@@ -1667,6 +1667,10 @@ body:hover .cursor-follower {
     .cursor-follower {
         display: none;
     }
+    
+    .scroll-indicator {
+        display: none;
+    }
 }
 
 @media (max-width: 480px) {
