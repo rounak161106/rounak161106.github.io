@@ -200,8 +200,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const certTabs = document.querySelectorAll('.cert-tab');
     const certCategories = document.querySelectorAll('.cert-category');
 
-    console.log('🔍 Cert tabs found:', certTabs.length); // Debug
-    console.log('🔍 Cert categories found:', certCategories.length); // Debug
+    // console.log('🔍 Cert tabs found:', certTabs.length); // Debug
+    // console.log('🔍 Cert categories found:', certCategories.length); // Debug
 
     if (certTabs.length === 0) {
         console.error('❌ No cert tabs found! Check if HTML has loaded.');
@@ -251,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    console.log('✅ Certification tabs initialized successfully!');
+    // console.log('✅ Certification tabs initialized successfully!');
 });
 
 // ===== CERTIFICATE MODAL =====
