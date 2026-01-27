@@ -105,7 +105,7 @@ window.addEventListener('scroll', activateNavLink);
 const typingText = document.querySelector('.typing-text');
 if (typingText) {
     const texts = [
-        'Rounak ',
+        'Aspiring Data Scientist',
         'Machine Learning Enthusiast',
         'Python Developer',
         'AI Researcher'
@@ -283,6 +283,81 @@ document.addEventListener('keydown', (e) => {
 });
 
 // ===== CONTACT FORM =====
+// const contactForm = document.getElementById('contactForm');
+// const formStatus = document.getElementById('formStatus');
+
+// if (contactForm) {
+//     contactForm.addEventListener('submit', async (e) => {
+//         e.preventDefault();
+        
+//         // Get form data
+//         const formData = new FormData(contactForm);
+//         const data = {
+//             name: formData.get('name'),
+//             email: formData.get('email'),
+//             subject: formData.get('subject'),
+//             message: formData.get('message')
+//         };
+        
+//         // Show loading state
+//         const submitBtn = contactForm.querySelector('button[type="submit"]');
+//         const originalText = submitBtn.innerHTML;
+//         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+//         submitBtn.disabled = true;
+        
+//         // Simulate form submission (replace with actual API call)
+//         setTimeout(() => {
+//             // Success
+//             formStatus.className = 'form-status success';
+//             formStatus.innerHTML = '<i class="fas fa-check-circle"></i> Message sent successfully! I\'ll get back to you soon.';
+            
+//             // Reset form
+//             contactForm.reset();
+            
+//             // Reset button
+//             submitBtn.innerHTML = originalText;
+//             submitBtn.disabled = false;
+            
+//             // Hide status after 5 seconds
+//             setTimeout(() => {
+//                 formStatus.className = 'form-status';
+//             }, 5000);
+//         }, 1500);
+        
+//         // For actual implementation, use:
+//         /*
+//         try {
+//             const response = await fetch('/api/contact', {
+//                 method: 'POST',
+//                 headers: {
+//                     'Content-Type': 'application/json'
+//                 },
+//                 body: JSON.stringify(data)
+//             });
+            
+//             if (response.ok) {
+//                 formStatus.className = 'form-status success';
+//                 formStatus.innerHTML = '<i class="fas fa-check-circle"></i> Message sent successfully!';
+//                 contactForm.reset();
+//             } else {
+//                 throw new Error('Failed to send message');
+//             }
+//         } catch (error) {
+//             formStatus.className = 'form-status error';
+//             formStatus.innerHTML = '<i class="fas fa-exclamation-circle"></i> Failed to send message. Please try again.';
+//         } finally {
+//             submitBtn.innerHTML = originalText;
+//             submitBtn.disabled = false;
+            
+//             setTimeout(() => {
+//                 formStatus.className = 'form-status';
+//             }, 5000);
+//         }
+//         */
+//     });
+// }
+
+// ===== CONTACT FORM WITH WEB3FORMS =====
 const contactForm = document.getElementById('contactForm');
 const formStatus = document.getElementById('formStatus');
 
@@ -290,70 +365,42 @@ if (contactForm) {
     contactForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        // Get form data
         const formData = new FormData(contactForm);
-        const data = {
-            name: formData.get('name'),
-            email: formData.get('email'),
-            subject: formData.get('subject'),
-            message: formData.get('message')
-        };
-        
-        // Show loading state
         const submitBtn = contactForm.querySelector('button[type="submit"]');
         const originalText = submitBtn.innerHTML;
+        
+        // Show loading
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
         submitBtn.disabled = true;
         
-        // Simulate form submission (replace with actual API call)
-        setTimeout(() => {
-            // Success
-            formStatus.className = 'form-status success';
-            formStatus.innerHTML = '<i class="fas fa-check-circle"></i> Message sent successfully! I\'ll get back to you soon.';
-            
-            // Reset form
-            contactForm.reset();
-            
-            // Reset button
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
-            
-            // Hide status after 5 seconds
-            setTimeout(() => {
-                formStatus.className = 'form-status';
-            }, 5000);
-        }, 1500);
-        
-        // For actual implementation, use:
-        /*
         try {
-            const response = await fetch('/api/contact', {
+            const response = await fetch('https://api.web3forms.com/submit', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
+                body: formData
             });
             
-            if (response.ok) {
+            const data = await response.json();
+            
+            if (data.success) {
                 formStatus.className = 'form-status success';
-                formStatus.innerHTML = '<i class="fas fa-check-circle"></i> Message sent successfully!';
+                formStatus.innerHTML = '<i class="fas fa-check-circle"></i> Message sent successfully! I\'ll get back to you soon.';
+                formStatus.style.display = 'block';
                 contactForm.reset();
             } else {
-                throw new Error('Failed to send message');
+                throw new Error('Form submission failed');
             }
         } catch (error) {
             formStatus.className = 'form-status error';
-            formStatus.innerHTML = '<i class="fas fa-exclamation-circle"></i> Failed to send message. Please try again.';
+            formStatus.innerHTML = '<i class="fas fa-exclamation-circle"></i> Failed to send. Please try again.';
+            formStatus.style.display = 'block';
         } finally {
             submitBtn.innerHTML = originalText;
             submitBtn.disabled = false;
             
             setTimeout(() => {
-                formStatus.className = 'form-status';
+                formStatus.style.display = 'none';
             }, 5000);
         }
-        */
     });
 }
 
