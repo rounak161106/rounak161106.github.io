@@ -105,7 +105,7 @@ window.addEventListener('scroll', activateNavLink);
 const typingText = document.querySelector('.typing-text');
 if (typingText) {
     const texts = [
-        'Aspiring Data Scientist',
+        'Rounak ',
         'Machine Learning Enthusiast',
         'Python Developer',
         'AI Researcher'
