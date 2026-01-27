@@ -1,6 +1,6 @@
 # Ignore all markdown files
 *.md
-
+!README.md
 
 # Allow gitignore itself
 .gitignore
