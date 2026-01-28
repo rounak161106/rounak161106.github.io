@@ -51,6 +51,189 @@
     --font-secondary: 'Inter', sans-serif;
 }
 
+/* ===== THEME VARIANTS ===== */
+/* Add this RIGHT AFTER the existing :root block in style.css */
+
+/* Green/Teal Theme */
+[data-theme="green"] {
+    --primary-color: #11998e;
+    --secondary-color: #38ef7d;
+    --accent-color: #7bed9f;
+    --gradient-primary: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    --gradient-secondary: linear-gradient(135deg, #7bed9f 0%, #2ed573 100%);
+    --gradient-accent: linear-gradient(135deg, #0be881 0%, #05c46b 100%);
+    --gradient-orb: radial-gradient(circle at center, rgba(17, 153, 142, 0.3) 0%, transparent 70%);
+    --shadow-glow: 0 0 30px rgba(17, 153, 142, 0.3);
+}
+
+/* Red/Orange Theme */
+[data-theme="red"] {
+    --primary-color: #ff6b6b;
+    --secondary-color: #ffa07a;
+    --accent-color: #ff8787;
+    --gradient-primary: linear-gradient(135deg, #ff6b6b 0%, #ffa07a 100%);
+    --gradient-secondary: linear-gradient(135deg, #ff8787 0%, #ff6348 100%);
+    --gradient-accent: linear-gradient(135deg, #ff7979 0%, #ff4757 100%);
+    --gradient-orb: radial-gradient(circle at center, rgba(255, 107, 107, 0.3) 0%, transparent 70%);
+    --shadow-glow: 0 0 30px rgba(255, 107, 107, 0.3);
+}
+
+/* Cyan/Blue Theme */
+[data-theme="cyan"] {
+    --primary-color: #4facfe;
+    --secondary-color: #00f2fe;
+    --accent-color: #48dbfb;
+    --gradient-primary: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    --gradient-secondary: linear-gradient(135deg, #48dbfb 0%, #0abde3 100%);
+    --gradient-accent: linear-gradient(135deg, #54a0ff 0%, #2e86de 100%);
+    --gradient-orb: radial-gradient(circle at center, rgba(79, 172, 254, 0.3) 0%, transparent 70%);
+    --shadow-glow: 0 0 30px rgba(79, 172, 254, 0.3);
+}
+
+/* Theme Switcher Button Styles */
+.theme-switcher {
+    position: fixed;
+    bottom: 100px;
+    right: 2rem;
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.theme-toggle-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid var(--primary-color);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    font-size: 1.2rem;
+    color: var(--text-primary);
+}
+
+.theme-toggle-btn:hover {
+    background: var(--gradient-primary);
+    transform: scale(1.1);
+    box-shadow: var(--shadow-glow);
+}
+
+.theme-options {
+    display: none;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.theme-options.active {
+    display: flex;
+    animation: slideIn 0.3s ease;
+}
+
+.theme-option {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+}
+
+.theme-option:hover {
+    transform: scale(1.15);
+    border-color: var(--text-primary);
+}
+
+.theme-option.active {
+    border-color: var(--text-primary);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+.theme-option::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+.theme-blue::before {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.theme-green::before {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.theme-red::before {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ffa07a 100%);
+}
+
+.theme-cyan::before {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mobile Responsive */
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    /* Theme Switcher - Position on left side */
+    .theme-switcher {
+        bottom: 20px;
+        right: auto;
+        left: 1rem;
+    }
+    
+    .theme-toggle-btn,
+    .theme-option {
+        width: 45px;
+        height: 45px;
+        font-size: 1.1rem;
+    }
+    
+    /* Back to Top Button - Keep on right side */
+    .back-to-top {
+        bottom: 20px;
+        right: 1rem;
+    }
+}
+
+/* For very small screens */
+@media (max-width: 480px) {
+    .theme-switcher {
+        left: 0.75rem;
+    }
+    
+    .back-to-top {
+        right: 0.75rem;
+    }
+    
+    .theme-toggle-btn,
+    .theme-option {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+}
+
 /* ===== RESET & BASE STYLES ===== */
 * {
     margin: 0;

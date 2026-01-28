@@ -572,3 +572,73 @@ window.addEventListener('error', (e) => {
 
 // ===== READY STATE =====
 console.log('%c✅ Portfolio loaded successfully!', 'color: #00ff00; font-size: 14px; font-weight: bold;');
+
+
+// ===== THEME SWITCHER =====
+// Add this AT THE END of main.js
+
+document.addEventListener('DOMContentLoaded', () => {
+    const themeToggle = document.getElementById('themeToggle');
+    const themeOptions = document.getElementById('themeOptions');
+    const themeButtons = document.querySelectorAll('.theme-option');
+    
+    // Load saved theme or default to blue
+    const savedTheme = localStorage.getItem('portfolio-theme') || 'blue';
+    applyTheme(savedTheme);
+    
+    // Toggle theme options visibility
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            themeOptions.classList.toggle('active');
+        });
+    }
+    
+    // Close theme options when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.theme-switcher')) {
+            themeOptions.classList.remove('active');
+        }
+    });
+    
+    // Handle theme selection
+    themeButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const theme = button.getAttribute('data-theme');
+            applyTheme(theme);
+            
+            // Save to localStorage
+            localStorage.setItem('portfolio-theme', theme);
+            
+            // Update active state
+            themeButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            
+            // Close options after selection
+            setTimeout(() => {
+                themeOptions.classList.remove('active');
+            }, 300);
+        });
+    });
+    
+    function applyTheme(theme) {
+        // Remove all theme classes
+        document.documentElement.removeAttribute('data-theme');
+        
+        // Apply new theme (blue is default, so no attribute needed)
+        if (theme !== 'blue') {
+            document.documentElement.setAttribute('data-theme', theme);
+        }
+        
+        // Update active button
+        themeButtons.forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.getAttribute('data-theme') === theme) {
+                btn.classList.add('active');
+            }
+        });
+        
+        // Log theme change
+        console.log('🎨 Theme changed to:', theme);
+    }
+});
