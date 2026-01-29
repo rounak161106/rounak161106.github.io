@@ -895,12 +895,14 @@ body:hover .cursor-follower {
     border-radius: var(--radius-md);
     border: 1px solid rgba(102, 126, 234, 0.2);
     transition: all var(--transition-normal);
+    position: relative; /* Added for better stacking */
 }
 
 .edu-card:hover {
     background: rgba(102, 126, 234, 0.1);
     border-color: var(--primary-color);
     transform: translateX(10px);
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2); /* Added glow effect */
 }
 
 .edu-icon {
@@ -913,12 +915,24 @@ body:hover .cursor-follower {
     background: var(--gradient-primary);
     border-radius: var(--radius-md);
     font-size: 1.5rem;
+    transition: transform var(--transition-normal); /* Added transition */
+}
+
+/* NEW: Icon animation on card hover */
+.edu-card:hover .edu-icon {
+    transform: scale(1.1) rotate(5deg);
 }
 
 .edu-content h4 {
     color: var(--text-primary);
     font-size: 1.2rem;
     margin-bottom: 0.5rem;
+    transition: color var(--transition-fast); /* Added transition */
+}
+
+/* NEW: Title color change on hover */
+.edu-card:hover .edu-content h4 {
+    color: var(--primary-color);
 }
 
 .edu-content p {
@@ -933,8 +947,15 @@ body:hover .cursor-follower {
     border-radius: 20px;
     font-size: 0.85rem;
     color: var(--primary-color);
+    transition: all var(--transition-fast); /* Added transition */
+    margin-bottom: 0.5rem; /* Added spacing */
 }
 
+/* NEW: Status badge animation on card hover */
+.edu-card:hover .edu-status {
+    background: rgba(102, 126, 234, 0.4);
+    transform: scale(1.05);
+}
 
 .edu-profile-link {
     display: inline-block;
@@ -943,11 +964,42 @@ body:hover .cursor-follower {
     text-decoration: none;
     font-size: 0.9rem;
     transition: all var(--transition-fast);
+    position: relative; /* Added for pseudo-element */
+    padding: 0.3rem 0.5rem; /* Added padding for better click area */
+    border-radius: 4px; /* Added border radius */
+}
+
+/* NEW: Underline effect */
+.edu-profile-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--secondary-color);
+    transition: width var(--transition-normal);
 }
 
 .edu-profile-link:hover {
     color: var(--secondary-color);
-    transform: translateX(5px);
+    background: rgba(102, 126, 234, 0.1); /* Added background */
+    /* REMOVED: transform: translateX(5px); - this was conflicting! */
+}
+
+/* NEW: Animate underline on hover */
+.edu-profile-link:hover::after {
+    width: 100%;
+}
+
+/* NEW: Icon animation in the link */
+.edu-profile-link i {
+    transition: transform var(--transition-fast);
+    margin-right: 0.3rem;
+}
+
+.edu-profile-link:hover i {
+    transform: translateX(3px);
 }
 
 .about-list {
