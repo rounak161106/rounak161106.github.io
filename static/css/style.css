@@ -935,6 +935,21 @@ body:hover .cursor-follower {
     color: var(--primary-color);
 }
 
+
+.edu-profile-link {
+    display: inline-block;
+    margin-top: 0.5rem;
+    color: var(--primary-color);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all var(--transition-fast);
+}
+
+.edu-profile-link:hover {
+    color: var(--secondary-color);
+    transform: translateX(5px);
+}
+
 .about-list {
     list-style: none;
     margin: 2rem 0;
