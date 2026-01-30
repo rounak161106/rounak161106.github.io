@@ -444,7 +444,22 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 // ===== PARALLAX EFFECT =====
-window.addEventListener('scroll', () => {
+// Throttle function for better performance
+function throttle(func, limit) {
+    let inThrottle;
+    return function() {
+        const args = arguments;
+        const context = this;
+        if (!inThrottle) {
+            func.apply(context, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
+    };
+}
+
+// Apply throttling to parallax
+const parallaxEffect = throttle(() => {
     const scrolled = window.pageYOffset;
     const parallaxElements = document.querySelectorAll('.gradient-orb');
     
@@ -452,7 +467,9 @@ window.addEventListener('scroll', () => {
         const speed = 0.5 + (index * 0.1);
         element.style.transform = `translateY(${scrolled * speed}px)`;
     });
-});
+}, 16); // 60fps
+
+window.addEventListener('scroll', parallaxEffect);
 
 // ===== LAZY LOADING IMAGES =====
 const images = document.querySelectorAll('img[data-src]');
