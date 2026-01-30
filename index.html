@@ -24,6 +24,49 @@
     />
     <meta name="msvalidate.01" content="47EA4D9D39143F9D9A1B137D622EC934" />
 
+    <!-- Add these meta tags -->
+    <meta name="theme-color" content="#667eea" />
+    <meta name="mobile-web-app-capable" content="yes" />
+
+    <!-- Improve Open Graph image -->
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Rounak Prasad - Data Scientist Portfolio"
+    />
+
+    <!-- Add breadcrumb schema -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://rounak161106.github.io/"
+          }
+        ]
+      }
+    </script>
+
+    <!-- Add WebSite schema for search box -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Rounak Prasad Portfolio",
+        "url": "https://rounak161106.github.io/",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://rounak161106.github.io/#search?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      }
+    </script>
+
     <!-- Open Graph / Social Media Meta Tags -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://rounak161106.github.io/" />

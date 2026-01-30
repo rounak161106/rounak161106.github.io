@@ -2,3 +2,6 @@ User-agent: *
 Allow: /
 
 Sitemap: https://rounak161106.github.io/sitemap.xml
+
+# Optimize crawl rate
+Crawl-delay: 1
