@@ -16,7 +16,7 @@ window.addEventListener('load', () => {
     const preloader = document.querySelector('.preloader');
     setTimeout(() => {
         preloader.classList.add('hidden');
-    }, 1500);
+    }, 200);
 });
 
 // ===== CUSTOM CURSOR =====
