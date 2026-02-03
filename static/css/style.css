@@ -1497,7 +1497,7 @@ body:hover .cursor-follower {
     padding: 1.5rem;
 }
 
-.cert-info h4 {
+.cert-info h3 {
     color: var(--text-primary);
     font-size: 1.1rem;
     margin-bottom: 1rem;
