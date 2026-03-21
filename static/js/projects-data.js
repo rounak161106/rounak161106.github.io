@@ -50,7 +50,7 @@ const projectsData = [
         description: "A full-stack web application to create authors and publish articles, featuring a many-to-many relational database and author-filtered article views. Deployed live on Render.",
         category: "web",
         technologies: ["Python", "Flask", "SQLAlchemy", "SQLite", "Bootstrap"],
-        image: "static/images/flask-article.png",
+        image: "static/images/flask-article.webp",
         github: "https://github.com/rounak161106/flask-article-app",
         demo: "https://flask-article-app.onrender.com",
         featured: true
@@ -72,15 +72,15 @@ const projectsData = [
 function renderProjects(filter = 'all') {
     const projectsGrid = document.getElementById('projectsGrid');
     if (!projectsGrid) return;
-    
-    const filteredProjects = filter === 'all' 
-        ? projectsData 
+
+    const filteredProjects = filter === 'all'
+        ? projectsData
         : projectsData.filter(project => project.category === filter);
-    
+
     projectsGrid.innerHTML = filteredProjects.map(project => `
         <div class="project-card" data-category="${project.category}" data-aos="fade-up">
             <div class="project-image">
-                ${project.image ? `<img src="${project.image}" alt="${project.title}">` : `
+                ${project.image ? `<img src="${project.image}" alt="${project.title}" loading="lazy" decoding="async">` : `
                     <div class="project-placeholder">
                         <i class="fas fa-${project.category === 'ml' ? 'brain' : project.category === 'dl' ? 'network-wired' : 'code'}"></i>
                     </div>
@@ -130,7 +130,7 @@ function renderProjects(filter = 'all') {
 // Initialize projects on page load
 document.addEventListener('DOMContentLoaded', () => {
     renderProjects();
-    
+
     // Project filter functionality
     const filterButtons = document.querySelectorAll('.filter-btn');
     filterButtons.forEach(btn => {

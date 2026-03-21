@@ -12,11 +12,13 @@ AOS.init({
 });
 
 // ===== PRELOADER =====
-window.addEventListener('load', () => {
+// Use DOMContentLoaded so the spinner hides as soon as the DOM is ready,
+// not after all heavy images (e.g. project screenshots) have finished downloading.
+document.addEventListener('DOMContentLoaded', () => {
     const preloader = document.querySelector('.preloader');
-    setTimeout(() => {
+    if (preloader) {
         preloader.classList.add('hidden');
-    });
+    }
 });
 
 // ===== CUSTOM CURSOR =====
