@@ -134,7 +134,6 @@ You are free to:
 - ✅ Modify
 - ✅ Merge
 - ✅ Publish
-- ✅ Distribute
 
 **Provided that** the original copyright and license notice are included.
 
