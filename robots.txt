@@ -1,7 +1,6 @@
 User-agent: *
 Allow: /
+Allow: /static/images/
+Allow: /static/certificates/
 
 Sitemap: https://rounak161106.github.io/sitemap.xml
-
-# Optimize crawl rate
-Crawl-delay: 1
