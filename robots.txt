@@ -4,3 +4,4 @@ Allow: /static/images/
 Allow: /static/certificates/
 
 Sitemap: https://rounak161106.github.io/sitemap.xml
+Sitemap: https://rounak161106.github.io/sitemap.txt
