@@ -196,7 +196,7 @@
             <div class="dev-inner">
                 <div class="dev-hero" style="text-align: center; margin-bottom: 2rem;">
                     <span class="dev-hero-tag">Developer</span>
-                    <h1>Dev <span>Activity</span></h1>
+                    <h2>Dev <span>Activity</span></h2>
                     <p class="dev-hero-desc" style="max-width: 600px; margin: 1rem auto 0;">Deep-dive into my professional coding journey across multiple platforms.</p>
                 </div>
                 
@@ -385,7 +385,7 @@
             <div class="blog-inner">
                 <div class="blog-hero">
                     <span class="blog-hero-tag">Writing</span>
-                    <h1>Latest <span>Articles</span></h1>
+                    <h2>Latest <span>Articles</span></h2>
                     <p class="blog-hero-desc">Thoughts on machine learning, coding, and my journey in data science — pulled live from Dev.to and Medium.</p>
                 </div>
                 <div class="blog-tabs" id="blogTabs">
