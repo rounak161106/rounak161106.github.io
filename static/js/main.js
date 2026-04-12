@@ -668,3 +668,22 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('contextmenu', (e) => {
     e.preventDefault();
 });
+
+// Disable Developer Tools Shortcuts (F12, Ctrl+Shift+I, Ctrl+Shift+J)
+document.addEventListener('keydown', (e) => {
+    // F12
+    if (e.key === 'F12' || e.keyCode === 123) {
+        e.preventDefault();
+        return false;
+    }
+    // Ctrl+Shift+I or Cmd+Option+I
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.keyCode === 73)) {
+        e.preventDefault();
+        return false;
+    }
+    // Ctrl+Shift+J or Cmd+Option+J
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'J' || e.key === 'j' || e.keyCode === 74)) {
+        e.preventDefault();
+        return false;
+    }
+});
