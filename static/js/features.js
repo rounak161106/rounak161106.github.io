@@ -470,7 +470,10 @@
     }
 
     function loadBlog() {
-        if (blogLoaded) return;
+        if (blogLoaded) {
+            renderBlog();
+            return;
+        }
         showBlogSkel();
         Promise.all([fetchDevTo(), fetchMedium()]).then(function (results) {
             var all = results[0].concat(results[1]);
