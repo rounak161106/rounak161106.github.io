@@ -686,4 +686,14 @@ document.addEventListener('keydown', (e) => {
         e.preventDefault();
         return false;
     }
+    // Ctrl+U or Cmd+U (View Source)
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'U' || e.key === 'u' || e.keyCode === 85)) {
+        e.preventDefault();
+        return false;
+    }
+    // Ctrl+S or Cmd+S (Save Page)
+    if ((e.ctrlKey || e.metaKey) && (e.key === 'S' || e.key === 's' || e.keyCode === 83)) {
+        e.preventDefault();
+        return false;
+    }
 });
