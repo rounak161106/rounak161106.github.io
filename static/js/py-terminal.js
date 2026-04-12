@@ -162,25 +162,15 @@ document.addEventListener('DOMContentLoaded', () => {
             border-left: 3px solid var(--primary-color);
         }
 
-        /* Mobile Styles - Clears any UI dock overlapping */
+        /* Mobile Styles - Trigger hidden on mobile in favor of Command Palette */
         @media (max-width: 768px) {
             #py-trigger {
-                top: 90px;
-                bottom: auto;
-                left: auto;
-                right: 15px;
-                padding: 10px;
-                border-radius: 50%;
-                width: 45px;
-                height: 45px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+                display: none !important;
             }
-            #py-trigger span { display: none; }
-            #py-trigger i { font-size: 1.2rem; margin: 0; }
-            #py-terminal-modal { width: 95%; max-width: 100%; }
+            #py-terminal-modal { 
+                width: 95%; 
+                max-width: 100%; 
+            }
         }
     `;
     document.head.appendChild(style);
@@ -244,9 +234,12 @@ welcome_guest()</textarea>
         elems.backdrop.classList.toggle('active', show);
     };
 
-    elems.trigger.addEventListener('click', () => toggleModal(true));
-    elems.closeBtn.addEventListener('click', () => toggleModal(false));
-    elems.backdrop.addEventListener('click', () => toggleModal(false));
+    window.openPythonTerminal = () => toggleModal(true);
+    window.closePythonTerminal = () => toggleModal(false);
+
+    elems.trigger.addEventListener('click', window.openPythonTerminal);
+    elems.closeBtn.addEventListener('click', window.closePythonTerminal);
+    elems.backdrop.addEventListener('click', window.closePythonTerminal);
 
     // Dynamic Engine Loader
     const initPyodide = async () => {

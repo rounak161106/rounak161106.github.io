@@ -92,6 +92,7 @@
     // FEATURE 1 — COMMAND PALETTE
     // ================================================================
     var commands = [
+        { group: 'Actions',  icon: 'fab fa-python',         label: 'Run Python',      hint: 'In-Browser Execution', action: function () { if(window.openPythonTerminal) window.openPythonTerminal(); } },
         { group: 'Actions',  icon: 'fas fa-bolt',           label: 'Dev Activity',    hint: 'GitHub · LeetCode', action: function () { openDev(); } },
         { group: 'Actions',  icon: 'fas fa-pen-nib',        label: 'Blog / Writing',  hint: 'Dev.to · Medium',   action: function () { openBlog(); } },
         { group: 'Actions',  icon: 'fas fa-palette',        label: 'Switch Theme',    hint: 'Cycle next',        action: cycleTheme },
