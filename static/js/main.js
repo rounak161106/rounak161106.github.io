@@ -657,7 +657,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         
+
         // Log theme change
         console.log('🎨 Theme changed to:', theme);
     }
+});
+
+// ===== SECURITY ENHANCEMENTS =====
+// Disable Context Menu (Right Click)
+document.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
 });
