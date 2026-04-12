@@ -748,57 +748,37 @@
         var devContent = document.getElementById('fdDevContent');
         if (!devContent) return;
 
-        fetch('https://api.github.com/users/' + GITHUB_USERNAME)
-            .then(function (r) { return r.ok ? r.json() : null; })
-            .then(function (u) {
-                u = u || { public_repos: '12', followers: '15' };
-                devContent.innerHTML =
-                    '<div class="fd-stats">' +
-                        '<div class="fd-stat"><div class="fd-stat-num">' + u.public_repos + '</div><div class="fd-stat-label">Repos</div></div>' +
-                        '<div class="fd-stat"><div class="fd-stat-num">' + u.followers + '</div><div class="fd-stat-label">Followers</div></div>' +
-                        '<div class="fd-stat"><div class="fd-stat-num">20+</div><div class="fd-stat-label">Solved</div></div>' +
-                    '</div>' +
-                    '<div class="fd-mini-heatmap" id="fdHeatmap"></div>';
-                generateMiniHeatmap();
-                // Mark activity dot if real data
-                if (u.public_repos) {
-                    var actDot = document.getElementById('dockActivityDot');
-                    if (actDot) actDot.classList.add('visible');
-                }
-            })
-            .catch(function () {
-                devContent.innerHTML =
-                    '<div class="fd-stats">' +
-                        '<div class="fd-stat"><div class="fd-stat-num">12+</div><div class="fd-stat-label">Repos</div></div>' +
-                        '<div class="fd-stat"><div class="fd-stat-num">20+</div><div class="fd-stat-label">Solved</div></div>' +
-                    '</div>' +
-                    '<div class="fd-mini-heatmap" id="fdHeatmap"></div>';
-                generateMiniHeatmap();
-            });
+        Promise.all([
+            fetch('https://api.github.com/users/' + GITHUB_USERNAME).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
+            fetch('https://alfa-leetcode-api.onrender.com/' + LEETCODE_USERNAME + '/solved').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
+        ]).then(function (results) {
+            var u = results[0] || { public_repos: '12+', followers: '15' };
+            var s = results[1] || { solvedProblem: '21+', easySolved: 20, mediumSolved: 1, hardSolved: 0 };
+            
+            var easyPct = Math.min(100, Math.max(1, (parseFloat(s.easySolved) / Math.max(1, parseFloat(s.solvedProblem))) * 100)) || 0;
+            var medPct = Math.min(100, Math.max(1, (parseFloat(s.mediumSolved) / Math.max(1, parseFloat(s.solvedProblem))) * 100)) || 0;
+            var hardPct = Math.min(100, Math.max(1, (parseFloat(s.hardSolved) / Math.max(1, parseFloat(s.solvedProblem))) * 100)) || 0;
+
+            devContent.innerHTML =
+                '<div class="fd-stats">' +
+                    '<div class="fd-stat"><div class="fd-stat-num">' + u.public_repos + '</div><div class="fd-stat-label">Repos</div></div>' +
+                    '<div class="fd-stat"><div class="fd-stat-num">' + u.followers + '</div><div class="fd-stat-label">Followers</div></div>' +
+                    '<div class="fd-stat"><div class="fd-stat-num">' + s.solvedProblem + '</div><div class="fd-stat-label">Solved</div></div>' +
+                '</div>' +
+                '<div class="fd-lc-bars">' +
+                    '<div class="fd-lc-bar"><div class="fd-lc-label">Easy <span style="color:#00b8a3">' + s.easySolved + '</span></div><div class="fd-lc-track"><div class="fd-lc-fill easy" style="width:' + easyPct + '%"></div></div></div>' +
+                    '<div class="fd-lc-bar"><div class="fd-lc-label">Med <span style="color:#ffc01e">' + s.mediumSolved + '</span></div><div class="fd-lc-track"><div class="fd-lc-fill medium" style="width:' + medPct + '%"></div></div></div>' +
+                    '<div class="fd-lc-bar"><div class="fd-lc-label">Hard <span style="color:#ff375f">' + s.hardSolved + '</span></div><div class="fd-lc-track"><div class="fd-lc-fill hard" style="width:' + hardPct + '%"></div></div></div>' +
+                '</div>';
+                
+            // Mark activity dot if real data
+            if (u && u.public_repos) {
+                var actDot = document.getElementById('dockActivityDot');
+                if (actDot) actDot.classList.add('visible');
+            }
+        });
     }
 
-    // Decorative GitHub-style heatmap
-    function generateMiniHeatmap() {
-        var container = document.getElementById('fdHeatmap');
-        if (!container) return;
-        var levels = ['', 'l1', 'l2', 'l3', 'l4'];
-        var weights = [0, 0, 0.22, 0.18, 0.12, 0.06];  // probability per level (0 = empty bias)
-        for (var c = 0; c < 26; c++) {
-            var col = document.createElement('div');
-            col.className = 'fd-heatmap-col';
-            for (var r = 0; r < 5; r++) {
-                var cell = document.createElement('div');
-                cell.className = 'fd-heatmap-cell';
-                var rand = Math.random();
-                if      (rand > 0.92) cell.classList.add('l4');
-                else if (rand > 0.75) cell.classList.add('l3');
-                else if (rand > 0.55) cell.classList.add('l2');
-                else if (rand > 0.35) cell.classList.add('l1');
-                col.appendChild(cell);
-            }
-            container.appendChild(col);
-        }
-    }
 
     // Populate blog discover card (called after blog posts load)
     function populateBlogDiscoverCard(posts) {
