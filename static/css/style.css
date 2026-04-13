@@ -90,15 +90,12 @@
     --shadow-glow: 0 0 30px rgba(79, 172, 254, 0.3);
 }
 
-/* Theme Switcher Button Styles */
+/* Theme Switcher Button Styles (Sideways & Fixed) */
 .theme-switcher {
     position: fixed;
-    bottom: 100px;
+    bottom: 2rem;
     right: 2rem;
     z-index: 999;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
 }
 
 .theme-toggle-btn {
@@ -115,6 +112,8 @@
     transition: all var(--transition-normal);
     font-size: 1.2rem;
     color: var(--text-primary);
+    position: relative;
+    z-index: 10;
 }
 
 .theme-toggle-btn:hover {
@@ -124,15 +123,24 @@
 }
 
 .theme-options {
+    position: absolute;
+    right: 60px;
+    top: 50%;
+    transform: translateY(-50%);
     display: none;
-    flex-direction: column;
+    flex-direction: row-reverse;
     gap: 0.5rem;
-    margin-bottom: 0.5rem;
+    z-index: 5;
 }
 
 .theme-options.active {
     display: flex;
-    animation: slideIn 0.3s ease;
+    animation: slideInLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideInLeft {
+    from { opacity: 0; transform: translateY(-50%) translateX(20px); }
+    to { opacity: 1; transform: translateY(-50%) translateX(0); }
 }
 
 .theme-option {
@@ -1830,7 +1838,7 @@ body:hover .cursor-follower {
 /* ===== BACK TO TOP BUTTON ===== */
 .back-to-top {
     position: fixed;
-    bottom: 2rem;
+    bottom: 100px;
     right: 2rem;
     width: 50px;
     height: 50px;
@@ -2064,8 +2072,27 @@ body:hover .cursor-follower {
 }
 
 /* ===== PRINT STYLES ===== */
-@media print {
+@media (max-width: 768px) {
+    .theme-switcher {
+        bottom: 20px;
+        right: auto;
+        left: 1rem;
+    }
+    
+    .theme-options {
+        right: auto;
+        left: 60px;
+        flex-direction: row !important;
+    }
 
+    .back-to-top {
+        bottom: 20px;
+        right: 1rem;
+    }
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
     .navbar,
     .scroll-indicator,
     .back-to-top,

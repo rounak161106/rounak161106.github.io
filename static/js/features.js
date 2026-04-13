@@ -13,10 +13,12 @@
     var MEDIUM_USERNAME  = 'rounak16112006';
     var GITHUB_USERNAME  = 'rounak161106';
     var LEETCODE_USERNAME = 'SRWo0aM93N';
+    var CODEFORCES_USERNAME = 'rounak.dev';
 
     var PROFILES = [
-        { name: 'GitHub',     icon: 'fab fa-github', cls: 'github',     user: 'rounak161106',  url: 'https://github.com/rounak161106' },
-        { name: 'LeetCode',   icon: 'fas fa-code',   cls: 'leetcode',   user: 'SRWo0aM93N',    url: 'https://leetcode.com/u/SRWo0aM93N/' }
+        { name: 'GitHub',     icon: 'fab fa-github', cls: 'github',     user: 'rounak161106',  url: 'https://github.com/rounak161106',  targetId: 'ghBox' },
+        { name: 'LeetCode',   icon: 'fas fa-code',   cls: 'leetcode',   user: 'SRWo0aM93N',    url: 'https://leetcode.com/u/SRWo0aM93N/', targetId: 'lcBox' },
+        { name: 'Codeforces', icon: 'fas fa-code',   cls: 'codeforces', user: 'rounak.dev',    url: 'https://codeforces.com/profile/rounak.dev', targetId: 'cfBox' }
     ];
 
     var FEATURED_REPOS = [
@@ -67,17 +69,118 @@
         return html + '</div>';
     }
 
-    // ── THEME CYCLING ─────────────────────────────────────────────────
+    // ── SVG GENERATORS ───────────────────────────────────────────────
+    function createSVG(tag, attrs) {
+        var el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+        for (var k in attrs) el.setAttribute(k, attrs[k]);
+        return el;
+    }
+
+    function renderCFHeatmap(submissions) {
+        var width = 640;
+        var height = 110;
+        var padding = 20;
+        var boxSize = 10;
+        var gap = 2;
+        
+        var svg = createSVG('svg', { viewBox: '0 0 ' + width + ' ' + height, width: '100%', height: 'auto', style: 'border-radius:8px' });
+        
+        // Background
+        svg.appendChild(createSVG('rect', { width: width, height: height, fill: 'rgba(255,255,255,0.01)', rx: 8 }));
+
+        var data = {};
+        submissions.forEach(function(s) {
+            var date = new Date(s.creationTimeSeconds * 1000).toISOString().split('T')[0];
+            data[date] = (data[date] || 0) + 1;
+        });
+
+        var today = new Date();
+        var start = new Date();
+        start.setDate(today.getDate() - 364);
+
+        for (var i = 0; i < 52; i++) {
+            for (var j = 0; j < 7; j++) {
+                var d = new Date(start);
+                d.setDate(start.getDate() + (i * 7 + j));
+                var dateStr = d.toISOString().split('T')[0];
+                var count = data[dateStr] || 0;
+                var color = 'rgba(255,255,255,0.05)';
+                if (count > 0) color = 'var(--primary-color)'; 
+                if (count > 0) {
+                    var op = Math.min(1, 0.2 + count * 0.2);
+                    svg.appendChild(createSVG('rect', {
+                        x: padding + i * (boxSize + gap),
+                        y: padding + j * (boxSize + gap),
+                        width: boxSize, height: boxSize, rx: 2,
+                        fill: 'var(--primary-color)', opacity: op
+                    }));
+                    continue; 
+                }
+                if (d > today) color = 'transparent';
+
+                svg.appendChild(createSVG('rect', {
+                    x: padding + i * (boxSize + gap),
+                    y: padding + j * (boxSize + gap),
+                    width: boxSize,
+                    height: boxSize,
+                    rx: 2,
+                    fill: color,
+                    'data-date': dateStr,
+                    'data-count': count
+                }));
+            }
+        }
+        return svg.outerHTML;
+    }
+
+    // ── THEME CYCLING & SELECTION ─────────────────────────────────────
     var themeList = ['blue', 'green', 'red', 'cyan'];
-    function cycleTheme() {
-        var cur  = document.documentElement.getAttribute('data-theme') || 'blue';
-        var next = themeList[(themeList.indexOf(cur) + 1) % themeList.length];
+    
+    function setTheme(next) {
+        if (!themeList.includes(next)) return;
         document.documentElement.removeAttribute('data-theme');
         if (next !== 'blue') document.documentElement.setAttribute('data-theme', next);
         localStorage.setItem('portfolio-theme', next);
+        
+        // Sync active state in all theme controls (main + overlays)
         document.querySelectorAll('.theme-option').forEach(function (b) {
             b.classList.toggle('active', b.getAttribute('data-theme') === next);
         });
+        
+        refreshThemedImages();
+    }
+
+    function cycleTheme() {
+        var cur  = document.documentElement.getAttribute('data-theme') || 'blue';
+        var next = themeList[(themeList.indexOf(cur) + 1) % themeList.length];
+        setTheme(next);
+    }
+
+    function refreshThemedImages() {
+        var theme = document.documentElement.getAttribute('data-theme') || 'blue';
+        var ghColor = theme === 'green' ? '41b883' : (theme === 'red' ? 'ff6b6b' : (theme === 'cyan' ? '00f2fe' : '4facfe'));
+        var ts = Date.now(); // Cache-busting timestamp
+        
+        // Update GitHub Activity Graph
+        var ghActImg = document.querySelector('img[alt="GitHub Activity Graph"]');
+        if (ghActImg) {
+            try {
+                var url = new URL(ghActImg.src);
+                url.searchParams.set('color', ghColor);
+                url.searchParams.set('line', ghColor);
+                url.searchParams.set('t', ts);
+                ghActImg.src = url.toString();
+            } catch (e) {
+                // Fallback for relative or malformed URLs
+                ghActImg.src = 'https://github-readme-activity-graph.vercel.app/graph?username=' + GITHUB_USERNAME + '&bg_color=0f1423&color=' + ghColor + '&line=' + ghColor + '&point=ffffff&area=true&hide_border=true&t=' + ts;
+            }
+        }
+        
+        // Update GitHub Heatmap
+        var ghHeatImg = document.querySelector('img[alt="GitHub Year Heatmap"]');
+        if (ghHeatImg) {
+            ghHeatImg.src = 'https://ghchart.rshah.org/' + ghColor + '/' + GITHUB_USERNAME + '?t=' + ts;
+        }
     }
 
     // ── BACK BUTTON ───────────────────────────────────────────────────
@@ -198,12 +301,12 @@
     // FEATURE 2 — DEV ACTIVITY OVERLAY
     // ================================================================
     var profilesHTML = PROFILES.filter(function (p) { return p.url; }).map(function (p) {
-        return '<a class="profile-card" href="' + p.url + '" target="_blank" rel="noopener">' +
+        return '<div class="profile-card" onclick="scrollToDevSection(\'' + p.targetId + '\')">' +
                '<div class="profile-card-icon ' + p.cls + '"><i class="' + p.icon + '"></i></div>' +
                '<div class="profile-card-info">' +
                '<div class="profile-card-name">' + p.name + '</div>' +
                '<div class="profile-card-user">@' + p.user + '</div>' +
-               '</div></a>';
+               '</div></div>';
     }).join('');
 
     inject(
@@ -238,8 +341,24 @@
                         '<div class="dev-section-title" style="margin-bottom:1.5rem;"><i class="fas fa-code"></i> Data Structures & Algorithms</div>' +
                         '<div id="lcBox"></div>' +
                     '</div>' +
+
+                    '<div class="dev-section" style="background:rgba(255,255,255,0.015);padding:1.5rem;border-radius:var(--radius-md);border:1px solid rgba(255,255,255,0.04);">' +
+                        '<div class="dev-section-title" style="margin-bottom:1.5rem;"><i class="fas fa-chart-line"></i> Codeforces Activity</div>' +
+                        '<div id="cfBox"></div>' +
+                    '</div>' +
                 '</div>' +
             '</div>' +
+            '<!-- Swapped Bottom-Right Controls -->' +
+            '<div class="theme-switcher overlay-theme-switcher">' +
+                '<div class="theme-options">' +
+                    '<button class="theme-option theme-blue" data-theme="blue" title="Blue/Purple"></button>' +
+                    '<button class="theme-option theme-green" data-theme="green" title="Green/Teal"></button>' +
+                    '<button class="theme-option theme-red" data-theme="red" title="Red/Orange"></button>' +
+                    '<button class="theme-option theme-cyan" data-theme="cyan" title="Cyan/Blue"></button>' +
+                '</div>' +
+                '<button class="theme-toggle-btn palette-toggle"><i class="fas fa-palette"></i></button>' +
+            '</div>' +
+            '<button class="back-to-top overlay-back-to-top"><i class="fas fa-arrow-up"></i></button>' +
         '</div>'
     );
 
@@ -365,13 +484,141 @@
         });
     }
 
+    function loadCF() {
+        var box = document.getElementById('cfBox');
+        box.innerHTML = '<div class="lc-card" style="display:flex;justify-content:center;align-items:center;min-height:200px;">' + skelLines(4) + '</div>';
+
+        Promise.all([
+            fetch('https://codeforces.com/api/user.info?handles=' + CODEFORCES_USERNAME).then(function (r) { return r.json(); }).catch(function () { return null; }),
+            fetch('https://codeforces.com/api/user.status?handle=' + CODEFORCES_USERNAME).then(function (r) { return r.json(); }).catch(function () { return null; })
+        ]).then(function (results) {
+            var info = results[0] && results[0].status === 'OK' ? results[0].result[0] : null;
+            var subs = results[1] && results[1].status === 'OK' ? results[1].result : [];
+            
+            if (!info) {
+                box.innerHTML = '<div class="lc-fallback">Unable to sync Codeforces data. <a href="https://codeforces.com/profile/' + CODEFORCES_USERNAME + '" target="_blank">View profile directly</a></div>';
+                return;
+            }
+
+            var solvedSet = new Set();
+            var diffs = { easy: 0, medium: 0, hard: 0 };
+            subs.forEach(function (s) {
+                if (s.verdict === 'OK') {
+                    var id = (s.problem.contestId || '') + s.problem.index;
+                    if (!solvedSet.has(id)) {
+                        solvedSet.add(id);
+                        var r = s.problem.rating;
+                        if (!r || r < 1200) diffs.easy++;
+                        else if (r < 1900) diffs.medium++;
+                        else diffs.hard++;
+                    }
+                }
+            });
+
+            var totalSolved = solvedSet.size;
+            var cfRank = info.rank || 'Candidate';
+            var cfRating = info.rating || 0;
+            var cfAvatar = info.avatar;
+
+            box.innerHTML =
+                '<div class="lc-profile" style="display:flex;flex-direction:column;gap:1.5rem;align-items:center;">' +
+                    '<div style="display:flex;flex-wrap:wrap;gap:1.5rem;align-items:center;width:100%;">' +
+                        '<img class="gh-avatar" src="' + cfAvatar + '" alt="' + info.handle + '" style="margin:0;width:80px;height:80px;border-radius:50%;box-shadow:0 4px 12px rgba(0,0,0,0.2);" />' +
+                        '<div class="gh-info" style="text-align:left;flex:1;min-width:200px;">' +
+                            '<div class="gh-name" style="font-size:1.4rem;text-transform:capitalize;">' + info.handle +
+                            ' <a href="https://codeforces.com/profile/' + info.handle + '" target="_blank" style="font-size:0.9rem;color:var(--text-muted);"><i class="fas fa-external-link-alt"></i></a></div>' +
+                            '<div class="gh-bio" style="font-size:0.95rem;line-height:1.4;color:var(--text-muted);">' + (info.organization || 'Independent Programmer') + '</div>' +
+                        '</div>' +
+                        '<div class="gh-stats-row" style="background:var(--body-bg);padding:1rem;border-radius:var(--radius-sm);border:1px solid rgba(255,255,255,0.05);">' +
+                            '<span class="gh-stat" style="color:#1e90ff;"><i class="fas fa-trophy"></i> <strong>' + cfRank + ' (' + cfRating + ')</strong></span>' +
+                            '<span class="gh-stat" style="color:#2EC866;"><i class="fas fa-check-circle"></i> <strong>' + totalSolved + '</strong> solved</span>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div style="width:100%;display:flex;gap:1rem;padding:1.5rem;background:var(--body-bg);border-radius:var(--radius-sm);border:1px solid rgba(255,255,255,0.05);justify-content:space-around;text-align:center;">' +
+                        '<div style="display:flex;flex-direction:column;gap:0.5rem;"><span style="color:#00b8a3;font-weight:bold;font-size:1.2rem;">' + diffs.easy + '</span><span style="font-size:0.8rem;color:var(--text-muted);">Easy</span></div>' +
+                        '<div style="display:flex;flex-direction:column;gap:0.5rem;"><span style="color:#ffc01e;font-weight:bold;font-size:1.2rem;">' + diffs.medium + '</span><span style="font-size:0.8rem;color:var(--text-muted);">Medium</span></div>' +
+                        '<div style="display:flex;flex-direction:column;gap:0.5rem;"><span style="color:#ef4743;font-weight:bold;font-size:1.2rem;">' + diffs.hard + '</span><span style="font-size:0.8rem;color:var(--text-muted);">Hard</span></div>' +
+                    '</div>' +
+                    '<div style="width:100%;overflow:hidden;border-radius:var(--radius-sm);border:1px solid rgba(255,255,255,0.05);text-align:center;">' +
+                        renderCFHeatmap(subs) +
+                    '</div>' +
+                '</div>';
+        });
+    }
+
     function openDev() {
         if (blogOvEl && blogOvEl.classList.contains('open')) { blogOvEl.classList.remove('open'); }
         devOvEl.classList.add('open');
         document.body.style.overflow = 'hidden';
         history.pushState({ overlay: 'dev' }, '');
-        if (!devLoaded) { devLoaded = true; loadGH(); loadLC(); }
+        if (!devLoaded) { devLoaded = true; loadGH(); loadLC(); loadCF(); }
     }
+
+    function scrollToDevSection(id) {
+        if (!devOvEl.classList.contains('open')) openDev();
+        setTimeout(function() {
+            var el = document.getElementById(id);
+            if (el && devOvEl) {
+                var containerRect = devOvEl.getBoundingClientRect();
+                var elRect = el.getBoundingClientRect();
+                // Calculate position relative to the scroll container's current scroll position
+                var targetScrollPos = elRect.top - containerRect.top + devOvEl.scrollTop - 80;
+                
+                devOvEl.scrollTo({ top: targetScrollPos, behavior: 'smooth' });
+                
+                // Enhanced visual cue
+                el.classList.add('section-highlight');
+                setTimeout(function() { el.classList.remove('section-highlight'); }, 2000);
+            }
+        }, devLoaded ? 150 : 850);
+    }
+    window.scrollToDevSection = scrollToDevSection;
+
+    // Attach listeners for overlay-specific controls
+    function initOverlayControls(ovEl) {
+        if (!ovEl) return;
+        var paletteToggle = ovEl.querySelector('.palette-toggle');
+        var themeOptions  = ovEl.querySelector('.theme-options');
+        var themeButtons  = ovEl.querySelectorAll('.theme-option');
+        var backTop       = ovEl.querySelector('.overlay-back-to-top');
+
+        if (paletteToggle && themeOptions) {
+            paletteToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                themeOptions.classList.toggle('active');
+            });
+        }
+        
+        if (themeButtons && themeOptions) {
+            themeButtons.forEach(function(btn) {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    setTheme(btn.getAttribute('data-theme'));
+                    setTimeout(function() { themeOptions.classList.remove('active'); }, 300);
+                });
+            });
+        }
+
+        if (backTop) {
+            backTop.addEventListener('click', function() {
+                ovEl.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+
+        // Global click to close menu
+        document.addEventListener('click', function() { 
+            if (themeOptions) themeOptions.classList.remove('active'); 
+        });
+        
+        // Scroll visibility for Top button
+        ovEl.addEventListener('scroll', function() {
+            if (backTop && ovEl.scrollTop > 400) backTop.classList.add('visible');
+            else if (backTop) backTop.classList.remove('visible');
+        });
+    }
+
+    // Init will be called at the very end of the script
 
     function closeDev() {
         if (!devOvEl.classList.contains('open')) return;
@@ -407,6 +654,17 @@
                 '</div>' +
                 '<div class="blog-grid" id="blogGrid"></div>' +
             '</div>' +
+            '<!-- Swapped Bottom-Right Controls -->' +
+            '<div class="theme-switcher overlay-theme-switcher">' +
+                '<div class="theme-options">' +
+                    '<button class="theme-option theme-blue" data-theme="blue" title="Blue/Purple"></button>' +
+                    '<button class="theme-option theme-green" data-theme="green" title="Green/Teal"></button>' +
+                    '<button class="theme-option theme-red" data-theme="red" title="Red/Orange"></button>' +
+                    '<button class="theme-option theme-cyan" data-theme="cyan" title="Cyan/Blue"></button>' +
+                '</div>' +
+                '<button class="theme-toggle-btn palette-toggle"><i class="fas fa-palette"></i></button>' +
+            '</div>' +
+            '<button class="back-to-top overlay-back-to-top"><i class="fas fa-arrow-up"></i></button>' +
         '</div>'
     );
 
@@ -754,10 +1012,16 @@
 
         Promise.all([
             fetch('https://api.github.com/users/' + GITHUB_USERNAME).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
-            fetch('https://alfa-leetcode-api.onrender.com/' + LEETCODE_USERNAME + '/solved').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
+            fetch('https://alfa-leetcode-api.onrender.com/' + LEETCODE_USERNAME + '/solved').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
+            fetch('https://codeforces.com/api/user.status?handle=' + CODEFORCES_USERNAME).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
         ]).then(function (results) {
             var u = results[0] || { public_repos: '12+', followers: '15' };
             var s = results[1] || { solvedProblem: '21+', easySolved: 20, mediumSolved: 1, hardSolved: 0 };
+            
+            var cfSubs = results[2] && results[2].status === 'OK' ? results[2].result : [];
+            var cfSolved = new Set();
+            cfSubs.forEach(function(sub) { if(sub.verdict === 'OK') cfSolved.add((sub.problem.contestId||'')+sub.problem.index); });
+            var cfCount = cfSolved.size || '0';
             
             var easyPct = Math.min(100, Math.max(1, (parseFloat(s.easySolved) / Math.max(1, parseFloat(s.solvedProblem))) * 100)) || 0;
             var medPct = Math.min(100, Math.max(1, (parseFloat(s.mediumSolved) / Math.max(1, parseFloat(s.solvedProblem))) * 100)) || 0;
@@ -766,8 +1030,8 @@
             devContent.innerHTML =
                 '<div class="fd-stats">' +
                     '<div class="fd-stat"><div class="fd-stat-num">' + u.public_repos + '</div><div class="fd-stat-label">Repos</div></div>' +
-                    '<div class="fd-stat"><div class="fd-stat-num">' + u.followers + '</div><div class="fd-stat-label">Followers</div></div>' +
-                    '<div class="fd-stat"><div class="fd-stat-num">' + s.solvedProblem + '</div><div class="fd-stat-label">Solved</div></div>' +
+                    '<div class="fd-stat"><div class="fd-stat-num">' + s.solvedProblem + '</div><div class="fd-stat-label">LeetCode</div></div>' +
+                    '<div class="fd-stat"><div class="fd-stat-num">' + cfCount + '</div><div class="fd-stat-label">CF Solved</div></div>' +
                 '</div>' +
                 '<div class="fd-lc-bars">' +
                     '<div class="fd-lc-bar"><div class="fd-lc-label">Easy <span style="color:#00b8a3">' + s.easySolved + '</span></div><div class="fd-lc-track"><div class="fd-lc-fill easy" style="width:' + easyPct + '%"></div></div></div>' +
@@ -883,4 +1147,6 @@
         });
     }
 
+    initOverlayControls(devOvEl);
+    initOverlayControls(blogOvEl);
 })();
