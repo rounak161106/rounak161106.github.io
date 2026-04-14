@@ -569,9 +569,9 @@
 /* Container: FIXED height so nothing ever shifts */
 .fd-platform-carousel {
     position: relative;
-    height: 190px;           /* enough for header + 3 stat bars */
+    height: 195px;           /* enough for header + 3 stat bars + 4 stat numbers */
     overflow: hidden;
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.5rem;
     border-radius: 14px;
 }
 
@@ -704,14 +704,14 @@
 /* ── Stats row ── */
 /* Overrides the global .fd-stats to remove bottom margin inside slides */
 .fd-carousel-slide .fd-stats {
-    margin-bottom: 0.75rem;
-    gap: 1.1rem;
+    margin-bottom: 0.6rem;
+    gap: 0.75rem;
 }
 .fd-carousel-slide .fd-stat-num {
-    font-size: 1.35rem;
+    font-size: 1.2rem;
 }
 .fd-carousel-slide .fd-stat-label {
-    font-size: 0.6rem;
+    font-size: 0.58rem;
 }
 
 /* ── Slim bars inside slides ── */
@@ -735,7 +735,7 @@
 .fd-carousel-progress {
     display: flex;
     gap: 5px;
-    margin-bottom: 0.9rem;
+    margin-bottom: 0.6rem;
     align-items: center;
 }
 .fd-prog-track {
@@ -772,7 +772,8 @@
     .fd-card  { padding: 1.6rem 1.4rem 1.5rem; }
     .fd-stats { gap: 1rem; }
     .fd-stat-num { font-size: 1.3rem; }
-    .fd-platform-carousel { height: 195px; }
+    .fd-platform-carousel { height: 200px; }
+    .fd-carousel-slide .fd-stats { gap: 0.6rem; }
 }
 @media (max-width: 480px) {
     .fd-title { font-size: 1.35rem; }

@@ -1034,8 +1034,8 @@
             fetch('https://codeforces.com/api/user.status?handle=' + CODEFORCES_USERNAME)
                 .then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; })
         ]).then(function(res) {
-            var gh     = res[0] || { public_repos: 12, followers: 15, login: GITHUB_USERNAME, following: 0 };
-            var lcs    = res[1] || { solvedProblem: 21, easySolved: 20, mediumSolved: 1, hardSolved: 0 };
+            var gh     = res[0] || { public_repos: 0, followers: 0, login: GITHUB_USERNAME, following: 0 };
+            var lcs    = res[1] || { solvedProblem: 0, easySolved: 0, mediumSolved: 0, hardSolved: 0 };
             var lcu    = res[2] || { ranking: null };
             var cfInfo = res[3] && res[3].status === 'OK' ? res[3].result[0] : null;
             var cfSubs = res[4] && res[4].status === 'OK' ? res[4].result : [];
@@ -1111,7 +1111,8 @@
                     '<div class="fd-stats" style="margin-bottom:0.75rem">' +
                         '<div class="fd-stat"><div class="fd-stat-num">' + (lcs.solvedProblem || 0) + '</div><div class="fd-stat-label">Solved</div></div>' +
                         '<div class="fd-stat"><div class="fd-stat-num" style="color:#00b8a3">' + (lcs.easySolved || 0) + '</div><div class="fd-stat-label">Easy</div></div>' +
-                        '<div class="fd-stat"><div class="fd-stat-num" style="color:#ffc01e">' + (lcs.mediumSolved || 0) + '</div><div class="fd-stat-label">Medium</div></div>' +
+                        '<div class="fd-stat"><div class="fd-stat-num" style="color:#ffc01e">' + (lcs.mediumSolved || 0) + '</div><div class="fd-stat-label">Med</div></div>' +
+                        '<div class="fd-stat"><div class="fd-stat-num" style="color:#ff375f">' + (lcs.hardSolved || 0) + '</div><div class="fd-stat-label">Hard</div></div>' +
                     '</div>' +
                     bars(lcs.easySolved, lcs.mediumSolved, lcs.hardSolved, lcs.easySolved, lcs.mediumSolved, lcs.hardSolved) +
                 '</div>' +
@@ -1130,6 +1131,7 @@
                         '<div class="fd-stat"><div class="fd-stat-num">' + cfCount + '</div><div class="fd-stat-label">Solved</div></div>' +
                         '<div class="fd-stat"><div class="fd-stat-num" style="color:#00b8a3">' + cfDiffs.easy + '</div><div class="fd-stat-label">Easy</div></div>' +
                         '<div class="fd-stat"><div class="fd-stat-num" style="color:#ffc01e">' + cfDiffs.medium + '</div><div class="fd-stat-label">Med</div></div>' +
+                        '<div class="fd-stat"><div class="fd-stat-num" style="color:#ff375f">' + cfDiffs.hard + '</div><div class="fd-stat-label">Hard</div></div>' +
                     '</div>' +
                     bars(cfDiffs.easy, cfDiffs.medium, cfDiffs.hard, cfDiffs.easy, cfDiffs.medium, cfDiffs.hard) +
                 '</div>';
