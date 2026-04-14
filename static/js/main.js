@@ -11,15 +11,7 @@ AOS.init({
     easing: 'ease-out-cubic'
 });
 
-// ===== PRELOADER =====
-// Use DOMContentLoaded so the spinner hides as soon as the DOM is ready,
-// not after all heavy images (e.g. project screenshots) have finished downloading.
-document.addEventListener('DOMContentLoaded', () => {
-    const preloader = document.querySelector('.preloader');
-    if (preloader) {
-        preloader.classList.add('hidden');
-    }
-});
+// Preloader is handled by preloader.js
 
 // ===== CUSTOM CURSOR =====
 const cursor = document.querySelector('.cursor');
@@ -180,22 +172,8 @@ statNumbers.forEach(stat => {
     counterObserver.observe(stat);
 });
 
-// ===== SKILL BARS ANIMATION =====
-const skillBars = document.querySelectorAll('.skill-progress');
+// Skill bars replaced with chip grid — no progress bars to animate
 
-const skillObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            const progress = entry.target.getAttribute('data-progress');
-            entry.target.style.width = progress + '%';
-            skillObserver.unobserve(entry.target);
-        }
-    });
-}, { threshold: 0.5 });
-
-skillBars.forEach(bar => {
-    skillObserver.observe(bar);
-});
 
 // ===== CERTIFICATION TABS =====
 document.addEventListener('DOMContentLoaded', () => {

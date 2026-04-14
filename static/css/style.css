@@ -329,61 +329,7 @@ body:hover .cursor-follower {
     height: 50px;
 }
 
-/* ===== PRELOADER ===== */
-.preloader {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--bg-darker);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10000;
-    transition: opacity 0.5s ease, visibility 0.5s ease;
-}
-
-.preloader.hidden {
-    opacity: 0;
-    visibility: hidden;
-}
-
-.loader {
-    position: relative;
-    width: 100px;
-    height: 100px;
-}
-
-.loader-circle {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border: 3px solid transparent;
-    border-top-color: var(--primary-color);
-    border-right-color: var(--secondary-color);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-.loader-text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 2rem;
-    font-weight: 700;
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
+/* Preloader styles moved to preloader.css */
 
 /* ===== UTILITIES ===== */
 .container {

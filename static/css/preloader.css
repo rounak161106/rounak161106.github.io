@@ -1,0 +1,156 @@
+/* ================================================================
+   CINEMATIC PRELOADER
+   Neural-network particle canvas + text reveal sequence
+   ================================================================ */
+
+.preloader {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: #050816;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+                visibility 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.preloader.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* Full-screen scene */
+.pl-scene {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+}
+
+#plCanvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Central text overlay */
+.pl-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    pointer-events: none;
+    text-align: center;
+}
+
+/* ── Monogram ── */
+.pl-monogram {
+    font-size: clamp(4rem, 12vw, 8rem);
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #667eea 0%, #f093fb 60%, #4facfe 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    opacity: 0;
+    transform: scale(0.6) translateY(20px);
+    transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+    filter: drop-shadow(0 0 40px rgba(102, 126, 234, 0.5));
+    letter-spacing: -0.02em;
+}
+
+.pl-monogram.visible {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+}
+
+.pl-letter {
+    display: inline-block;
+    animation: pl-letter-hover 3s ease-in-out infinite;
+}
+
+.pl-letter:nth-child(2) {
+    animation-delay: 0.3s;
+}
+
+@keyframes pl-letter-hover {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-6px); }
+}
+
+/* ── Name ── */
+.pl-name {
+    font-size: clamp(1.1rem, 3vw, 1.6rem);
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.6s ease 0.3s, transform 0.6s ease 0.3s;
+    margin-bottom: 0.35rem;
+}
+
+.pl-name.visible { opacity: 1; transform: translateY(0); }
+
+/* ── Role ── */
+.pl-role {
+    font-size: clamp(0.75rem, 2vw, 0.95rem);
+    color: rgba(180, 180, 200, 0.7);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.6s ease 0.5s, transform 0.6s ease 0.5s;
+    margin-bottom: 2.5rem;
+}
+
+.pl-role.visible { opacity: 1; transform: translateY(0); }
+
+/* ── Progress bar ── */
+.pl-bar-wrap {
+    width: clamp(160px, 35vw, 280px);
+    height: 3px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 3px;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.4s ease 0.6s;
+    margin-bottom: 0.9rem;
+}
+
+.pl-bar-wrap.visible { opacity: 1; }
+
+.pl-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #667eea, #f093fb, #4facfe);
+    border-radius: 3px;
+    transition: width 0.15s linear;
+    box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+}
+
+/* ── Status text ── */
+.pl-status {
+    font-size: 0.72rem;
+    color: rgba(150, 150, 170, 0.6);
+    letter-spacing: 0.08em;
+    font-family: 'Courier New', monospace;
+    opacity: 0;
+    transition: opacity 0.4s ease 0.7s;
+    min-height: 1.1em;
+}
+
+.pl-status.visible { opacity: 1; }
+
+/* Mobile */
+@media (max-width: 480px) {
+    .pl-role { letter-spacing: 0.08em; }
+    .pl-name { letter-spacing: 0.15em; }
+}
