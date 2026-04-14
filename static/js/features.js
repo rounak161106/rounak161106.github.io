@@ -105,7 +105,6 @@
                 var dateStr = d.toISOString().split('T')[0];
                 var count = data[dateStr] || 0;
                 var color = 'rgba(255,255,255,0.05)';
-                if (count > 0) color = 'var(--primary-color)'; 
                 if (count > 0) {
                     var op = Math.min(1, 0.2 + count * 0.2);
                     svg.appendChild(createSVG('rect', {
@@ -114,7 +113,7 @@
                         width: boxSize, height: boxSize, rx: 2,
                         fill: 'var(--primary-color)', opacity: op
                     }));
-                    continue; 
+                    continue;
                 }
                 if (d > today) color = 'transparent';
 
@@ -196,7 +195,7 @@
     // ================================================================
     var commands = [
 
-        { group: 'Actions',  icon: 'fas fa-bolt',           label: 'Dev Activity',    hint: 'GitHub · LeetCode', action: function () { openDev(); } },
+        { group: 'Actions',  icon: 'fas fa-bolt',           label: 'Dev Activity',    hint: 'GitHub · LeetCode · Codeforces', action: function () { openDev(); } },
         { group: 'Actions',  icon: 'fas fa-pen-nib',        label: 'Blog / Writing',  hint: 'Dev.to · Medium',   action: function () { openBlog(); } },
         { group: 'Actions',  icon: 'fas fa-palette',        label: 'Switch Theme',    hint: 'Cycle next',        action: cycleTheme },
         { group: 'Navigate', icon: 'fas fa-home',           label: 'Home',            action: function () { navTo('#home'); } },
@@ -924,13 +923,22 @@
                             '<div class="fd-card-icon"><i class="fas fa-bolt"></i></div>' +
                             '<div>' +
                                 '<div class="fd-card-title">Dev Activity</div>' +
-                                '<div class="fd-card-sub">GitHub · LeetCode · Profiles</div>' +
+                                '<div class="fd-card-sub">GitHub · LeetCode · Codeforces</div>' +
                             '</div>' +
                         '</div>' +
                         '<div id="fdDevContent">' +
-                            '<div class="fd-skel" style="width:55%"></div>' +
-                            '<div class="fd-skel" style="width:100%"></div>' +
-                            '<div class="fd-skel" style="width:78%"></div>' +
+                            '<div class="fd-platform-carousel" id="fdPlatformCarousel">' +
+                                '<div class="fd-carousel-slide fd-skel-wrap active">' +
+                                    '<div class="fd-skel" style="width:55%"></div>' +
+                                    '<div class="fd-skel" style="width:100%"></div>' +
+                                    '<div class="fd-skel" style="width:78%"></div>' +
+                                '</div>' +
+                            '</div>' +
+                            '<div class="fd-carousel-dots" id="fdCarouselDots">' +
+                                '<span class="fd-dot active" data-idx="0"></span>' +
+                                '<span class="fd-dot" data-idx="1"></span>' +
+                                '<span class="fd-dot" data-idx="2"></span>' +
+                            '</div>' +
                         '</div>' +
                         '<button class="fd-cta">Explore Activity <i class="fas fa-arrow-right"></i></button>' +
                     '</div>' +
@@ -1005,45 +1013,169 @@
         });
     }
 
-    // Populate dev discover card
+    // ── Live Platform Carousel for Dev Activity Card ──────────────────
     function populateDevDiscoverCard() {
-        var devContent = document.getElementById('fdDevContent');
-        if (!devContent) return;
+        var carousel = document.getElementById('fdPlatformCarousel');
+        var dotsEl   = document.getElementById('fdCarouselDots');
+        if (!carousel) return;
 
+        // Fetch all three platforms in parallel
         Promise.all([
-            fetch('https://api.github.com/users/' + GITHUB_USERNAME).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
-            fetch('https://alfa-leetcode-api.onrender.com/' + LEETCODE_USERNAME + '/solved').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
-            fetch('https://codeforces.com/api/user.status?handle=' + CODEFORCES_USERNAME).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
-        ]).then(function (results) {
-            var u = results[0] || { public_repos: '12+', followers: '15' };
-            var s = results[1] || { solvedProblem: '21+', easySolved: 20, mediumSolved: 1, hardSolved: 0 };
-            
-            var cfSubs = results[2] && results[2].status === 'OK' ? results[2].result : [];
-            var cfSolved = new Set();
-            cfSubs.forEach(function(sub) { if(sub.verdict === 'OK') cfSolved.add((sub.problem.contestId||'')+sub.problem.index); });
-            var cfCount = cfSolved.size || '0';
-            
-            var easyPct = Math.min(100, Math.max(1, (parseFloat(s.easySolved) / Math.max(1, parseFloat(s.solvedProblem))) * 100)) || 0;
-            var medPct = Math.min(100, Math.max(1, (parseFloat(s.mediumSolved) / Math.max(1, parseFloat(s.solvedProblem))) * 100)) || 0;
-            var hardPct = Math.min(100, Math.max(1, (parseFloat(s.hardSolved) / Math.max(1, parseFloat(s.solvedProblem))) * 100)) || 0;
+            fetch('https://api.github.com/users/' + GITHUB_USERNAME)
+                .then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; }),
+            fetch('https://alfa-leetcode-api.onrender.com/' + LEETCODE_USERNAME + '/solved')
+                .then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; }),
+            fetch('https://alfa-leetcode-api.onrender.com/' + LEETCODE_USERNAME)
+                .then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; }),
+            fetch('https://codeforces.com/api/user.info?handles=' + CODEFORCES_USERNAME)
+                .then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; }),
+            fetch('https://codeforces.com/api/user.status?handle=' + CODEFORCES_USERNAME)
+                .then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; })
+        ]).then(function(res) {
+            var gh   = res[0] || { public_repos: 12, followers: 15, login: GITHUB_USERNAME };
+            var lcs  = res[1] || { solvedProblem: 21, easySolved: 20, mediumSolved: 1, hardSolved: 0 };
+            var lcu  = res[2] || { ranking: 'N/A' };
+            var cfInfo = res[3] && res[3].status === 'OK' ? res[3].result[0] : null;
+            var cfSubs = res[4] && res[4].status === 'OK' ? res[4].result : [];
 
-            devContent.innerHTML =
-                '<div class="fd-stats">' +
-                    '<div class="fd-stat"><div class="fd-stat-num">' + u.public_repos + '</div><div class="fd-stat-label">Repos</div></div>' +
-                    '<div class="fd-stat"><div class="fd-stat-num">' + s.solvedProblem + '</div><div class="fd-stat-label">LeetCode</div></div>' +
-                    '<div class="fd-stat"><div class="fd-stat-num">' + cfCount + '</div><div class="fd-stat-label">CF Solved</div></div>' +
-                '</div>' +
-                '<div class="fd-lc-bars">' +
-                    '<div class="fd-lc-bar"><div class="fd-lc-label">Easy <span style="color:#00b8a3">' + s.easySolved + '</span></div><div class="fd-lc-track"><div class="fd-lc-fill easy" style="width:' + easyPct + '%"></div></div></div>' +
-                    '<div class="fd-lc-bar"><div class="fd-lc-label">Med <span style="color:#ffc01e">' + s.mediumSolved + '</span></div><div class="fd-lc-track"><div class="fd-lc-fill medium" style="width:' + medPct + '%"></div></div></div>' +
-                    '<div class="fd-lc-bar"><div class="fd-lc-label">Hard <span style="color:#ff375f">' + s.hardSolved + '</span></div><div class="fd-lc-track"><div class="fd-lc-fill hard" style="width:' + hardPct + '%"></div></div></div>' +
-                '</div>';
-                
-            // Mark activity dot if real data
-            if (u && u.public_repos) {
-                var actDot = document.getElementById('dockActivityDot');
-                if (actDot) actDot.classList.add('visible');
+            // Compute CF solved
+            var cfSet = new Set();
+            var cfDiffs = { easy: 0, medium: 0, hard: 0 };
+            cfSubs.forEach(function(s){
+                if (s.verdict === 'OK') {
+                    var id = (s.problem.contestId||'') + s.problem.index;
+                    if (!cfSet.has(id)) {
+                        cfSet.add(id);
+                        var r = s.problem.rating;
+                        if (!r || r < 1200) cfDiffs.easy++;
+                        else if (r < 1900) cfDiffs.medium++;
+                        else cfDiffs.hard++;
+                    }
+                }
+            });
+            var cfCount = cfSet.size;
+
+            // LeetCode bar percents
+            var total  = Math.max(1, parseFloat(lcs.solvedProblem) || 1);
+            var ePct   = Math.min(100, Math.round((parseFloat(lcs.easySolved)  / total) * 100)) || 0;
+            var mPct   = Math.min(100, Math.round((parseFloat(lcs.mediumSolved)/ total) * 100)) || 0;
+            var hPct   = Math.min(100, Math.round((parseFloat(lcs.hardSolved)  / total) * 100)) || 0;
+
+            // CF bar percents
+            var cfTotal = Math.max(1, cfCount);
+            var cfEPct  = Math.min(100, Math.round((cfDiffs.easy   / cfTotal) * 100)) || 0;
+            var cfMPct  = Math.min(100, Math.round((cfDiffs.medium / cfTotal) * 100)) || 0;
+            var cfHPct  = Math.min(100, Math.round((cfDiffs.hard   / cfTotal) * 100)) || 0;
+
+            // Build three slides
+            var slides = [
+                // Slide 0 — GitHub
+                '<div class="fd-carousel-slide" data-platform="github">' +
+                    '<div class="fd-platform-header">' +
+                        '<div class="fd-platform-badge github"><i class="fab fa-github"></i></div>' +
+                        '<div>' +
+                            '<div class="fd-platform-name">GitHub</div>' +
+                            '<div class="fd-platform-user">@' + gh.login + '</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="fd-stats">' +
+                        '<div class="fd-stat"><div class="fd-stat-num">' + gh.public_repos + '</div><div class="fd-stat-label">Repos</div></div>' +
+                        '<div class="fd-stat"><div class="fd-stat-num">' + gh.followers + '</div><div class="fd-stat-label">Followers</div></div>' +
+                        '<div class="fd-stat"><div class="fd-stat-num">' + (gh.following || 0) + '</div><div class="fd-stat-label">Following</div></div>' +
+                    '</div>' +
+                '</div>',
+
+                // Slide 1 — LeetCode
+                '<div class="fd-carousel-slide" data-platform="leetcode">' +
+                    '<div class="fd-platform-header">' +
+                        '<div class="fd-platform-badge leetcode"><i class="fas fa-code"></i></div>' +
+                        '<div>' +
+                            '<div class="fd-platform-name">LeetCode</div>' +
+                            '<div class="fd-platform-user">@' + LEETCODE_USERNAME + '</div>' +
+                        '</div>' +
+                        '<div class="fd-platform-rank" style="color:#FFA116"><i class="fas fa-trophy"></i> ' + (lcu.ranking ? (typeof lcu.ranking === 'number' ? '#' + lcu.ranking.toLocaleString() : lcu.ranking) : 'N/A') + '</div>' +
+                    '</div>' +
+                    '<div class="fd-stats">' +
+                        '<div class="fd-stat"><div class="fd-stat-num">' + lcs.solvedProblem + '</div><div class="fd-stat-label">Solved</div></div>' +
+                        '<div class="fd-stat"><div class="fd-stat-num" style="color:#00b8a3">' + lcs.easySolved + '</div><div class="fd-stat-label">Easy</div></div>' +
+                        '<div class="fd-stat"><div class="fd-stat-num" style="color:#ffc01e">' + lcs.mediumSolved + '</div><div class="fd-stat-label">Medium</div></div>' +
+                    '</div>' +
+                    '<div class="fd-lc-bars">' +
+                        '<div class="fd-lc-bar"><div class="fd-lc-label">Easy <span style="color:#00b8a3">' + lcs.easySolved + '</span></div><div class="fd-lc-track"><div class="fd-lc-fill easy" style="width:' + ePct + '%"></div></div></div>' +
+                        '<div class="fd-lc-bar"><div class="fd-lc-label">Med <span style="color:#ffc01e">' + lcs.mediumSolved + '</span></div><div class="fd-lc-track"><div class="fd-lc-fill medium" style="width:' + mPct + '%"></div></div></div>' +
+                        '<div class="fd-lc-bar"><div class="fd-lc-label">Hard <span style="color:#ff375f">' + lcs.hardSolved + '</span></div><div class="fd-lc-track"><div class="fd-lc-fill hard" style="width:' + hPct + '%"></div></div></div>' +
+                    '</div>' +
+                '</div>',
+
+                // Slide 2 — Codeforces
+                '<div class="fd-carousel-slide" data-platform="codeforces">' +
+                    '<div class="fd-platform-header">' +
+                        '<div class="fd-platform-badge codeforces"><i class="fas fa-chart-line"></i></div>' +
+                        '<div>' +
+                            '<div class="fd-platform-name">Codeforces</div>' +
+                            '<div class="fd-platform-user">' + (cfInfo ? '@' + cfInfo.handle : '@' + CODEFORCES_USERNAME) + '</div>' +
+                        '</div>' +
+                        (cfInfo ? '<div class="fd-platform-rank" style="color:#1e90ff"><i class="fas fa-trophy"></i> ' + (cfInfo.rating || 0) + '</div>' : '') +
+                    '</div>' +
+                    '<div class="fd-stats">' +
+                        '<div class="fd-stat"><div class="fd-stat-num">' + cfCount + '</div><div class="fd-stat-label">Solved</div></div>' +
+                        '<div class="fd-stat"><div class="fd-stat-num" style="color:#00b8a3">' + cfDiffs.easy + '</div><div class="fd-stat-label">Easy</div></div>' +
+                        '<div class="fd-stat"><div class="fd-stat-num" style="color:#ffc01e">' + cfDiffs.medium + '</div><div class="fd-stat-label">Med</div></div>' +
+                    '</div>' +
+                    '<div class="fd-lc-bars">' +
+                        '<div class="fd-lc-bar"><div class="fd-lc-label">Easy <span style="color:#00b8a3">' + cfDiffs.easy + '</span></div><div class="fd-lc-track"><div class="fd-lc-fill easy" style="width:' + cfEPct + '%"></div></div></div>' +
+                        '<div class="fd-lc-bar"><div class="fd-lc-label">Med <span style="color:#ffc01e">' + cfDiffs.medium + '</span></div><div class="fd-lc-track"><div class="fd-lc-fill medium" style="width:' + cfMPct + '%"></div></div></div>' +
+                        '<div class="fd-lc-bar"><div class="fd-lc-label">Hard <span style="color:#ef4743">' + cfDiffs.hard + '</span></div><div class="fd-lc-track"><div class="fd-lc-fill hard" style="width:' + cfHPct + '%"></div></div></div>' +
+                    '</div>' +
+                '</div>'
+            ];
+
+            // Inject slides
+            carousel.innerHTML = slides.join('');
+            var slideEls = carousel.querySelectorAll('.fd-carousel-slide');
+            var dots     = dotsEl ? dotsEl.querySelectorAll('.fd-dot') : [];
+            var current  = 0;
+            var timer    = null;
+
+            // Make first slide active
+            if (slideEls[0]) slideEls[0].classList.add('active');
+            if (dots[0]) dots[0].classList.add('active');
+
+            function goTo(idx) {
+                slideEls[current].classList.remove('active');
+                slideEls[current].classList.add('exit');
+                if (dots[current]) dots[current].classList.remove('active');
+                current = (idx + slides.length) % slides.length;
+                slideEls[current].classList.remove('exit');
+                slideEls[current].classList.add('active');
+                if (dots[current]) dots[current].classList.add('active');
+                // Clean up exit class after animation
+                var exitEl = carousel.querySelector('.fd-carousel-slide.exit');
+                if (exitEl) setTimeout(function(){ exitEl.classList.remove('exit'); }, 500);
             }
+
+            function startAuto() {
+                timer = setInterval(function(){ goTo(current + 1); }, 3500);
+            }
+
+            // Dot clicks
+            dots.forEach(function(dot, i){
+                dot.addEventListener('click', function(){
+                    clearInterval(timer);
+                    goTo(i);
+                    startAuto();
+                });
+            });
+
+            // Pause on hover
+            carousel.addEventListener('mouseenter', function(){ clearInterval(timer); });
+            carousel.addEventListener('mouseleave', startAuto);
+
+            startAuto();
+
+            // Mark activity dot
+            var actDot = document.getElementById('dockActivityDot');
+            if (actDot) actDot.classList.add('visible');
         });
     }
 

@@ -564,6 +564,104 @@
     margin-bottom: 0.55rem;
 }
 
+/* ── Platform Carousel ── */
+@keyframes fd-slide-in {
+    from { opacity: 0; transform: translateX(30px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes fd-slide-out {
+    from { opacity: 1; transform: translateX(0); }
+    to   { opacity: 0; transform: translateX(-30px); }
+}
+.fd-platform-carousel {
+    position: relative;
+    min-height: 140px;
+    overflow: hidden;
+    margin-bottom: 0.65rem;
+}
+.fd-carousel-slide {
+    display: none;
+    opacity: 0;
+    animation-duration: 0.45s;
+    animation-fill-mode: both;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+.fd-carousel-slide.active {
+    display: block;
+    opacity: 1;
+    animation-name: fd-slide-in;
+}
+.fd-carousel-slide.exit {
+    display: block;
+    animation-name: fd-slide-out;
+    pointer-events: none;
+}
+.fd-skel-wrap { display: block; opacity: 1; }
+
+/* Platform header row */
+.fd-platform-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+.fd-platform-badge {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+}
+.fd-platform-badge.github    { background: rgba(255,255,255,0.1);  color: #e6edf3; }
+.fd-platform-badge.leetcode  { background: rgba(255,160,0,0.15);   color: #FFA116; }
+.fd-platform-badge.codeforces{ background: rgba(30,144,255,0.15);  color: #1e90ff; }
+
+.fd-platform-name {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.1;
+}
+.fd-platform-user {
+    font-size: 0.66rem;
+    color: var(--text-muted);
+}
+.fd-platform-rank {
+    margin-left: auto;
+    font-size: 0.72rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    white-space: nowrap;
+}
+
+/* Carousel dot indicators */
+.fd-carousel-dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 0.85rem;
+}
+.fd-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease, width 0.3s ease;
+    border-radius: 3px;
+}
+.fd-dot.active {
+    background: var(--primary-color);
+    width: 18px;
+    transform: scaleY(1);
+}
+
 /* mobile */
 @media (max-width: 768px) {
     .feature-discover { padding: 4rem 0 4.5rem; }
