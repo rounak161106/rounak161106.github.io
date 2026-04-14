@@ -927,17 +927,11 @@
                             '</div>' +
                         '</div>' +
                         '<div id="fdDevContent">' +
-                            '<div class="fd-platform-carousel" id="fdPlatformCarousel">' +
-                                '<div class="fd-carousel-slide fd-skel-wrap active">' +
-                                    '<div class="fd-skel" style="width:55%"></div>' +
-                                    '<div class="fd-skel" style="width:100%"></div>' +
-                                    '<div class="fd-skel" style="width:78%"></div>' +
-                                '</div>' +
-                            '</div>' +
-                            '<div class="fd-carousel-dots" id="fdCarouselDots">' +
-                                '<span class="fd-dot active" data-idx="0"></span>' +
-                                '<span class="fd-dot" data-idx="1"></span>' +
-                                '<span class="fd-dot" data-idx="2"></span>' +
+                            '<div class="fd-platform-carousel" id="fdPlatformCarousel"></div>' +
+                            '<div class="fd-carousel-progress" id="fdCarouselProgress">' +
+                                '<div class="fd-prog-track" data-platform="github" data-idx="0"><div class="fd-prog-fill"></div></div>' +
+                                '<div class="fd-prog-track" data-platform="leetcode" data-idx="1"><div class="fd-prog-fill"></div></div>' +
+                                '<div class="fd-prog-track" data-platform="codeforces" data-idx="2"><div class="fd-prog-fill"></div></div>' +
                             '</div>' +
                         '</div>' +
                         '<button class="fd-cta">Explore Activity <i class="fas fa-arrow-right"></i></button>' +
@@ -1015,9 +1009,17 @@
 
     // ── Live Platform Carousel for Dev Activity Card ──────────────────
     function populateDevDiscoverCard() {
-        var carousel = document.getElementById('fdPlatformCarousel');
-        var dotsEl   = document.getElementById('fdCarouselDots');
+        var carousel  = document.getElementById('fdPlatformCarousel');
+        var progressEl = document.getElementById('fdCarouselProgress');
         if (!carousel) return;
+
+        // Show skeleton while fetching
+        carousel.innerHTML =
+            '<div class="fd-carousel-slide" data-platform="github" style="opacity:1;transform:none;pointer-events:auto;z-index:2;">' +
+            '  <div class="fd-skel" style="width:55%;margin-bottom:0.7rem"></div>' +
+            '  <div class="fd-skel" style="width:90%;margin-bottom:0.5rem"></div>' +
+            '  <div class="fd-skel" style="width:70%"></div>' +
+            '</div>';
 
         // Fetch all three platforms in parallel
         Promise.all([
@@ -1032,148 +1034,192 @@
             fetch('https://codeforces.com/api/user.status?handle=' + CODEFORCES_USERNAME)
                 .then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; })
         ]).then(function(res) {
-            var gh   = res[0] || { public_repos: 12, followers: 15, login: GITHUB_USERNAME };
-            var lcs  = res[1] || { solvedProblem: 21, easySolved: 20, mediumSolved: 1, hardSolved: 0 };
-            var lcu  = res[2] || { ranking: 'N/A' };
+            var gh     = res[0] || { public_repos: 12, followers: 15, login: GITHUB_USERNAME, following: 0 };
+            var lcs    = res[1] || { solvedProblem: 21, easySolved: 20, mediumSolved: 1, hardSolved: 0 };
+            var lcu    = res[2] || { ranking: null };
             var cfInfo = res[3] && res[3].status === 'OK' ? res[3].result[0] : null;
             var cfSubs = res[4] && res[4].status === 'OK' ? res[4].result : [];
 
-            // Compute CF solved
+            // ─ Compute CF solved & difficulty breakdown
             var cfSet = new Set();
             var cfDiffs = { easy: 0, medium: 0, hard: 0 };
-            cfSubs.forEach(function(s){
+            cfSubs.forEach(function(s) {
                 if (s.verdict === 'OK') {
-                    var id = (s.problem.contestId||'') + s.problem.index;
-                    if (!cfSet.has(id)) {
-                        cfSet.add(id);
-                        var r = s.problem.rating;
-                        if (!r || r < 1200) cfDiffs.easy++;
-                        else if (r < 1900) cfDiffs.medium++;
-                        else cfDiffs.hard++;
+                    var pid = (s.problem.contestId || '') + s.problem.index;
+                    if (!cfSet.has(pid)) {
+                        cfSet.add(pid);
+                        var rt = s.problem.rating;
+                        if (!rt || rt < 1200) cfDiffs.easy++;
+                        else if (rt < 1900)   cfDiffs.medium++;
+                        else                  cfDiffs.hard++;
                     }
                 }
             });
             var cfCount = cfSet.size;
 
-            // LeetCode bar percents
-            var total  = Math.max(1, parseFloat(lcs.solvedProblem) || 1);
-            var ePct   = Math.min(100, Math.round((parseFloat(lcs.easySolved)  / total) * 100)) || 0;
-            var mPct   = Math.min(100, Math.round((parseFloat(lcs.mediumSolved)/ total) * 100)) || 0;
-            var hPct   = Math.min(100, Math.round((parseFloat(lcs.hardSolved)  / total) * 100)) || 0;
+            // ─ Helper: build difficulty bars HTML
+            function bars(e, m, h, eN, mN, hN) {
+                var t = Math.max(1, e + m + h);
+                function pct(v) { return Math.max(1, Math.min(100, Math.round(v / t * 100))); }
+                return '<div class="fd-lc-bars">' +
+                    '<div class="fd-lc-bar"><div class="fd-lc-label">Easy <span style="color:#00b8a3">' + eN + '</span></div>' +
+                    '<div class="fd-lc-track"><div class="fd-lc-fill easy" style="width:' + (eN > 0 ? pct(eN) : 0) + '%"></div></div></div>' +
+                    '<div class="fd-lc-bar"><div class="fd-lc-label">Med <span style="color:#ffc01e">' + mN + '</span></div>' +
+                    '<div class="fd-lc-track"><div class="fd-lc-fill medium" style="width:' + (mN > 0 ? pct(mN) : 0) + '%"></div></div></div>' +
+                    '<div class="fd-lc-bar"><div class="fd-lc-label">Hard <span style="color:#ff375f">' + hN + '</span></div>' +
+                    '<div class="fd-lc-track"><div class="fd-lc-fill hard" style="width:' + (hN > 0 ? pct(hN) : 0) + '%"></div></div></div>' +
+                    '</div>';
+            }
 
-            // CF bar percents
-            var cfTotal = Math.max(1, cfCount);
-            var cfEPct  = Math.min(100, Math.round((cfDiffs.easy   / cfTotal) * 100)) || 0;
-            var cfMPct  = Math.min(100, Math.round((cfDiffs.medium / cfTotal) * 100)) || 0;
-            var cfHPct  = Math.min(100, Math.round((cfDiffs.hard   / cfTotal) * 100)) || 0;
+            var lcRank = lcu && lcu.ranking
+                ? (typeof lcu.ranking === 'number' ? '#' + lcu.ranking.toLocaleString() : String(lcu.ranking))
+                : null;
 
-            // Build three slides
-            var slides = [
+            // ─ Build HTML for each slide (IDENTICAL structure so height matches)
+            var slidesHTML =
                 // Slide 0 — GitHub
                 '<div class="fd-carousel-slide" data-platform="github">' +
                     '<div class="fd-platform-header">' +
                         '<div class="fd-platform-badge github"><i class="fab fa-github"></i></div>' +
-                        '<div>' +
+                        '<div class="fd-platform-title">' +
                             '<div class="fd-platform-name">GitHub</div>' +
-                            '<div class="fd-platform-user">@' + gh.login + '</div>' +
+                            '<div class="fd-platform-user">@' + (gh.login || GITHUB_USERNAME) + '</div>' +
                         '</div>' +
                     '</div>' +
-                    '<div class="fd-stats">' +
-                        '<div class="fd-stat"><div class="fd-stat-num">' + gh.public_repos + '</div><div class="fd-stat-label">Repos</div></div>' +
-                        '<div class="fd-stat"><div class="fd-stat-num">' + gh.followers + '</div><div class="fd-stat-label">Followers</div></div>' +
+                    '<div class="fd-stats" style="margin-bottom:0.75rem">' +
+                        '<div class="fd-stat"><div class="fd-stat-num">' + (gh.public_repos || 0) + '</div><div class="fd-stat-label">Repos</div></div>' +
+                        '<div class="fd-stat"><div class="fd-stat-num">' + (gh.followers || 0) + '</div><div class="fd-stat-label">Followers</div></div>' +
                         '<div class="fd-stat"><div class="fd-stat-num">' + (gh.following || 0) + '</div><div class="fd-stat-label">Following</div></div>' +
                     '</div>' +
-                '</div>',
+                    // GitHub slide: use a repos bar as the third row to keep height uniform
+                    '<div class="fd-lc-bars" style="background:rgba(0,0,0,0.1)">' +
+                        '<div style="font-size:0.7rem;color:var(--text-muted);text-align:center;padding:0.5rem 0;opacity:0.7">' +
+                        '<i class="fab fa-github"></i>&nbsp; ' + (gh.public_repos || 0) + ' public repositories &nbsp;&middot;&nbsp; ' + (gh.followers || 0) + ' followers</div>' +
+                    '</div>' +
+                '</div>' +
 
                 // Slide 1 — LeetCode
                 '<div class="fd-carousel-slide" data-platform="leetcode">' +
                     '<div class="fd-platform-header">' +
                         '<div class="fd-platform-badge leetcode"><i class="fas fa-code"></i></div>' +
-                        '<div>' +
+                        '<div class="fd-platform-title">' +
                             '<div class="fd-platform-name">LeetCode</div>' +
                             '<div class="fd-platform-user">@' + LEETCODE_USERNAME + '</div>' +
                         '</div>' +
-                        '<div class="fd-platform-rank" style="color:#FFA116"><i class="fas fa-trophy"></i> ' + (lcu.ranking ? (typeof lcu.ranking === 'number' ? '#' + lcu.ranking.toLocaleString() : lcu.ranking) : 'N/A') + '</div>' +
+                        (lcRank ? '<div class="fd-platform-rank" style="color:#FFA116"><i class="fas fa-trophy"></i>' + lcRank + '</div>' : '') +
                     '</div>' +
-                    '<div class="fd-stats">' +
-                        '<div class="fd-stat"><div class="fd-stat-num">' + lcs.solvedProblem + '</div><div class="fd-stat-label">Solved</div></div>' +
-                        '<div class="fd-stat"><div class="fd-stat-num" style="color:#00b8a3">' + lcs.easySolved + '</div><div class="fd-stat-label">Easy</div></div>' +
-                        '<div class="fd-stat"><div class="fd-stat-num" style="color:#ffc01e">' + lcs.mediumSolved + '</div><div class="fd-stat-label">Medium</div></div>' +
+                    '<div class="fd-stats" style="margin-bottom:0.75rem">' +
+                        '<div class="fd-stat"><div class="fd-stat-num">' + (lcs.solvedProblem || 0) + '</div><div class="fd-stat-label">Solved</div></div>' +
+                        '<div class="fd-stat"><div class="fd-stat-num" style="color:#00b8a3">' + (lcs.easySolved || 0) + '</div><div class="fd-stat-label">Easy</div></div>' +
+                        '<div class="fd-stat"><div class="fd-stat-num" style="color:#ffc01e">' + (lcs.mediumSolved || 0) + '</div><div class="fd-stat-label">Medium</div></div>' +
                     '</div>' +
-                    '<div class="fd-lc-bars">' +
-                        '<div class="fd-lc-bar"><div class="fd-lc-label">Easy <span style="color:#00b8a3">' + lcs.easySolved + '</span></div><div class="fd-lc-track"><div class="fd-lc-fill easy" style="width:' + ePct + '%"></div></div></div>' +
-                        '<div class="fd-lc-bar"><div class="fd-lc-label">Med <span style="color:#ffc01e">' + lcs.mediumSolved + '</span></div><div class="fd-lc-track"><div class="fd-lc-fill medium" style="width:' + mPct + '%"></div></div></div>' +
-                        '<div class="fd-lc-bar"><div class="fd-lc-label">Hard <span style="color:#ff375f">' + lcs.hardSolved + '</span></div><div class="fd-lc-track"><div class="fd-lc-fill hard" style="width:' + hPct + '%"></div></div></div>' +
-                    '</div>' +
-                '</div>',
+                    bars(lcs.easySolved, lcs.mediumSolved, lcs.hardSolved, lcs.easySolved, lcs.mediumSolved, lcs.hardSolved) +
+                '</div>' +
 
                 // Slide 2 — Codeforces
                 '<div class="fd-carousel-slide" data-platform="codeforces">' +
                     '<div class="fd-platform-header">' +
                         '<div class="fd-platform-badge codeforces"><i class="fas fa-chart-line"></i></div>' +
-                        '<div>' +
+                        '<div class="fd-platform-title">' +
                             '<div class="fd-platform-name">Codeforces</div>' +
-                            '<div class="fd-platform-user">' + (cfInfo ? '@' + cfInfo.handle : '@' + CODEFORCES_USERNAME) + '</div>' +
+                            '<div class="fd-platform-user">@' + (cfInfo ? cfInfo.handle : CODEFORCES_USERNAME) + '</div>' +
                         '</div>' +
-                        (cfInfo ? '<div class="fd-platform-rank" style="color:#1e90ff"><i class="fas fa-trophy"></i> ' + (cfInfo.rating || 0) + '</div>' : '') +
+                        (cfInfo && cfInfo.rating ? '<div class="fd-platform-rank" style="color:#1e90ff"><i class="fas fa-trophy"></i>' + cfInfo.rating + '</div>' : '') +
                     '</div>' +
-                    '<div class="fd-stats">' +
+                    '<div class="fd-stats" style="margin-bottom:0.75rem">' +
                         '<div class="fd-stat"><div class="fd-stat-num">' + cfCount + '</div><div class="fd-stat-label">Solved</div></div>' +
                         '<div class="fd-stat"><div class="fd-stat-num" style="color:#00b8a3">' + cfDiffs.easy + '</div><div class="fd-stat-label">Easy</div></div>' +
                         '<div class="fd-stat"><div class="fd-stat-num" style="color:#ffc01e">' + cfDiffs.medium + '</div><div class="fd-stat-label">Med</div></div>' +
                     '</div>' +
-                    '<div class="fd-lc-bars">' +
-                        '<div class="fd-lc-bar"><div class="fd-lc-label">Easy <span style="color:#00b8a3">' + cfDiffs.easy + '</span></div><div class="fd-lc-track"><div class="fd-lc-fill easy" style="width:' + cfEPct + '%"></div></div></div>' +
-                        '<div class="fd-lc-bar"><div class="fd-lc-label">Med <span style="color:#ffc01e">' + cfDiffs.medium + '</span></div><div class="fd-lc-track"><div class="fd-lc-fill medium" style="width:' + cfMPct + '%"></div></div></div>' +
-                        '<div class="fd-lc-bar"><div class="fd-lc-label">Hard <span style="color:#ef4743">' + cfDiffs.hard + '</span></div><div class="fd-lc-track"><div class="fd-lc-fill hard" style="width:' + cfHPct + '%"></div></div></div>' +
-                    '</div>' +
-                '</div>'
-            ];
+                    bars(cfDiffs.easy, cfDiffs.medium, cfDiffs.hard, cfDiffs.easy, cfDiffs.medium, cfDiffs.hard) +
+                '</div>';
 
-            // Inject slides
-            carousel.innerHTML = slides.join('');
-            var slideEls = carousel.querySelectorAll('.fd-carousel-slide');
-            var dots     = dotsEl ? dotsEl.querySelectorAll('.fd-dot') : [];
-            var current  = 0;
-            var timer    = null;
+            // Inject
+            carousel.innerHTML = slidesHTML;
 
-            // Make first slide active
-            if (slideEls[0]) slideEls[0].classList.add('active');
-            if (dots[0]) dots[0].classList.add('active');
+            var slideEls  = carousel.querySelectorAll('.fd-carousel-slide');
+            var tracks    = progressEl ? progressEl.querySelectorAll('.fd-prog-track') : [];
+            var total     = slideEls.length;
+            var current   = 0;
+            var autoTimer = null;
+            var INTERVAL  = 3500; // ms per slide
 
+            // ─ Set initial state: first slide visible, all others hidden
+            slideEls.forEach(function(sl, i) {
+                if (i === 0) sl.classList.add('is-active');
+            });
+
+            // ─ Progress bar helpers
+            function resetTracks() {
+                tracks.forEach(function(tr) {
+                    tr.classList.remove('done', 'sweeping');
+                    var fill = tr.querySelector('.fd-prog-fill');
+                    if (fill) fill.style.width = '0%';
+                });
+            }
+
+            function activateTrack(idx) {
+                resetTracks();
+                // Mark all before idx as done
+                for (var i = 0; i < idx; i++) {
+                    if (tracks[i]) tracks[i].classList.add('done');
+                }
+                // Kick off sweep on current — must be in next rAF so transition triggers
+                if (tracks[idx]) {
+                    var tr = tracks[idx];
+                    requestAnimationFrame(function() {
+                        requestAnimationFrame(function() {
+                            tr.classList.add('sweeping');
+                        });
+                    });
+                }
+            }
+
+            // ─ Navigate to slide idx
             function goTo(idx) {
-                slideEls[current].classList.remove('active');
-                slideEls[current].classList.add('exit');
-                if (dots[current]) dots[current].classList.remove('active');
-                current = (idx + slides.length) % slides.length;
-                slideEls[current].classList.remove('exit');
-                slideEls[current].classList.add('active');
-                if (dots[current]) dots[current].classList.add('active');
-                // Clean up exit class after animation
-                var exitEl = carousel.querySelector('.fd-carousel-slide.exit');
-                if (exitEl) setTimeout(function(){ exitEl.classList.remove('exit'); }, 500);
+                if (idx === current) return;
+                var prev = current;
+                current  = ((idx % total) + total) % total;
+
+                slideEls[prev].classList.remove('is-active');
+                slideEls[prev].classList.add('is-exit');
+                slideEls[current].classList.add('is-active');
+
+                // Remove is-exit after transition finishes (530ms = 52s + buffer)
+                var exitEl = slideEls[prev];
+                setTimeout(function() { exitEl.classList.remove('is-exit'); }, 560);
+
+                activateTrack(current);
             }
 
+            // ─ Auto-advance
             function startAuto() {
-                timer = setInterval(function(){ goTo(current + 1); }, 3500);
+                stopAuto();
+                autoTimer = setInterval(function() { goTo(current + 1); }, INTERVAL);
+            }
+            function stopAuto() {
+                clearInterval(autoTimer);
+                autoTimer = null;
             }
 
-            // Dot clicks
-            dots.forEach(function(dot, i){
-                dot.addEventListener('click', function(){
-                    clearInterval(timer);
+            // ─ Progress bar click
+            tracks.forEach(function(tr, i) {
+                tr.addEventListener('click', function() {
+                    stopAuto();
                     goTo(i);
                     startAuto();
                 });
             });
 
-            // Pause on hover
-            carousel.addEventListener('mouseenter', function(){ clearInterval(timer); });
+            // ─ Pause on hover
+            carousel.addEventListener('mouseenter', stopAuto);
             carousel.addEventListener('mouseleave', startAuto);
 
+            // ─ Start
+            activateTrack(0);
             startAuto();
 
-            // Mark activity dot
+            // Mark activity dot on dock
             var actDot = document.getElementById('dockActivityDot');
             if (actDot) actDot.classList.add('visible');
         });

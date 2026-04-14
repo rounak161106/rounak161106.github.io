@@ -564,105 +564,207 @@
     margin-bottom: 0.55rem;
 }
 
-/* ── Platform Carousel ── */
-@keyframes fd-slide-in {
-    from { opacity: 0; transform: translateX(30px); }
-    to   { opacity: 1; transform: translateX(0); }
-}
-@keyframes fd-slide-out {
-    from { opacity: 1; transform: translateX(0); }
-    to   { opacity: 0; transform: translateX(-30px); }
-}
+/* ── Platform Carousel — zero-reflow, GPU-only transitions ── */
+
+/* Container: FIXED height so nothing ever shifts */
 .fd-platform-carousel {
     position: relative;
-    min-height: 140px;
+    height: 190px;           /* enough for header + 3 stat bars */
     overflow: hidden;
-    margin-bottom: 0.65rem;
+    margin-bottom: 0.6rem;
+    border-radius: 14px;
 }
+
+/* Every slide is stacked, covering the full container */
 .fd-carousel-slide {
-    display: none;
+    position: absolute;
+    inset: 0;
+    padding: 0.95rem 1rem;
     opacity: 0;
-    animation-duration: 0.45s;
-    animation-fill-mode: both;
-    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    transform: translateX(40px) scale(0.97);
+    transition:
+        opacity  0.52s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.52s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
+    pointer-events: none;
+    border-radius: 14px;
+    overflow: hidden;
 }
-.fd-carousel-slide.active {
-    display: block;
+
+/* Platform-tinted glassmorphism backgrounds */
+.fd-carousel-slide[data-platform="github"] {
+    background: linear-gradient(135deg,
+        rgba(255,255,255,0.04) 0%,
+        rgba(255,255,255,0.015) 100%);
+    border: 1px solid rgba(255,255,255,0.07);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+}
+.fd-carousel-slide[data-platform="leetcode"] {
+    background: linear-gradient(135deg,
+        rgba(255,160,0,0.06) 0%,
+        rgba(255,160,0,0.01) 100%);
+    border: 1px solid rgba(255,160,0,0.12);
+    box-shadow: inset 0 1px 0 rgba(255,160,0,0.08);
+}
+.fd-carousel-slide[data-platform="codeforces"] {
+    background: linear-gradient(135deg,
+        rgba(30,144,255,0.07) 0%,
+        rgba(30,144,255,0.01) 100%);
+    border: 1px solid rgba(30,144,255,0.14);
+    box-shadow: inset 0 1px 0 rgba(30,144,255,0.09);
+}
+
+/* Ambient glow blob behind each slide */
+.fd-carousel-slide::before {
+    content: '';
+    position: absolute;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    top: -40px;
+    right: -40px;
+    pointer-events: none;
+    opacity: 0.35;
+    filter: blur(50px);
+    transition: opacity 0.5s ease;
+}
+.fd-carousel-slide[data-platform="github"]::before    { background: #e6edf3; }
+.fd-carousel-slide[data-platform="leetcode"]::before  { background: #FFA116; }
+.fd-carousel-slide[data-platform="codeforces"]::before{ background: #1e90ff; }
+
+/* Active + entering */
+.fd-carousel-slide.is-active {
     opacity: 1;
-    animation-name: fd-slide-in;
+    transform: translateX(0) scale(1);
+    pointer-events: auto;
+    z-index: 2;
 }
-.fd-carousel-slide.exit {
-    display: block;
-    animation-name: fd-slide-out;
+/* Exiting — slides away to the left */
+.fd-carousel-slide.is-exit {
+    opacity: 0;
+    transform: translateX(-40px) scale(0.97);
+    z-index: 1;
     pointer-events: none;
 }
-.fd-skel-wrap { display: block; opacity: 1; }
 
-/* Platform header row */
+/* ── Platform header row ── */
 .fd-platform-header {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 1rem;
+    gap: 0.7rem;
+    margin-bottom: 0.85rem;
 }
 .fd-platform-badge {
-    width: 32px;
-    height: 32px;
-    border-radius: 9px;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.95rem;
+    font-size: 0.85rem;
     flex-shrink: 0;
+    transition: box-shadow 0.4s ease;
 }
-.fd-platform-badge.github    { background: rgba(255,255,255,0.1);  color: #e6edf3; }
-.fd-platform-badge.leetcode  { background: rgba(255,160,0,0.15);   color: #FFA116; }
-.fd-platform-badge.codeforces{ background: rgba(30,144,255,0.15);  color: #1e90ff; }
+.fd-platform-badge.github     { background: rgba(255,255,255,0.08); color: #e6edf3; }
+.fd-platform-badge.leetcode   { background: rgba(255,160,0,0.14);   color: #FFA116;
+                                  box-shadow: 0 0 12px rgba(255,160,0,0.25); }
+.fd-platform-badge.codeforces { background: rgba(30,144,255,0.14);  color: #1e90ff;
+                                  box-shadow: 0 0 12px rgba(30,144,255,0.25); }
 
 .fd-platform-name {
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     font-weight: 700;
     color: var(--text-primary);
     line-height: 1.1;
 }
 .fd-platform-user {
-    font-size: 0.66rem;
+    font-size: 0.63rem;
     color: var(--text-muted);
+    margin-top: 1px;
+}
+.fd-platform-title {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
 }
 .fd-platform-rank {
     margin-left: auto;
-    font-size: 0.72rem;
-    font-weight: 600;
+    font-size: 0.68rem;
+    font-weight: 700;
     display: flex;
     align-items: center;
-    gap: 0.3rem;
+    gap: 0.28rem;
     white-space: nowrap;
+    padding: 0.2rem 0.55rem;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
 }
 
-/* Carousel dot indicators */
-.fd-carousel-dots {
+/* ── Stats row ── */
+/* Overrides the global .fd-stats to remove bottom margin inside slides */
+.fd-carousel-slide .fd-stats {
+    margin-bottom: 0.75rem;
+    gap: 1.1rem;
+}
+.fd-carousel-slide .fd-stat-num {
+    font-size: 1.35rem;
+}
+.fd-carousel-slide .fd-stat-label {
+    font-size: 0.6rem;
+}
+
+/* ── Slim bars inside slides ── */
+.fd-carousel-slide .fd-lc-bars {
+    margin-bottom: 0;
+    padding: 0.65rem 0.75rem;
+    gap: 0.45rem;
+    background: rgba(0,0,0,0.15);
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.04);
+}
+.fd-carousel-slide .fd-lc-bar { gap: 0.6rem; }
+.fd-carousel-slide .fd-lc-label {
+    width: 54px;
+    font-size: 0.64rem;
+}
+.fd-carousel-slide .fd-lc-track { height: 5px; }
+.fd-carousel-slide .fd-lc-fill  { height: 5px; }
+
+/* ── Progress sweep bar (replaces dots) ── */
+.fd-carousel-progress {
     display: flex;
+    gap: 5px;
+    margin-bottom: 0.9rem;
     align-items: center;
-    justify-content: center;
-    gap: 6px;
-    margin-bottom: 0.85rem;
 }
-.fd-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.2);
-    cursor: pointer;
-    transition: background 0.3s ease, transform 0.3s ease, width 0.3s ease;
+.fd-prog-track {
+    flex: 1;
+    height: 3px;
+    background: rgba(255,255,255,0.08);
     border-radius: 3px;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    transition: height 0.2s ease;
 }
-.fd-dot.active {
-    background: var(--primary-color);
-    width: 18px;
-    transform: scaleY(1);
+.fd-prog-track:hover { height: 4px; }
+.fd-prog-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 3px;
+    transition: width 0.15s linear;
 }
+/* Platform-branded fill colors */
+.fd-prog-track[data-platform="github"]     .fd-prog-fill { background: rgba(230,237,243,0.6); }
+.fd-prog-track[data-platform="leetcode"]   .fd-prog-fill { background: #FFA116; }
+.fd-prog-track[data-platform="codeforces"] .fd-prog-fill { background: #1e90ff; }
+/* Completed past segments */
+.fd-prog-track.done .fd-prog-fill { width: 100%; transition: none; }
+/* Active: sweep on a RAF timer class added via JS */
+.fd-prog-track.sweeping .fd-prog-fill { width: 100%; transition: width 3.5s linear; }
 
-/* mobile */
+/* ── Mobile ── */
 @media (max-width: 768px) {
     .feature-discover { padding: 4rem 0 4.5rem; }
     .fd-grid { grid-template-columns: 1fr; }
@@ -670,6 +772,7 @@
     .fd-card  { padding: 1.6rem 1.4rem 1.5rem; }
     .fd-stats { gap: 1rem; }
     .fd-stat-num { font-size: 1.3rem; }
+    .fd-platform-carousel { height: 195px; }
 }
 @media (max-width: 480px) {
     .fd-title { font-size: 1.35rem; }
