@@ -1,11 +1,20 @@
-# Ignore all markdown files
+# Dependencies
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Development artifacts
+scratch*.js
+replace_skills.js
+optimize_images.py
+debug_screenshot.png
+backup_skills/
+
+# Ignore all markdown files except README
 *.md
 !README.md
 
 # Allow gitignore itself
 .gitignore
-
-
-# Optional: ignore other junk
-.DS_Store
-node_modules/

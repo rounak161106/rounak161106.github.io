@@ -221,6 +221,7 @@
         width: 100%;
         animation: none;
         opacity: 1;
+        z-index: 9500;
     }
     .orbit-dock-inner {
         border-radius: 0;
@@ -976,9 +977,9 @@
 }
 
 @media (max-width: 768px) {
-    .overlay-theme-switcher { bottom: 20px; right: auto; left: 1rem; }
+    .overlay-theme-switcher { bottom: calc(72px + env(safe-area-inset-bottom, 0px) + 0.75rem) !important; right: auto; left: 1rem; }
     .overlay-theme-switcher .theme-options { right: auto; left: 60px; flex-direction: row !important; }
-    .overlay-back-to-top { bottom: 20px; right: 1rem; }
+    .overlay-back-to-top { bottom: calc(72px + env(safe-area-inset-bottom, 0px) + 0.75rem) !important; right: 1rem; }
 }
 
 .dev-inner { max-width: 960px; margin: 0 auto; padding: 5rem 2rem 4rem; scroll-behavior: smooth; }
@@ -1073,7 +1074,7 @@
 @media (max-width: 768px) {
     .overlay-actions { top: 1rem; right: 1rem; gap: 0.5rem; }
     .overlay-action-btn, .dev-close, .blog-close { width: 38px; height: 38px; font-size: 0.95rem; }
-    .dev-inner { padding: 4rem 1.25rem 3rem; }
+    .dev-inner { padding: 4rem 1.25rem calc(3rem + 72px + env(safe-area-inset-bottom, 0px)); }
     .dev-hero h1, .dev-hero h2 { font-size: 1.8rem; }
     .dev-close { top: 1rem; right: 1rem; width: 38px; height: 38px; font-size: 1rem; }
     .dev-two-col { grid-template-columns: 1fr; }
@@ -1143,7 +1144,7 @@
 .blog-empty small { font-size: 0.8rem; color: var(--text-muted); }
 
 @media (max-width: 768px) {
-    .blog-inner { padding: 4rem 1.25rem 3rem; }
+    .blog-inner { padding: 4rem 1.25rem calc(3rem + 72px + env(safe-area-inset-bottom, 0px)); }
     .blog-hero h1, .blog-hero h2 { font-size: 1.8rem; }
     .blog-close { top: 1rem; right: 1rem; width: 38px; height: 38px; font-size: 1rem; }
 }

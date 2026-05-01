@@ -63,6 +63,8 @@ if (navToggle) {
     navToggle.addEventListener('click', () => {
         navToggle.classList.toggle('active');
         navMenu.classList.toggle('active');
+        const expanded = navToggle.classList.contains('active');
+        navToggle.setAttribute('aria-expanded', expanded);
     });
 }
 
@@ -71,6 +73,7 @@ navLinks.forEach(link => {
     link.addEventListener('click', () => {
         navToggle.classList.remove('active');
         navMenu.classList.remove('active');
+        navToggle.setAttribute('aria-expanded', 'false');
     });
 });
 
@@ -93,7 +96,7 @@ function activateNavLink() {
     });
 }
 
-window.addEventListener('scroll', activateNavLink);
+// activateNavLink is called via debounced scroll listener below
 
 // ===== TYPING EFFECT =====
 const typingText = document.querySelector('.typing-text');
@@ -180,58 +183,36 @@ document.addEventListener('DOMContentLoaded', () => {
     const certTabs = document.querySelectorAll('.cert-tab');
     const certCategories = document.querySelectorAll('.cert-category');
 
-    // console.log('🔍 Cert tabs found:', certTabs.length); // Debug
-    // console.log('🔍 Cert categories found:', certCategories.length); // Debug
-
-    if (certTabs.length === 0) {
-        console.error('❌ No cert tabs found! Check if HTML has loaded.');
-        return;
-    }
-
-    if (certCategories.length === 0) {
-        console.error('❌ No cert categories found! Check HTML structure.');
-        return;
-    }
+    if (certTabs.length === 0 || certCategories.length === 0) return;
 
     certTabs.forEach(tab => {
         tab.addEventListener('click', () => {
             const targetCategory = tab.getAttribute('data-tab');
             
-            console.log('✅ Tab clicked:', targetCategory); // Debug log
-            
             // Remove active class from all tabs and categories
             certTabs.forEach(t => t.classList.remove('active'));
             certCategories.forEach(c => {
                 c.classList.remove('active');
-                c.style.display = 'none'; // FORCE HIDE ALL
+                c.style.display = 'none';
             });
             
             // Add active class to clicked tab
             tab.classList.add('active');
             
-            // Show corresponding category - BE SPECIFIC to avoid selecting project-card elements!
+            // Show corresponding category
             const categoryElement = document.querySelector(`.cert-category[data-category="${targetCategory}"]`);
-            
-            console.log('🔍 Found category element:', categoryElement); // Debug log
             
             if (categoryElement) {
                 categoryElement.classList.add('active');
-                categoryElement.style.display = 'block'; // FORCE SHOW THIS ONE
-                console.log('✅ Activated category:', targetCategory); // Debug log
-            } else {
-                console.error('❌ Category not found:', targetCategory); // Error log
+                categoryElement.style.display = 'block';
             }
             
             // Refresh AOS animations
             if (typeof AOS !== 'undefined') {
                 AOS.refresh();
-            } else {
-                console.warn('⚠️ AOS not loaded');
             }
         });
     });
-
-    // console.log('✅ Certification tabs initialized successfully!');
 });
 
 // ===== CERTIFICATE MODAL =====
@@ -261,81 +242,6 @@ document.addEventListener('keydown', (e) => {
         closeCertModal();
     }
 });
-
-// ===== CONTACT FORM =====
-// const contactForm = document.getElementById('contactForm');
-// const formStatus = document.getElementById('formStatus');
-
-// if (contactForm) {
-//     contactForm.addEventListener('submit', async (e) => {
-//         e.preventDefault();
-        
-//         // Get form data
-//         const formData = new FormData(contactForm);
-//         const data = {
-//             name: formData.get('name'),
-//             email: formData.get('email'),
-//             subject: formData.get('subject'),
-//             message: formData.get('message')
-//         };
-        
-//         // Show loading state
-//         const submitBtn = contactForm.querySelector('button[type="submit"]');
-//         const originalText = submitBtn.innerHTML;
-//         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-//         submitBtn.disabled = true;
-        
-//         // Simulate form submission (replace with actual API call)
-//         setTimeout(() => {
-//             // Success
-//             formStatus.className = 'form-status success';
-//             formStatus.innerHTML = '<i class="fas fa-check-circle"></i> Message sent successfully! I\'ll get back to you soon.';
-            
-//             // Reset form
-//             contactForm.reset();
-            
-//             // Reset button
-//             submitBtn.innerHTML = originalText;
-//             submitBtn.disabled = false;
-            
-//             // Hide status after 5 seconds
-//             setTimeout(() => {
-//                 formStatus.className = 'form-status';
-//             }, 5000);
-//         }, 1500);
-        
-//         // For actual implementation, use:
-//         /*
-//         try {
-//             const response = await fetch('/api/contact', {
-//                 method: 'POST',
-//                 headers: {
-//                     'Content-Type': 'application/json'
-//                 },
-//                 body: JSON.stringify(data)
-//             });
-            
-//             if (response.ok) {
-//                 formStatus.className = 'form-status success';
-//                 formStatus.innerHTML = '<i class="fas fa-check-circle"></i> Message sent successfully!';
-//                 contactForm.reset();
-//             } else {
-//                 throw new Error('Failed to send message');
-//             }
-//         } catch (error) {
-//             formStatus.className = 'form-status error';
-//             formStatus.innerHTML = '<i class="fas fa-exclamation-circle"></i> Failed to send message. Please try again.';
-//         } finally {
-//             submitBtn.innerHTML = originalText;
-//             submitBtn.disabled = false;
-            
-//             setTimeout(() => {
-//                 formStatus.className = 'form-status';
-//             }, 5000);
-//         }
-//         */
-//     });
-// }
 
 // ===== CONTACT FORM WITH WEB3FORMS =====
 const contactForm = document.getElementById('contactForm');
@@ -451,23 +357,7 @@ const parallaxEffect = throttle(() => {
 
 window.addEventListener('scroll', parallaxEffect);
 
-// ===== LAZY LOADING IMAGES =====
-const images = document.querySelectorAll('img[data-src]');
 
-const imageObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            const img = entry.target;
-            img.src = img.getAttribute('data-src');
-            img.removeAttribute('data-src');
-            imageObserver.unobserve(img);
-        }
-    });
-});
-
-images.forEach(img => {
-    imageObserver.observe(img);
-});
 
 // ===== PERFORMANCE OPTIMIZATION =====
 // Debounce function for scroll events
@@ -488,10 +378,7 @@ window.addEventListener('scroll', debounce(() => {
     activateNavLink();
 }, 100));
 
-// ===== CONSOLE MESSAGE =====
-console.log('%c👋 Hey there!', 'color: #667eea; font-size: 20px; font-weight: bold;');
-console.log('%cWelcome to my portfolio!', 'color: #764ba2; font-size: 16px;');
-console.log('%cLooking to connect? Find me on LinkedIn: https://www.linkedin.com/in/rounakprasad', 'color: #667eea; font-size: 14px;');
+
 
 // ===== EXPORT FUNCTIONS FOR GLOBAL USE =====
 window.openCertModal = openCertModal;
@@ -548,11 +435,13 @@ function trapFocus(element) {
 // Apply focus trap to modal when it opens
 const modal = document.getElementById('certModal');
 if (modal) {
+    let focusTrapBound = false;
     const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
             if (mutation.attributeName === 'class') {
-                if (modal.classList.contains('active')) {
+                if (modal.classList.contains('active') && !focusTrapBound) {
                     trapFocus(modal);
+                    focusTrapBound = true;
                 }
             }
         });
@@ -561,14 +450,7 @@ if (modal) {
     observer.observe(modal, { attributes: true });
 }
 
-// ===== ERROR HANDLING =====
-window.addEventListener('error', (e) => {
-    console.error('An error occurred:', e.error);
-    // Optionally send to error tracking service
-});
 
-// ===== READY STATE =====
-console.log('%c✅ Portfolio loaded successfully!', 'color: #00ff00; font-size: 14px; font-weight: bold;');
 
 
 // ===== THEME SWITCHER =====
@@ -635,43 +517,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         
-
-        // Log theme change
-        console.log('🎨 Theme changed to:', theme);
+        // Log theme change (dev only)
     }
 });
 
-// ===== SECURITY ENHANCEMENTS =====
-// Disable Context Menu (Right Click)
-document.addEventListener('contextmenu', (e) => {
-    e.preventDefault();
-});
-
-// Disable Developer Tools Shortcuts (F12, Ctrl+Shift+I, Ctrl+Shift+J)
-document.addEventListener('keydown', (e) => {
-    // F12
-    if (e.key === 'F12' || e.keyCode === 123) {
-        e.preventDefault();
-        return false;
-    }
-    // Ctrl+Shift+I or Cmd+Option+I
-    if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.keyCode === 73)) {
-        e.preventDefault();
-        return false;
-    }
-    // Ctrl+Shift+J or Cmd+Option+J
-    if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'J' || e.key === 'j' || e.keyCode === 74)) {
-        e.preventDefault();
-        return false;
-    }
-    // Ctrl+U or Cmd+U (View Source)
-    if ((e.ctrlKey || e.metaKey) && (e.key === 'U' || e.key === 'u' || e.keyCode === 85)) {
-        e.preventDefault();
-        return false;
-    }
-    // Ctrl+S or Cmd+S (Save Page)
-    if ((e.ctrlKey || e.metaKey) && (e.key === 'S' || e.key === 's' || e.keyCode === 83)) {
-        e.preventDefault();
-        return false;
-    }
-});

@@ -3,7 +3,7 @@
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://rounak161106.github.io/</loc>
-    <lastmod>2026-04-07</lastmod>
+    <lastmod>2026-04-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image>
@@ -11,11 +11,7 @@
       <image:title>Rounak Prasad - Data Scientist Portfolio</image:title>
       <image:caption>Rounak Prasad - Aspiring Data Scientist from IIT Madras and LPU specializing in Machine Learning and AI</image:caption>
     </image:image>
-    <image:image>
-      <image:loc>https://rounak161106.github.io/static/images/profile.jpeg</image:loc>
-      <image:title>Rounak Prasad Profile Photo</image:title>
-      <image:caption>Rounak Prasad - Data Scientist and Machine Learning Engineer</image:caption>
-    </image:image>
+
     <image:image>
       <image:loc>https://rounak161106.github.io/static/certificates/ML_Specialization.webp</image:loc>
       <image:title>Rounak Prasad - Machine Learning Specialization Certificate</image:title>
