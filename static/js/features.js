@@ -951,6 +951,31 @@
                         '</div>' +
                         '<button class="fd-cta">Read Articles <i class="fas fa-arrow-right"></i></button>' +
                     '</div>' +
+
+                    '<a href="https://www.linkedin.com/in/rounakprasad" target="_blank" rel="noopener noreferrer" class="fd-card fd-card--linkedin" id="fdLinkedinCard" aria-label="View LinkedIn Profile">' +
+                        '<div class="fd-card-header">' +
+                            '<div class="fd-card-icon"><i class="fab fa-linkedin-in"></i></div>' +
+                            '<div>' +
+                                '<div class="fd-card-title">LinkedIn</div>' +
+                                '<div class="fd-card-sub">Professional Network</div>' +
+                            '</div>' +
+                            '<div class="fd-linkedin-status"><span class="fd-linkedin-dot"></span>Open to Connect</div>' +
+                        '</div>' +
+                        '<div class="fd-linkedin-body">' +
+                            '<div class="fd-linkedin-avatar">' +
+                                '<img src="static/images/rounak-prasad-data-scientist.webp" alt="Rounak Prasad" width="64" height="64" loading="lazy" />' +
+                            '</div>' +
+                            '<div class="fd-linkedin-info">' +
+                                '<div class="fd-linkedin-name">Rounak Prasad</div>' +
+                                '<div class="fd-linkedin-headline">Aspiring Data Scientist | Dual Degree (IIT Madras & LPU) | Machine Learning & Python | Open to Data Science Internships</div>' +
+                                '<div class="fd-linkedin-org"><i class="fas fa-graduation-cap"></i> Lovely Professional University</div>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="fd-linkedin-cta-row">' +
+                            '<span class="fd-cta fd-cta--linkedin">View Profile <i class="fas fa-arrow-right"></i></span>' +
+                        '</div>' +
+                    '</a>' +
+
                 '</div>' +
             '</div>';
 
@@ -959,6 +984,7 @@
         // ── click / keyboard handlers ────────────────────────────────
         var fdDevCard  = document.getElementById('fdDevCard');
         var fdBlogCard = document.getElementById('fdBlogCard');
+        var fdLinkedinCard = document.getElementById('fdLinkedinCard');
 
         function makeCardClickable(card, fn) {
             card.addEventListener('click', fn);
@@ -979,11 +1005,11 @@
             });
         }, { threshold: 0.12 });
 
-        [fdDevCard, fdBlogCard].forEach(function (card) { observer.observe(card); });
+        [fdDevCard, fdBlogCard, fdLinkedinCard].forEach(function (card) { if (card) observer.observe(card); });
 
         // ── 3-D tilt effect (desktop) ────────────────────────────────
         if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-            [fdDevCard, fdBlogCard].forEach(addTiltEffect);
+            [fdDevCard, fdBlogCard, fdLinkedinCard].forEach(function(c) { if (c) addTiltEffect(c); });
         }
 
         // ── populate dev card ────────────────────────────────────────
