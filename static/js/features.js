@@ -132,55 +132,7 @@
         return svg.outerHTML;
     }
 
-    // ── THEME CYCLING & SELECTION ─────────────────────────────────────
-    var themeList = ['blue', 'green', 'red', 'cyan'];
-    
-    function setTheme(next) {
-        if (!themeList.includes(next)) return;
-        document.documentElement.removeAttribute('data-theme');
-        if (next !== 'blue') document.documentElement.setAttribute('data-theme', next);
-        localStorage.setItem('portfolio-theme', next);
-        
-        // Sync active state in all theme controls (main + overlays)
-        document.querySelectorAll('.theme-option').forEach(function (b) {
-            b.classList.toggle('active', b.getAttribute('data-theme') === next);
-        });
-        
-        refreshThemedImages();
-    }
-
-    function cycleTheme() {
-        var cur  = document.documentElement.getAttribute('data-theme') || 'blue';
-        var next = themeList[(themeList.indexOf(cur) + 1) % themeList.length];
-        setTheme(next);
-    }
-
-    function refreshThemedImages() {
-        var theme = document.documentElement.getAttribute('data-theme') || 'blue';
-        var ghColor = theme === 'green' ? '41b883' : (theme === 'red' ? 'ff6b6b' : (theme === 'cyan' ? '00f2fe' : '4facfe'));
-        var ts = Date.now(); // Cache-busting timestamp
-        
-        // Update GitHub Activity Graph
-        var ghActImg = document.querySelector('img[alt="GitHub Activity Graph"]');
-        if (ghActImg) {
-            try {
-                var url = new URL(ghActImg.src);
-                url.searchParams.set('color', ghColor);
-                url.searchParams.set('line', ghColor);
-                url.searchParams.set('t', ts);
-                ghActImg.src = url.toString();
-            } catch (e) {
-                // Fallback for relative or malformed URLs
-                ghActImg.src = 'https://github-readme-activity-graph.vercel.app/graph?username=' + GITHUB_USERNAME + '&bg_color=0f1423&color=' + ghColor + '&line=' + ghColor + '&point=ffffff&area=true&hide_border=true&t=' + ts;
-            }
-        }
-        
-        // Update GitHub Heatmap
-        var ghHeatImg = document.querySelector('img[alt="GitHub Year Heatmap"]');
-        if (ghHeatImg) {
-            ghHeatImg.src = 'https://ghchart.rshah.org/' + ghColor + '/' + GITHUB_USERNAME + '?t=' + ts;
-        }
-    }
+    // Theme switcher removed.
 
     // ── BACK BUTTON ───────────────────────────────────────────────────
     window.addEventListener('popstate', function () {
@@ -197,7 +149,6 @@
 
         { group: 'Actions',  icon: 'fas fa-bolt',           label: 'Dev Activity',    hint: 'GitHub · LeetCode · Codeforces', action: function () { openDev(); } },
         { group: 'Actions',  icon: 'fas fa-pen-nib',        label: 'Blog / Writing',  hint: 'Dev.to · Medium',   action: function () { openBlog(); } },
-        { group: 'Actions',  icon: 'fas fa-palette',        label: 'Switch Theme',    hint: 'Cycle next',        action: cycleTheme },
         { group: 'Navigate', icon: 'fas fa-home',           label: 'Home',            action: function () { navTo('#home'); } },
         { group: 'Navigate', icon: 'fas fa-user',           label: 'About',           action: function () { navTo('#about'); } },
         { group: 'Navigate', icon: 'fas fa-cogs',           label: 'Skills',          action: function () { navTo('#skills'); } },
@@ -347,16 +298,7 @@
                     '</div>' +
                 '</div>' +
             '</div>' +
-            '<!-- Swapped Bottom-Right Controls -->' +
-            '<div class="theme-switcher overlay-theme-switcher">' +
-                '<div class="theme-options">' +
-                    '<button class="theme-option theme-blue" data-theme="blue" title="Blue/Purple"></button>' +
-                    '<button class="theme-option theme-green" data-theme="green" title="Green/Teal"></button>' +
-                    '<button class="theme-option theme-red" data-theme="red" title="Red/Orange"></button>' +
-                    '<button class="theme-option theme-cyan" data-theme="cyan" title="Cyan/Blue"></button>' +
-                '</div>' +
-                '<button class="theme-toggle-btn palette-toggle"><i class="fas fa-palette"></i></button>' +
-            '</div>' +
+            '<!-- Swapped Bottom-Right Controls -->
             '<button class="back-to-top overlay-back-to-top"><i class="fas fa-arrow-up"></i></button>' +
         '</div>'
     );
@@ -576,28 +518,7 @@
     // Attach listeners for overlay-specific controls
     function initOverlayControls(ovEl) {
         if (!ovEl) return;
-        var paletteToggle = ovEl.querySelector('.palette-toggle');
-        var themeOptions  = ovEl.querySelector('.theme-options');
-        var themeButtons  = ovEl.querySelectorAll('.theme-option');
         var backTop       = ovEl.querySelector('.overlay-back-to-top');
-
-        if (paletteToggle && themeOptions) {
-            paletteToggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                themeOptions.classList.toggle('active');
-            });
-        }
-        
-        if (themeButtons && themeOptions) {
-            themeButtons.forEach(function(btn) {
-                btn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    setTheme(btn.getAttribute('data-theme'));
-                    setTimeout(function() { themeOptions.classList.remove('active'); }, 300);
-                });
-            });
-        }
 
         if (backTop) {
             backTop.addEventListener('click', function() {
@@ -605,11 +526,6 @@
             });
         }
 
-        // Global click to close menu
-        document.addEventListener('click', function() { 
-            if (themeOptions) themeOptions.classList.remove('active'); 
-        });
-        
         // Scroll visibility for Top button
         ovEl.addEventListener('scroll', function() {
             if (backTop && ovEl.scrollTop > 400) backTop.classList.add('visible');
@@ -653,16 +569,7 @@
                 '</div>' +
                 '<div class="blog-grid" id="blogGrid"></div>' +
             '</div>' +
-            '<!-- Swapped Bottom-Right Controls -->' +
-            '<div class="theme-switcher overlay-theme-switcher">' +
-                '<div class="theme-options">' +
-                    '<button class="theme-option theme-blue" data-theme="blue" title="Blue/Purple"></button>' +
-                    '<button class="theme-option theme-green" data-theme="green" title="Green/Teal"></button>' +
-                    '<button class="theme-option theme-red" data-theme="red" title="Red/Orange"></button>' +
-                    '<button class="theme-option theme-cyan" data-theme="cyan" title="Cyan/Blue"></button>' +
-                '</div>' +
-                '<button class="theme-toggle-btn palette-toggle"><i class="fas fa-palette"></i></button>' +
-            '</div>' +
+            '<!-- Swapped Bottom-Right Controls -->
             '<button class="back-to-top overlay-back-to-top"><i class="fas fa-arrow-up"></i></button>' +
         '</div>'
     );

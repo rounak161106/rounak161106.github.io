@@ -93,7 +93,7 @@
 /* ===== BACK TO TOP BUTTON ===== */
 .back-to-top {
     position: fixed;
-    bottom: 100px;
+    bottom: 2rem;
     right: 2rem;
     width: 50px;
     height: 50px;
@@ -219,6 +219,14 @@ body::before {
 body:hover .cursor-follower {
     width: 50px;
     height: 50px;
+}
+
+/* Hide custom cursor on touch devices */
+@media (hover: none) and (pointer: coarse) {
+    .cursor,
+    .cursor-follower {
+        display: none !important;
+    }
 }
 
 /* Preloader styles moved to preloader.css */
