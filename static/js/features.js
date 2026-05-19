@@ -790,8 +790,12 @@
         if (maxScroll > 0) {
             var dock = document.getElementById('orbitDock');
             if (dock) {
-                if (maxScroll - window.scrollY < 150) {
-                    dock.classList.add('hidden');
+                if (window.innerWidth > 768) {
+                    if (maxScroll - window.scrollY < 150) {
+                        dock.classList.add('hidden');
+                    } else {
+                        dock.classList.remove('hidden');
+                    }
                 } else {
                     dock.classList.remove('hidden');
                 }
@@ -802,6 +806,14 @@
         var offset = circumference * (1 - pct);
         progressRing.style.strokeDashoffset = offset;
     }, { passive: true });
+
+    // Clear keyframe animation on end to allow smooth CSS transitions
+    var dockEl = document.getElementById('orbitDock');
+    if (dockEl) {
+        dockEl.addEventListener('animationend', function () {
+            dockEl.style.animation = 'none';
+        });
+    }
 
     // ── magnetic effect (desktop only) ──────────────────────────────
     var dockEl    = document.getElementById('orbitDock');
