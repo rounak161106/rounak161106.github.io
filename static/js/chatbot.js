@@ -314,6 +314,12 @@
         chatPanel.classList.add('open');
         chatBackdrop.classList.add('open');
         if (dockAiBtn) dockAiBtn.classList.add('chat-active');
+        
+        if (window.innerWidth <= 768) {
+            document.body.style.overflow = 'hidden';
+            history.pushState({ chatbotOpen: true }, '');
+        }
+        
         setTimeout(function () { chatInput.focus(); }, 400);
 
         // Build knowledge base on first open (self-updating)
@@ -328,7 +334,25 @@
         chatPanel.classList.remove('open');
         chatBackdrop.classList.remove('open');
         if (dockAiBtn) dockAiBtn.classList.remove('chat-active');
+        
+        if (window.innerWidth <= 768) {
+            document.body.style.overflow = '';
+            if (history.state && history.state.chatbotOpen) {
+                history.back();
+            }
+        }
     }
+    
+    // Close chat on hardware back button
+    window.addEventListener('popstate', function(e) {
+        if (chatOpen && (!e.state || !e.state.chatbotOpen)) {
+            chatOpen = false;
+            chatPanel.classList.remove('open');
+            chatBackdrop.classList.remove('open');
+            if (dockAiBtn) dockAiBtn.classList.remove('chat-active');
+            document.body.style.overflow = '';
+        }
+    });
 
     function toggleChat() {
         chatOpen ? closeChat() : openChat();
