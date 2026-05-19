@@ -298,7 +298,7 @@
                     '</div>' +
                 '</div>' +
             '</div>' +
-            '<!-- Swapped Bottom-Right Controls -->
+            '<!-- Swapped Bottom-Right Controls -->' +
             '<button class="back-to-top overlay-back-to-top"><i class="fas fa-arrow-up"></i></button>' +
         '</div>'
     );
@@ -569,7 +569,7 @@
                 '</div>' +
                 '<div class="blog-grid" id="blogGrid"></div>' +
             '</div>' +
-            '<!-- Swapped Bottom-Right Controls -->
+            '<!-- Swapped Bottom-Right Controls -->' +
             '<button class="back-to-top overlay-back-to-top"><i class="fas fa-arrow-up"></i></button>' +
         '</div>'
     );

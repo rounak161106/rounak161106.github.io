@@ -1704,35 +1704,6 @@ body:hover .cursor-follower {
     color: #ff0000;
 }
 
-/* ===== BACK TO TOP BUTTON ===== */
-.back-to-top {
-    position: fixed;
-    bottom: 100px;
-    right: 2rem;
-    width: 50px;
-    height: 50px;
-    background: var(--gradient-primary);
-    border: none;
-    border-radius: 50%;
-    color: var(--text-primary);
-    font-size: 1.2rem;
-    cursor: pointer;
-    opacity: 0;
-    visibility: hidden;
-    transition: all var(--transition-normal);
-    z-index: 999;
-    box-shadow: var(--shadow-lg);
-}
-
-.back-to-top.visible {
-    opacity: 1;
-    visibility: visible;
-}
-
-.back-to-top:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-glow);
-}
 
 /* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 1024px) {
