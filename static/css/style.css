@@ -90,156 +90,17 @@
     --shadow-glow: 0 0 30px rgba(79, 172, 254, 0.3);
 }
 
-/* Theme Switcher Button Styles (Sideways & Fixed) */
-.theme-switcher {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    z-index: 999;
-}
-
-.theme-toggle-btn {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: 2px solid var(--primary-color);
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all var(--transition-normal);
-    font-size: 1.2rem;
-    color: var(--text-primary);
-    position: relative;
-    z-index: 10;
-}
-
-.theme-toggle-btn:hover {
-    background: var(--gradient-primary);
-    transform: scale(1.1);
-    box-shadow: var(--shadow-glow);
-}
-
-.theme-options {
-    position: absolute;
-    right: 60px;
-    top: 50%;
-    transform: translateY(-50%);
-    display: none;
-    flex-direction: row-reverse;
-    gap: 0.5rem;
-    z-index: 5;
-}
-
-.theme-options.active {
-    display: flex;
-    animation: slideInLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes slideInLeft {
-    from { opacity: 0; transform: translateY(-50%) translateX(20px); }
-    to { opacity: 1; transform: translateY(-50%) translateX(0); }
-}
-
-.theme-option {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: 3px solid transparent;
-    cursor: pointer;
-    transition: all var(--transition-normal);
-    position: relative;
-    overflow: hidden;
-}
-
-.theme-option:hover {
-    transform: scale(1.15);
-    border-color: var(--text-primary);
-}
-
-.theme-option.active {
-    border-color: var(--text-primary);
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-}
-
-.theme-option::before {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-}
-
-.theme-blue::before {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-.theme-green::before {
-    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-}
-
-.theme-red::before {
-    background: linear-gradient(135deg, #ff6b6b 0%, #ffa07a 100%);
-}
-
-.theme-cyan::before {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-}
-
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Mobile Responsive */
+/* Mobile Responsive - Back to Top */
 @media (max-width: 768px) {
-
-    /* Theme Switcher - Position on left side */
-    .theme-switcher {
-        bottom: 20px;
-        right: auto;
-        left: 1rem;
-    }
-
-    .theme-toggle-btn,
-    .theme-option {
-        width: 45px;
-        height: 45px;
-        font-size: 1.1rem;
-    }
-
-    /* Back to Top Button - Keep on right side */
     .back-to-top {
         bottom: 20px;
         right: 1rem;
     }
 }
 
-/* For very small screens */
 @media (max-width: 480px) {
-    .theme-switcher {
-        left: 0.75rem;
-    }
-
     .back-to-top {
         right: 0.75rem;
-    }
-
-    .theme-toggle-btn,
-    .theme-option {
-        width: 40px;
-        height: 40px;
-        font-size: 1rem;
     }
 }
 
@@ -307,6 +168,9 @@ body::before {
     z-index: 9999;
     mix-blend-mode: difference;
     transition: transform 0.2s ease;
+    will-change: transform;
+    left: 0;
+    top: 0;
 }
 
 .cursor {

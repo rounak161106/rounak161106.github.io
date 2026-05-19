@@ -12,8 +12,14 @@
         var cards = document.querySelectorAll('.bento-card');
         
         cards.forEach(function(card) {
+            var rect = null;
+            
+            card.addEventListener('mouseenter', function() {
+                rect = card.getBoundingClientRect();
+            });
+            
             card.addEventListener('mousemove', function(e) {
-                var rect = card.getBoundingClientRect();
+                if (!rect) rect = card.getBoundingClientRect();
                 var x = e.clientX - rect.left;
                 var y = e.clientY - rect.top;
                 
@@ -31,6 +37,7 @@
             });
             
             card.addEventListener('mouseleave', function() {
+                rect = null;
                 card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
             });
         });

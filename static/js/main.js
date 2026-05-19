@@ -17,31 +17,44 @@ AOS.init({
 const cursor = document.querySelector('.cursor');
 const cursorFollower = document.querySelector('.cursor-follower');
 
-if (cursor && cursorFollower) {
+    let mouseX = 0;
+    let mouseY = 0;
+    let cursorX = 0;
+    let cursorY = 0;
+    let isHovering = false;
+
     document.addEventListener('mousemove', (e) => {
-        cursor.style.left = e.clientX + 'px';
-        cursor.style.top = e.clientY + 'px';
+        mouseX = e.clientX;
+        mouseY = e.clientY;
         
-        setTimeout(() => {
-            cursorFollower.style.left = e.clientX + 'px';
-            cursorFollower.style.top = e.clientY + 'px';
-        }, 100);
+        // Immediate update for the main cursor
+        cursor.style.transform = `translate3d(calc(${mouseX}px - 50%), calc(${mouseY}px - 50%), 0) ${isHovering ? 'scale(1.5)' : 'scale(1)'}`;
     });
+    
+    // Smooth follow for the follower cursor using rAF
+    function animateCursor() {
+        cursorX += (mouseX - cursorX) * 0.2; // Ease factor
+        cursorY += (mouseY - cursorY) * 0.2;
+        
+        cursorFollower.style.transform = `translate3d(calc(${cursorX}px - 50%), calc(${cursorY}px - 50%), 0) ${isHovering ? 'scale(1.8)' : 'scale(1)'}`;
+        
+        requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
     
     // Cursor effects on hover
     const hoverElements = document.querySelectorAll('a, button, .project-card, .cert-card');
     hoverElements.forEach(el => {
         el.addEventListener('mouseenter', () => {
-            cursor.style.transform = 'translate(-50%, -50%) scale(1.5)';
-            cursorFollower.style.transform = 'translate(-50%, -50%) scale(1.8)';
+            isHovering = true;
+            cursor.style.transform = `translate3d(calc(${mouseX}px - 50%), calc(${mouseY}px - 50%), 0) scale(1.5)`;
         });
         
         el.addEventListener('mouseleave', () => {
-            cursor.style.transform = 'translate(-50%, -50%) scale(1)';
-            cursorFollower.style.transform = 'translate(-50%, -50%) scale(1)';
+            isHovering = false;
+            cursor.style.transform = `translate3d(calc(${mouseX}px - 50%), calc(${mouseY}px - 50%), 0) scale(1)`;
         });
     });
-}
 
 // ===== NAVIGATION =====
 const navbar = document.getElementById('navbar');
@@ -77,26 +90,36 @@ navLinks.forEach(link => {
     });
 });
 
-// Active nav link on scroll
+// Active nav link via IntersectionObserver (High Performance)
 const sections = document.querySelectorAll('section[id]');
-
-function activateNavLink() {
-    const scrollY = window.pageYOffset;
+const navObserver = new IntersectionObserver((entries) => {
+    // Find the intersecting entry that is taking up the most space
+    let currentSection = null;
+    let maxRatio = 0;
     
-    sections.forEach(section => {
-        const sectionHeight = section.offsetHeight;
-        const sectionTop = section.offsetTop - 100;
-        const sectionId = section.getAttribute('id');
-        
-        if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
-            document.querySelector(`.nav-link[href="#${sectionId}"]`)?.classList.add('active');
-        } else {
-            document.querySelector(`.nav-link[href="#${sectionId}"]`)?.classList.remove('active');
+    entries.forEach(entry => {
+        if (entry.isIntersecting && entry.intersectionRatio > maxRatio) {
+            maxRatio = entry.intersectionRatio;
+            currentSection = entry.target.getAttribute('id');
         }
     });
-}
+    
+    if (currentSection) {
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${currentSection}`) {
+                link.classList.add('active');
+            }
+        });
+    }
+}, { 
+    threshold: [0.2, 0.5, 0.8],
+    rootMargin: '-10% 0px -40% 0px' 
+});
 
-// activateNavLink is called via debounced scroll listener below
+sections.forEach(section => {
+    navObserver.observe(section);
+});
 
 // ===== TYPING EFFECT =====
 const typingText = document.querySelector('.typing-text');
@@ -366,7 +389,7 @@ function debounce(func, wait) {
 
 // Apply debounce to scroll-heavy functions
 window.addEventListener('scroll', debounce(() => {
-    activateNavLink();
+    // Other scroll-heavy logic if needed (nav link logic moved to IntersectionObserver)
 }, 100));
 
 
@@ -444,73 +467,7 @@ if (modal) {
 
 
 
-// ===== THEME SWITCHER =====
-// Add this AT THE END of main.js
-
-document.addEventListener('DOMContentLoaded', () => {
-    const themeToggle = document.getElementById('themeToggle');
-    const themeOptions = document.getElementById('themeOptions');
-    const themeButtons = document.querySelectorAll('.theme-option');
-    
-    // Load saved theme or default to blue
-    const savedTheme = localStorage.getItem('portfolio-theme') || 'blue';
-    applyTheme(savedTheme);
-    
-    // Toggle theme options visibility
-    if (themeToggle) {
-        themeToggle.addEventListener('click', () => {
-            themeOptions.classList.toggle('active');
-        });
-    }
-    
-    // Close theme options when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('.theme-switcher')) {
-            themeOptions.classList.remove('active');
-        }
-    });
-    
-    // Handle theme selection
-    themeButtons.forEach(button => {
-        button.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const theme = button.getAttribute('data-theme');
-            applyTheme(theme);
-            
-            // Save to localStorage
-            localStorage.setItem('portfolio-theme', theme);
-            
-            // Update active state
-            themeButtons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
-            
-            // Close options after selection
-            setTimeout(() => {
-                themeOptions.classList.remove('active');
-            }, 300);
-        });
-    });
-    
-    function applyTheme(theme) {
-        // Remove all theme classes
-        document.documentElement.removeAttribute('data-theme');
-        
-        // Apply new theme (blue is default, so no attribute needed)
-        if (theme !== 'blue') {
-            document.documentElement.setAttribute('data-theme', theme);
-        }
-        
-        // Update active button
-        themeButtons.forEach(btn => {
-            btn.classList.remove('active');
-            if (btn.getAttribute('data-theme') === theme) {
-                btn.classList.add('active');
-            }
-        });
-        
-        // Log theme change (dev only)
-    }
-});
+// Theme Switcher Removed per user request to improve performance and code simplicity
 
 // ===== SECTION DIVIDER DRAW-IN ANIMATION =====
 const dividerObserver = new IntersectionObserver((entries) => {

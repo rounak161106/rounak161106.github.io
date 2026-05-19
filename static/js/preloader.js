@@ -23,8 +23,6 @@
         canvas.width  = window.innerWidth;
         canvas.height = window.innerHeight;
     }
-    resize();
-    window.addEventListener('resize', resize);
 
     // ── Particles ─────────────────────────────────────────────
     var PARTICLE_COUNT = Math.min(80, Math.floor(window.innerWidth / 16));
@@ -49,7 +47,6 @@
             });
         }
     }
-    createParticles();
 
     // Primary colour cycling (matches site theme)
     var colours = ['102,126,234', '118,75,162', '240,147,251', '79,172,254'];
@@ -109,8 +106,6 @@
             }
         }
     }
-
-    draw();
 
     // ── Status messages ────────────────────────────────────────
     var msgs = [
@@ -179,8 +174,17 @@
     }
 
     // ── Sequence ──────────────────────────────────────────────
-    // Start the text reveal after a tiny delay so canvas is painting
-    setTimeout(revealText, 200);
+    
+    // Defer initialization to avoid blocking the main thread parsing
+    requestAnimationFrame(function() {
+        resize();
+        window.addEventListener('resize', resize);
+        createParticles();
+        draw();
+        
+        // Start the text reveal after a tiny delay so canvas is painting
+        setTimeout(revealText, 200);
+    });
 
     // Hard fallback: if DOMContentLoaded has already fired, boot immediately
     if (document.readyState !== 'loading') {
