@@ -787,6 +787,16 @@
 
     window.addEventListener('scroll', function () {
         var maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+        if (maxScroll > 0) {
+            var dock = document.getElementById('orbitDock');
+            if (dock) {
+                if (maxScroll - window.scrollY < 150) {
+                    dock.classList.add('hidden');
+                } else {
+                    dock.classList.remove('hidden');
+                }
+            }
+        }
         if (maxScroll <= 0 || !progressRing) return;
         var pct    = Math.min(1, window.scrollY / maxScroll);
         var offset = circumference * (1 - pct);
