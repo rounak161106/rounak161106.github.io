@@ -272,6 +272,8 @@ if (contactForm) {
                 formStatus.innerHTML = '<i class="fas fa-check-circle"></i> Message sent successfully! I\'ll get back to you soon.';
                 formStatus.style.display = 'block';
                 contactForm.reset();
+                // Celebration confetti
+                if (typeof fireConfetti === 'function') fireConfetti(submitBtn);
             } else {
                 throw new Error('Form submission failed');
             }
@@ -344,18 +346,7 @@ function throttle(func, limit) {
     };
 }
 
-// Apply throttling to parallax
-const parallaxEffect = throttle(() => {
-    const scrolled = window.pageYOffset;
-    const parallaxElements = document.querySelectorAll('.gradient-orb');
-    
-    parallaxElements.forEach((element, index) => {
-        const speed = 0.5 + (index * 0.1);
-        element.style.transform = `translateY(${scrolled * speed}px)`;
-    });
-}, 16); // 60fps
-
-window.addEventListener('scroll', parallaxEffect);
+// Parallax removed — CSS orb-morph animations handle movement now
 
 
 
@@ -521,3 +512,95 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// ===== SECTION DIVIDER DRAW-IN ANIMATION =====
+const dividerObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+            dividerObserver.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.3 });
+
+document.querySelectorAll('.section-divider').forEach(d => dividerObserver.observe(d));
+
+// ===== STAGGERED CARD CASCADE REVEALS =====
+const cascadeObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const cards = entry.target.querySelectorAll('.project-card, .cert-card');
+            cards.forEach((card, i) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = `opacity 0.6s ease ${i * 0.1}s, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${i * 0.1}s`;
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    });
+                });
+            });
+            cascadeObserver.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.projects-grid, .cert-grid').forEach(g => cascadeObserver.observe(g));
+
+// ===== CONFETTI CELEBRATION (form success) =====
+function fireConfetti(originEl) {
+    const canvas = document.createElement('canvas');
+    canvas.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:99999;';
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    document.body.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+
+    const colors = ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#00f2fe', '#22c55e', '#fbbf24'];
+    const particles = [];
+    const rect = originEl ? originEl.getBoundingClientRect() : { left: canvas.width / 2, top: canvas.height / 2, width: 0, height: 0 };
+    const cx = rect.left + (rect.width || 0) / 2;
+    const cy = rect.top + (rect.height || 0) / 2;
+
+    for (let i = 0; i < 80; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 3 + Math.random() * 6;
+        particles.push({
+            x: cx, y: cy,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed - 2,
+            size: 3 + Math.random() * 5,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            alpha: 1,
+            decay: 0.012 + Math.random() * 0.01,
+            rotation: Math.random() * 360,
+            rotSpeed: (Math.random() - 0.5) * 10
+        });
+    }
+
+    let frame;
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let alive = false;
+        particles.forEach(p => {
+            if (p.alpha <= 0) return;
+            alive = true;
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.12;
+            p.alpha -= p.decay;
+            p.rotation += p.rotSpeed;
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rotation * Math.PI / 180);
+            ctx.globalAlpha = Math.max(0, p.alpha);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+            ctx.restore();
+        });
+        if (alive) frame = requestAnimationFrame(animate);
+        else { cancelAnimationFrame(frame); canvas.remove(); }
+    }
+    animate();
+}
+window.fireConfetti = fireConfetti;
