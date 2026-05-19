@@ -5,6 +5,9 @@ node_modules/
 .DS_Store
 Thumbs.db
 
+# Cloudflare Worker (keep out of public repo)
+cloudflare-worker/
+
 # Development artifacts
 scratch*.js
 replace_skills.js

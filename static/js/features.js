@@ -786,6 +786,16 @@
         '<nav class="orbit-dock" id="orbitDock" aria-label="Quick launch dock">' +
             '<div class="orbit-dock-inner">' +
 
+                '<button class="orbit-item orbit-item--ai" id="dockAi" aria-label="Chat with Rounak AI">' +
+                    '<div class="orbit-icon">' +
+                        '<i class="fas fa-robot"></i>' +
+                        '<span class="orbit-ai-dot"></span>' +
+                    '</div>' +
+                    '<span class="orbit-label">Ask AI</span>' +
+                '</button>' +
+
+                '<div class="orbit-divider"></div>' +
+
                 '<button class="orbit-item orbit-item--dev" id="dockDev" aria-label="Open Dev Activity">' +
                     '<div class="orbit-icon">' +
                         '<i class="fas fa-bolt"></i>' +
@@ -853,11 +863,16 @@
 
     var dockDev  = document.getElementById('dockDev');
     var dockBlog = document.getElementById('dockBlog');
+    var dockAi   = document.getElementById('dockAi');
     var dockCmd  = document.getElementById('dockCmd');
 
     dockClick(dockDev,  openDev,  '#818cf8');
     dockClick(dockBlog, openBlog, '#fb923c');
+    dockClick(dockAi,   function () { if (window._chatbotToggle) window._chatbotToggle(); }, '#a78bfa');
     dockClick(dockCmd,  openCmd,  null);
+
+    // Register dock button with chatbot for active-state styling
+    if (window._chatbotSetDockBtn) window._chatbotSetDockBtn(dockAi);
 
     // ── scroll progress ring ─────────────────────────────────────────
     var progressRing = document.querySelector('.orbit-progress-ring');
