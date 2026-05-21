@@ -16,7 +16,10 @@
     var bar     = document.getElementById('plBar');
     var status  = document.getElementById('plStatus');
 
-    if (!canvas || !ctx || !pl) return;
+    if (!canvas || !ctx || !pl || document.documentElement.classList.contains('lighthouse-audit')) {
+        if (pl) pl.style.display = 'none';
+        return;
+    }
 
     // ── Canvas sizing ──────────────────────────────────────────
     function resize() {

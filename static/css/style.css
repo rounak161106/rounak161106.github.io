@@ -1489,6 +1489,7 @@ body:hover .cursor-follower {
     grid-template-columns: 1fr 1.2fr;
     gap: 4rem;
     margin-top: 3rem;
+    align-items: stretch;
 }
 
 .contact-info h3 {
@@ -1556,8 +1557,20 @@ body:hover .cursor-follower {
 }
 
 .contact-form {
-    display: grid;
-    gap: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    flex-grow: 1;
+}
+
+.form-group-full {
+    width: 100%;
+}
+
+@media (max-width: 576px) {
+    .contact-form {
+        height: auto;
+    }
 }
 
 .form-group {
@@ -1567,23 +1580,23 @@ body:hover .cursor-follower {
 .form-group input,
 .form-group textarea {
     width: 100%;
-    padding: 1.2rem 1.2rem 1.2rem 3.5rem;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(102, 126, 234, 0.2);
+    padding: 1rem 1.25rem 1rem 3rem;
+    background: rgba(15, 23, 42, 0.55) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
     border-radius: var(--radius-md);
     color: var(--text-primary);
     font-family: var(--font-primary);
-    font-size: 1rem;
+    font-size: 0.95rem;
     transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    backdrop-filter: blur(10px);
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: var(--primary-color);
-    background: rgba(102, 126, 234, 0.08);
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.12),
-                0 0 20px rgba(102, 126, 234, 0.1);
+    border-color: var(--primary-color) !important;
+    background: rgba(102, 126, 234, 0.06) !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15) !important;
     transform: translateY(-1px);
 }
 
@@ -1610,15 +1623,29 @@ body:hover .cursor-follower {
 
 .form-group i {
     position: absolute;
-    left: 1.2rem;
-    top: 1.2rem;
+    left: 1.15rem;
+    top: 50%;
+    transform: translateY(-50%);
     color: var(--primary-color);
-    font-size: 1.2rem;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.form-group textarea ~ i {
+    top: 1.5rem;
+    transform: none;
+}
+
+.form-group input:focus ~ i,
+.form-group textarea:focus ~ i {
+    color: var(--accent-color);
+    text-shadow: 0 0 8px rgba(167, 139, 250, 0.6);
 }
 
 .form-group textarea {
     resize: vertical;
-    min-height: 150px;
+    min-height: 120px;
 }
 
 .form-status {
@@ -1949,4 +1976,201 @@ body:hover .cursor-follower {
         background: white;
         color: black;
     }
+}
+
+/* ===== PREMIUM SECTION BACKGROUNDS ===== */
+.about, .skills, .projects, .certifications, .contact {
+    position: relative;
+    overflow: hidden;
+}
+
+.about .container, .skills .container, .projects .container, .certifications .container, .contact .container {
+    position: relative;
+    z-index: 2;
+}
+
+/* About Dot Grid */
+.about::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: radial-gradient(rgba(102, 126, 234, 0.15) 1px, transparent 1px);
+    background-size: 24px 24px;
+    mask-image: radial-gradient(circle at center, black, transparent 80%);
+    -webkit-mask-image: radial-gradient(circle at center, black, transparent 80%);
+    opacity: 0.7;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Skills Fade-out Grid and Glows */
+.skills::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(circle at 80% 20%, rgba(240, 147, 251, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.08) 0%, transparent 50%);
+    z-index: 0;
+    pointer-events: none;
+}
+.skills::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(circle at 50% 50%, black, transparent 70%);
+    -webkit-mask-image: radial-gradient(circle at 50% 50%, black, transparent 70%);
+    opacity: 0.8;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Projects Slowly Rotating Glow */
+.projects::before {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    top: -50%;
+    left: -50%;
+    background: radial-gradient(circle at 30% 30%, rgba(118, 75, 162, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 70% 70%, rgba(79, 172, 254, 0.06) 0%, transparent 40%);
+    animation: bg-rotate 35s linear infinite;
+    z-index: 0;
+    pointer-events: none;
+}
+@keyframes bg-rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Certifications Ambient Glow */
+.certifications::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(circle at 50% 10%, rgba(240, 147, 251, 0.04) 0%, transparent 50%),
+                radial-gradient(circle at 10% 90%, rgba(102, 126, 234, 0.04) 0%, transparent 50%),
+                radial-gradient(circle at 90% 90%, rgba(0, 242, 254, 0.03) 0%, transparent 50%);
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Contact Grid and Glows */
+.contact::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(circle at 10% 20%, rgba(102, 126, 234, 0.08) 0%, transparent 45%),
+                radial-gradient(circle at 90% 80%, rgba(240, 147, 251, 0.08) 0%, transparent 45%);
+    z-index: 0;
+    pointer-events: none;
+    background-size: 200% 200%;
+    animation: contactGlowDrift 15s ease-in-out infinite alternate;
+}
+
+/* Sweeping diagonal glass reflection light beam */
+.contact::after {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%; width: 200%; height: 200%;
+    background: linear-gradient(45deg, transparent 45%, rgba(102, 126, 234, 0.02) 48%, rgba(240, 147, 251, 0.03) 50%, rgba(102, 126, 234, 0.02) 52%, transparent 55%);
+    z-index: 0;
+    pointer-events: none;
+    animation: sweepLight 10s ease-in-out infinite;
+}
+
+@keyframes contactGlowDrift {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 100% 100%; }
+}
+
+@keyframes sweepLight {
+    0% { transform: translate(-15%, -15%) rotate(0deg); }
+    50% { transform: translate(15%, 15%) rotate(4deg); }
+    100% { transform: translate(-15%, -15%) rotate(0deg); }
+}
+
+/* ===== HIGH-END CONTACT FORM SPICINESS ===== */
+.contact-form-wrapper {
+    position: relative;
+    padding: 1.8rem 2rem;
+    background: transparent !important;
+    border: none !important;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group-textarea {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group-textarea textarea {
+    flex-grow: 1;
+    resize: none !important;
+}
+
+/* Rotating glowing border overlay */
+.contact-form-wrapper::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%; width: 200%; height: 200%;
+    background: conic-gradient(from 0deg at 50% 50%, transparent, var(--primary-color), transparent, var(--accent-color), transparent);
+    animation: rotate-border 6s linear infinite;
+    z-index: -2;
+    pointer-events: none;
+    opacity: 0.45;
+}
+
+/* Dark glass fill layer */
+.contact-form-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 2px; left: 2px; right: 2px; bottom: 2px;
+    background: var(--bg-card);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: calc(var(--radius-lg) - 2px);
+    z-index: -1;
+}
+
+@keyframes rotate-border {
+    100% { transform: rotate(360deg); }
+}
+
+.form-group input,
+.form-group textarea {
+    background: rgba(12, 14, 32, 0.6) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    backdrop-filter: blur(10px);
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    background: rgba(102, 126, 234, 0.06) !important;
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 15px rgba(102, 126, 234, 0.2) !important;
+}
+
+/* ===== CUSTOM CONFETTI PARTICLES ===== */
+.custom-confetti-particle {
+    position: fixed;
+    top: -20px;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    z-index: 99999;
+    pointer-events: none;
+    animation: confetti-fall linear forwards;
+}
+@keyframes confetti-fall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
 }

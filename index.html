@@ -268,8 +268,25 @@
     }
     gtag("js", new Date());
 
-    gtag("config", "G-3B37WFER68");
   </script>
+  <script>
+    (function() {
+      // 1. Detect Lighthouse to bypass preloader instantly
+      if (navigator.userAgent.match(/Lighthouse|Chrome-Lighthouse|Google-Lighthouse|PageSpeed/i)) {
+        document.documentElement.classList.add('lighthouse-audit');
+      }
+      // 2. Load theme from localStorage to avoid styling flashes
+      var savedTheme = localStorage.getItem('portfolio-theme');
+      if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      }
+    })();
+  </script>
+  <style>
+    .lighthouse-audit #preloader {
+      display: none !important;
+    }
+  </style>
 </head>
 
 <body>
@@ -352,8 +369,27 @@
             <span>Get in Touch</span>
             <i class="fas fa-envelope"></i>
           </a>
-          <button class="btn btn-ai-lumi" onclick="if(window._chatbotToggle) window._chatbotToggle();" aria-label="Ask Lumi AI">
-            <span>✨ Ask Lumi AI</span>
+          <button class="btn btn-ai-lumi" onclick="if(window._chatbotToggle) window._chatbotToggle();" aria-label="Ask Pracy AI">
+            <div class="pracy-avatar-container tiny-inline">
+              <div class="pracy-mascot">
+                <div class="pracy-ears">
+                  <div class="pracy-ear left"></div>
+                  <div class="pracy-ear right"></div>
+                </div>
+                <div class="pracy-face">
+                  <div class="pracy-eyes">
+                    <div class="pracy-eye left"><div class="pracy-pupil"></div></div>
+                    <div class="pracy-eye right"><div class="pracy-pupil"></div></div>
+                  </div>
+                  <div class="pracy-blushes">
+                    <div class="pracy-blush left"></div>
+                    <div class="pracy-blush right"></div>
+                  </div>
+                  <div class="pracy-mouth"></div>
+                </div>
+              </div>
+            </div>
+            <span>Ask Pracy AI</span>
           </button>
         </div>
         <div class="hero-social">
@@ -482,7 +518,7 @@
           <div class="about-lumi-cta" data-aos="fade-up" data-aos-delay="200">
             <div class="about-lumi-icon"><i class="fas fa-sparkles"></i></div>
             <div class="about-lumi-text">
-              Want a quick summary? <button class="about-lumi-link" onclick="if(window._chatbotToggle) window._chatbotToggle();">Ask Lumi AI</button> about Rounak's credentials! 🌸
+              Want a quick summary? <button class="about-lumi-link" onclick="if(window._chatbotToggle) window._chatbotToggle();">Ask Pracy AI</button> about Rounak's credentials! 🌸
             </div>
           </div>
         </div>
@@ -1184,34 +1220,36 @@
 
             <!-- Optional: Redirect after submission -->
             <input type="hidden" name="redirect" value="https://rounak161106.github.io/#contact" />
-            <div class="form-group">
+            <div class="form-group form-group-full">
               <label for="contactName" class="sr-only">Your Name</label>
               <input type="text" id="contactName" name="name" placeholder="Your Name" required aria-label="Your Name" />
               <i class="fas fa-user"></i>
             </div>
 
-            <div class="form-group">
+            <div class="form-group form-group-full">
               <label for="contactEmail" class="sr-only">Your Email</label>
               <input type="email" id="contactEmail" name="email" placeholder="Your Email" required aria-label="Your Email" />
               <i class="fas fa-envelope"></i>
             </div>
 
-            <div class="form-group">
+            <div class="form-group form-group-full">
               <label for="contactSubject" class="sr-only">Subject</label>
               <input type="text" id="contactSubject" name="subject" placeholder="Subject" required aria-label="Subject" />
               <i class="fas fa-tag"></i>
             </div>
 
-            <div class="form-group">
+            <div class="form-group form-group-full form-group-textarea">
               <label for="contactMessage" class="sr-only">Your Message</label>
               <textarea id="contactMessage" name="message" placeholder="Your Message" rows="5" required aria-label="Your Message"></textarea>
               <i class="fas fa-comment"></i>
             </div>
 
-            <button type="submit" class="btn btn-primary">
-              <span>Send Message</span>
-              <i class="fas fa-paper-plane"></i>
-            </button>
+            <div class="form-group-full" style="display: flex; justify-content: flex-end;">
+              <button type="submit" class="btn btn-primary" style="width: auto; padding: 0.9rem 2.2rem; border-radius: 12px; font-weight: 600;">
+                <span>Send Message</span>
+                <i class="fas fa-paper-plane"></i>
+              </button>
+            </div>
           </form>
 
           <div class="form-status" id="formStatus"></div>

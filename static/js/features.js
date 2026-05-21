@@ -182,6 +182,28 @@
     cmdOvEl = document.getElementById('cmdOverlay');
     var cmdIn = document.getElementById('cmdInput');
     var cmdLs = document.getElementById('cmdList');
+    
+    // Expose control API for AI/Chatbot
+    window.portfolioControl = {
+        openDev: function() { openDev(); },
+        openBlog: function() { openBlog(); },
+        openCmd: function() {
+            if (cmdOvEl) {
+                cmdOvEl.classList.add('open');
+                if (cmdIn) {
+                    cmdIn.value = '';
+                    cmdIn.focus();
+                }
+                renderCmd('');
+            }
+        },
+        closeAllOverlays: function() {
+            if (devOvEl) devOvEl.classList.remove('open');
+            if (blogOvEl) blogOvEl.classList.remove('open');
+            if (cmdOvEl) cmdOvEl.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+    };
     var cmdIdx = 0, cmdFilt = commands.slice();
 
     function renderCmd(q) {
@@ -702,12 +724,30 @@
         '<nav class="orbit-dock" id="orbitDock" aria-label="Quick launch dock">' +
             '<div class="orbit-dock-inner">' +
                 '<div class="orbit-ai-tooltip" id="dockAiTooltip">' +
-                    '<span>Hi, I\'m Lumi! Let\'s chat! ✨</span>' +
+                    '<span>Hi, I\'m Pracy! Let\'s chat! ✨</span>' +
                     '<button class="orbit-ai-tooltip-close" id="dockAiTooltipClose" aria-label="Dismiss">&times;</button>' +
                 '</div>' +
-                '<button class="orbit-item orbit-item--ai" id="dockAi" aria-label="Chat with Lumi AI">' +
+                '<button class="orbit-item orbit-item--ai" id="dockAi" aria-label="Chat with Pracy AI">' +
                     '<div class="orbit-icon">' +
-                        '<i class="fas fa-robot"></i>' +
+                        '<div class="pracy-avatar-container tiny-inline" style="transform: scale(0.55); margin: 0; display: inline-flex;">' +
+                            '<div class="pracy-mascot">' +
+                                '<div class="pracy-ears">' +
+                                    '<div class="pracy-ear left"></div>' +
+                                    '<div class="pracy-ear right"></div>' +
+                                '</div>' +
+                                '<div class="pracy-face">' +
+                                    '<div class="pracy-eyes">' +
+                                        '<div class="pracy-eye left"><div class="pracy-pupil"></div></div>' +
+                                        '<div class="pracy-eye right"><div class="pracy-pupil"></div></div>' +
+                                    '</div>' +
+                                    '<div class="pracy-blushes">' +
+                                        '<div class="pracy-blush left"></div>' +
+                                        '<div class="pracy-blush right"></div>' +
+                                    '</div>' +
+                                    '<div class="pracy-mouth"></div>' +
+                                '</div>' +
+                            '</div>' +
+                        '</div>' +
                         '<span class="orbit-ai-dot"></span>' +
                     '</div>' +
                     '<span class="orbit-label">Ask AI</span>' +
