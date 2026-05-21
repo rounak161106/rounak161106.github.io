@@ -28,124 +28,175 @@
     var sessionId = 'pracy_' + Date.now() + '_' + Math.random().toString(36).slice(2,8);
 
     // -- PRACY -- KAWAII CHIBI SPRITE --────────────────────────────────────────
-    // -- PRACY -- KAWAII CHIBI SPRITE (hair + cute anime face) ------
-    // 3 tall hair spikes, animated side strands, big sparkly eyes,
-    // star hair clip, eyelashes, blush, cute smile.
-    function getPracyAvatarHTML(isSmall) {
-        var sizeClass = isSmall ? 'small' : '';
-        var mainId   = isSmall ? '' : ' id="pracy-main-body"';
-
-        var svg =
-            '<svg class="pracy-svg" viewBox="0 0 72 80" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    function getPracyAvatarHTML(isSmall, isStatic) {
+        var sizeClass = isSmall ? 'pracy-avatar-small-img' : 'pracy-avatar-welcome-img';
+        var frameClass = isSmall ? 'pracy-avatar-small-frame' : 'pracy-avatar-welcome-frame';
+        var glowClass = isSmall ? 'avatar-small-glow' : 'avatar-welcome-glow';
+        
+        var svgHTML = 
+            '<svg class="pracy-svg-mascot state-idle ' + sizeClass + '" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">' +
                 '<defs>' +
-                    '<linearGradient id="pg-hair" x1="0%" y1="0%" x2="0%" y2="100%">' +
-                        '<stop offset="0%" stop-color="#a78bfa"/>' +
-                        '<stop offset="40%" stop-color="#7c3aed"/>' +
-                        '<stop offset="100%" stop-color="#4c1d95"/>' +
+                    '<linearGradient id="cyberHairGrad" x1="0%" y1="0%" x2="100%" y2="100%">' +
+                        '<stop offset="0%" stop-color="#c084fc" />' +
+                        '<stop offset="50%" stop-color="#f472b6" />' +
+                        '<stop offset="100%" stop-color="#22d3ee" />' +
                     '</linearGradient>' +
-                    '<radialGradient id="pg-face" cx="50%" cy="30%" r="70%">' +
-                        '<stop offset="0%" stop-color="#fffafd"/>' +
-                        '<stop offset="85%" stop-color="#ffe4f2"/>' +
-                        '<stop offset="100%" stop-color="#fbcfe8"/>' +
-                    '</radialGradient>' +
-                    '<linearGradient id="pg-eye" x1="0%" y1="0%" x2="0%" y2="100%">' +
-                        '<stop offset="0%" stop-color="#3b82f6"/>' +
-                        '<stop offset="45%" stop-color="#6366f1"/>' +
-                        '<stop offset="100%" stop-color="#1e1b4b"/>' +
+                    '<linearGradient id="cyberEyeGrad" x1="0%" y1="0%" x2="0%" y2="100%">' +
+                        '<stop offset="0%" stop-color="#f472b6" />' +
+                        '<stop offset="100%" stop-color="#8b5cf6" />' +
                     '</linearGradient>' +
-                    '<linearGradient id="pg-halo" x1="0%" y1="0%" x2="100%" y2="0%">' +
-                        '<stop offset="0%" stop-color="#f472b6"/>' +
-                        '<stop offset="100%" stop-color="#60a5fa"/>' +
+                    '<linearGradient id="cyberSuitGrad" x1="0%" y1="0%" x2="100%" y2="100%">' +
+                        '<stop offset="0%" stop-color="#1e1e38" />' +
+                        '<stop offset="100%" stop-color="#0f172a" />' +
                     '</linearGradient>' +
+                    '<filter id="cyberNeonGlow" x="-20%" y="-20%" width="140%" height="140%">' +
+                        '<feGaussianBlur stdDeviation="2.5" result="blur" />' +
+                        '<feMerge>' +
+                            '<feMergeNode in="blur" />' +
+                            '<feMergeNode in="SourceGraphic" />' +
+                        '</feMerge>' +
+                    '</filter>' +
                 '</defs>' +
-
-                '<g class="pracy-body-group"' + mainId + '>' +
-                    '<ellipse cx="36" cy="76" rx="16" ry="2" fill="rgba(99, 102, 241, 0.18)"/>' +
-
-                    '<g class="pracy-halo-group">' +
-                        '<ellipse cx="36" cy="9" rx="14" ry="3.5" fill="none" stroke="url(#pg-halo)" stroke-width="1.8" stroke-dasharray="3,1.5" opacity="0.9"/>' +
-                        '<ellipse cx="36" cy="9" rx="14" ry="3.5" fill="none" stroke="#fff" stroke-width="0.8" opacity="0.6"/>' +
+                
+                '<!-- Background Solid projection ring that acts as visual boundary frame -->' +
+                '<circle cx="50" cy="53" r="39" fill="rgba(12, 10, 24, 0.9)" stroke="rgba(167, 139, 250, 0.4)" stroke-width="1.8" />' +
+                
+                '<!-- Background Cyber Orbit Ring -->' +
+                '<g class="cyber-ring-group">' +
+                    '<circle cx="50" cy="53" r="44" fill="none" stroke="rgba(167, 139, 250, 0.15)" stroke-width="0.8" />' +
+                    '<circle cx="50" cy="53" r="44" fill="none" stroke="#ec4899" stroke-width="1.2" stroke-dasharray="10 15" class="cyber-dashed-ring" />' +
+                '</g>' +
+                
+                '<!-- Floating Holographic Hexagons / Particles -->' +
+                '<g class="cyber-particles">' +
+                    '<polygon points="12,30 15,28 18,30 18,34 15,36 12,34" fill="#22d3ee" opacity="0.5" class="float-hex-1" />' +
+                    '<polygon points="82,45 85,43 88,45 88,49 85,51 82,49" fill="#f472b6" opacity="0.5" class="float-hex-2" />' +
+                '</g>' +
+                
+                '<!-- Cybernetic Floating Headset Rings / Halo -->' +
+                '<ellipse cx="50" cy="18" rx="20" ry="3.5" fill="none" stroke="#22d3ee" stroke-width="1.5" filter="url(#cyberNeonGlow)" class="cyber-halo" />' +
+                
+                '<!-- MAIN CHARACTER GROUP -->' +
+                '<g class="mascot-character">' +
+                    '<!-- Suit / Collar / Shoulders -->' +
+                    '<g class="mascot-suit">' +
+                        '<path d="M 32,82 Q 32,70 50,68 Q 68,70 68,82 Z" fill="url(#cyberSuitGrad)" stroke="rgba(255,255,255,0.05)" />' +
+                        '<path d="M 38,70 L 44,76 L 50,70 L 56,76 L 62,70" fill="none" stroke="#ec4899" stroke-width="1.8" filter="url(#cyberNeonGlow)" />' +
+                        '<polygon points="50,72 53,77 50,82 47,77" fill="#22d3ee" filter="url(#cyberNeonGlow)" />' +
                     '</g>' +
-
-                    '<path d="M14,30 C14,12 58,12 58,30 L58,74 C58,75 56,76 54,75 C46,72 38,71 36,71 C34,71 26,72 18,75 C16,76 14,75 14,74 Z" fill="url(#pg-hair)"/>' +
-
-                    '<path d="M24,58 L48,58 L45,76 L27,76 Z" fill="#6366f1"/>' +
-                    '<path d="M28,58 L36,66 L44,58 Z" fill="#ffffff"/>' +
-                    '<path d="M33,60 L39,60 L36,63 Z" fill="#fb7185"/>' +
-
-                    '<ellipse cx="36" cy="43" rx="17.5" ry="15.5" fill="url(#pg-face)" stroke="rgba(244, 63, 94, 0.15)" stroke-width="0.7"/>' +
-
-                    '<path d="M14,30 C18,22 54,22 58,30 L58,36 Q36,32 14,36 Z" fill="url(#pg-hair)"/>' +
-                    '<path d="M14,35 Q19,50 19,55 Q17,50 14,35" fill="url(#pg-hair)"/>' +
-                    '<path d="M58,35 Q53,50 53,55 Q55,50 58,35" fill="url(#pg-hair)"/>' +
-
-                    '<g class="pracy-ear-left-group" style="transform-origin: 15px 32px;">' +
-                        '<path d="M14,30 C13,46 16,58 17,73 C17,75 15,76 14,74 C12,62 11,46 11,30 Z" fill="url(#pg-hair)"/>' +
+                    
+                    '<!-- Neck -->' +
+                    '<path d="M 46,65 L 46,72 L 54,72 L 54,65 Z" fill="#ffe5db" />' +
+                    
+                    '<!-- Left Waving Arm/Hand Group -->' +
+                    '<g class="left-arm-group">' +
+                        '<!-- Arm Sleeve -->' +
+                        '<path d="M 32,70 Q 24,72 20,63" fill="none" stroke="#22d3ee" stroke-width="4.5" stroke-linecap="round" />' +
+                        '<!-- Cuff -->' +
+                        '<path d="M 21,64 L 19,61" stroke="#ec4899" stroke-width="1.8" stroke-linecap="round" />' +
+                        '<!-- Hand Glove -->' +
+                        '<circle cx="19" cy="59" r="2.8" fill="#ffffff" stroke="#3b82f6" stroke-width="0.8" />' +
                     '</g>' +
-                    '<g class="pracy-ear-right-group" style="transform-origin: 57px 32px;">' +
-                        '<path d="M58,30 C59,46 56,58 55,73 C55,75 57,76 58,74 C60,62 61,46 61,30 Z" fill="url(#pg-hair)"/>' +
+                    
+                    '<!-- Right Arm/Hand Group -->' +
+                    '<g class="right-arm-group">' +
+                        '<!-- Arm Sleeve -->' +
+                        '<path d="M 68,70 Q 76,72 80,63" fill="none" stroke="#22d3ee" stroke-width="4.5" stroke-linecap="round" />' +
+                        '<!-- Cuff -->' +
+                        '<path d="M 79,64 L 81,61" stroke="#ec4899" stroke-width="1.8" stroke-linecap="round" />' +
+                        '<!-- Hand Glove -->' +
+                        '<circle cx="81" cy="59" r="2.8" fill="#ffffff" stroke="#3b82f6" stroke-width="0.8" />' +
                     '</g>' +
-
-                    '<path d="M18,26 Q36,21 54,26" fill="none" stroke="rgba(255, 255, 255, 0.45)" stroke-width="2.5" stroke-linecap="round"/>' +
-                    '<path d="M22,29 Q36,25 50,29" fill="none" stroke="rgba(255, 255, 255, 0.25)" stroke-width="1.2" stroke-linecap="round"/>' +
-
-                    '<g class="pracy-heart">' +
-                        '<path d="M18,28 L19.2,30 L21.5,30.2 L19.8,31.8 L20.2,34 L18,32.8 L15.8,34 L16.2,31.8 L14.5,30.2 L16.8,30 Z" fill="#fbbf24"/>' +
+                    
+                    '<!-- Head Group (contains face, eyes, mouth, hair) -->' +
+                    '<g class="mascot-head-group">' +
+                        '<!-- Back hair -->' +
+                        '<path d="M 28,52 Q 22,25 50,22 Q 78,25 72,52 L 74,78 Q 70,82 66,72 L 64,52 L 36,52 L 34,72 Q 30,82 26,78 Z" fill="url(#cyberHairGrad)" />' +
+                        
+                        '<!-- Face Base (Skin) -->' +
+                        '<path d="M 33,48 C 33,35 67,35 67,48 C 67,60 58,66 50,66 C 42,66 33,60 33,48 Z" fill="#ffe5db" />' +
+                        
+                        '<!-- Cute Cheek Blush -->' +
+                        '<ellipse cx="38" cy="55" rx="5" ry="2.5" fill="#ff2e93" opacity="0.6" />' +
+                        '<ellipse cx="62" cy="55" rx="5" ry="2.5" fill="#ff2e93" opacity="0.6" />' +
+                        
+                        '<!-- Sparkly Anime Eyes -->' +
+                        '<g class="mascot-eyes">' +
+                            '<!-- Left Eye -->' +
+                            '<g class="left-eye-group">' +
+                                '<ellipse cx="41" cy="48" rx="5.5" ry="7.5" fill="url(#cyberEyeGrad)" />' +
+                                '<ellipse cx="41" cy="48" rx="4" ry="6" fill="#020617" />' +
+                                '<circle cx="39.2" cy="44.8" r="1.8" fill="#ffffff" />' +
+                                '<circle cx="42.8" cy="50.8" r="0.9" fill="#ffffff" />' +
+                                '<path d="M 35,46 Q 41,42.5 47,46" fill="none" stroke="#020617" stroke-width="2" stroke-linecap="round" />' +
+                            '</g>' +
+                            '<!-- Right Eye -->' +
+                            '<g class="right-eye-group">' +
+                                '<ellipse cx="59" cy="48" rx="5.5" ry="7.5" fill="url(#cyberEyeGrad)" />' +
+                                '<ellipse cx="59" cy="48" rx="4" ry="6" fill="#020617" />' +
+                                '<circle cx="57.2" cy="44.8" r="1.8" fill="#ffffff" />' +
+                                '<circle cx="60.8" cy="50.8" r="0.9" fill="#ffffff" />' +
+                                '<path d="M 53,46 Q 59,42.5 65,46" fill="none" stroke="#020617" stroke-width="2" stroke-linecap="round" />' +
+                            '</g>' +
+                        '</g>' +
+                        
+                        '<!-- Cute Eyebrows -->' +
+                        '<path d="M 36,41.5 Q 41,39.5 45,42.5" fill="none" stroke="#020617" stroke-width="1" stroke-linecap="round" />' +
+                        '<path d="M 55,42.5 Q 59,39.5 64,41.5" fill="none" stroke="#020617" stroke-width="1" stroke-linecap="round" />' +
+                        
+                        '<!-- State-based Cute Mouths (High Contrast) -->' +
+                        '<path d="M 48,58 Q 50,60 52,58" fill="none" stroke="#ff1493" stroke-width="2" stroke-linecap="round" class="mouth-idle" />' +
+                        '<ellipse cx="50" cy="58" rx="2" ry="2.8" fill="none" stroke="#ff1493" stroke-width="2" class="mouth-thinking" />' +
+                        '<path d="M 46,57 Q 50,63 54,57" fill="#ff4d94" stroke="#ff1493" stroke-width="1.5" stroke-linecap="round" class="mouth-happy" />' +
+                        '<path d="M 47,58 Q 50,61 53,58" fill="none" stroke="#ff1493" stroke-width="2" stroke-linecap="round" class="mouth-greet" />' +
+                        
+                        '<!-- Cybernetic Cheek Decals -->' +
+                        '<path d="M 34,51 L 36,53" stroke="#22d3ee" stroke-width="1" stroke-linecap="round" />' +
+                        '<path d="M 66,51 L 64,53" stroke="#22d3ee" stroke-width="1" stroke-linecap="round" />' +
+                        
+                        '<!-- Cute Cyber Hairclips / Star clips -->' +
+                        '<g filter="url(#cyberNeonGlow)">' +
+                            '<polygon points="31,38 33,39 32,41 30,41 29,39" fill="#ec4899" />' +
+                            '<polygon points="69,38 71,39 70,41 68,41 67,39" fill="#22d3ee" />' +
+                        '</g>' +
+                        
+                        '<!-- Front Hair (Bangs & side locks framing face) -->' +
+                        '<path d="M 33,40 Q 50,33 67,40 Q 67,46 64,52 Q 62,38 50,38 Q 38,38 36,52 Q 33,46 33,40" fill="url(#cyberHairGrad)" />' +
+                        '<path d="M 30,40 Q 25,58 31,68 Q 33,68 32,58 Z" fill="url(#cyberHairGrad)" />' +
+                        '<path d="M 70,40 Q 75,58 69,68 Q 67,68 68,58 Z" fill="url(#cyberHairGrad)" />' +
+                        
+                        '<!-- Shiny Hair Highlights (Anime gloss effect) -->' +
+                        '<ellipse cx="43" cy="33" rx="3.5" ry="1.8" fill="#ffffff" opacity="0.75" transform="rotate(-15 43 33)" />' +
+                        '<ellipse cx="57" cy="33" rx="3.5" ry="1.8" fill="#ffffff" opacity="0.75" transform="rotate(15 57 33)" />' +
                     '</g>' +
-                    '<g class="pracy-heart" style="transform: scale(0.85) translate(41px, -3px); transform-origin: 18px 28px;">' +
-                        '<path d="M18,28 L19.2,30 L21.5,30.2 L19.8,31.8 L20.2,34 L18,32.8 L15.8,34 L16.2,31.8 L14.5,30.2 L16.8,30 Z" fill="#fbbf24"/>' +
+                    
+                    '<!-- Glowing Cybernetic Ear Headphones -->' +
+                    '<g class="cyber-headphones">' +
+                        '<circle cx="28" cy="48" r="4.5" fill="#1e1e38" stroke="#22d3ee" stroke-width="1.5" filter="url(#cyberNeonGlow)" />' +
+                        '<circle cx="28" cy="48" r="2" fill="#ec4899" />' +
+                        '<circle cx="72" cy="48" r="4.5" fill="#1e1e38" stroke="#22d3ee" stroke-width="1.5" filter="url(#cyberNeonGlow)" />' +
+                        '<circle cx="72" cy="48" r="2" fill="#ec4899" />' +
                     '</g>' +
-
-                    '<g class="pracy-eye-left-group">' +
-                        '<path d="M19,39 C22,34 30,34 33,39" stroke="#1e1b4b" stroke-width="2.6" stroke-linecap="round" fill="none"/>' +
-                        '<path d="M19,39 C18,37 17,38 17,40" stroke="#1e1b4b" stroke-width="1.2" stroke-linecap="round" fill="none"/>' +
-                        '<ellipse cx="26" cy="43.5" rx="5.6" ry="6.2" fill="url(#pg-eye)"/>' +
-                        '<circle cx="24.2" cy="41" r="1.9" fill="white" opacity="0.95"/>' +
-                        '<circle cx="28.2" cy="46" r="0.9" fill="white" opacity="0.75"/>' +
-                        '<circle cx="24.5" cy="46.2" r="0.5" fill="white" opacity="0.5"/>' +
-                    '</g>' +
-
-                    '<g class="pracy-eye-right-group">' +
-                        '<path d="M39,39 C42,34 50,34 53,39" stroke="#1e1b4b" stroke-width="2.6" stroke-linecap="round" fill="none"/>' +
-                        '<path d="M53,39 C54,37 55,38 55,40" stroke="#1e1b4b" stroke-width="1.2" stroke-linecap="round" fill="none"/>' +
-                        '<ellipse cx="46" cy="43.5" rx="5.6" ry="6.2" fill="url(#pg-eye)"/>' +
-                        '<circle cx="44.2" cy="41" r="1.9" fill="white" opacity="0.95"/>' +
-                        '<circle cx="48.2" cy="46" r="0.9" fill="white" opacity="0.75"/>' +
-                        '<circle cx="44.5" cy="46.2" r="0.5" fill="white" opacity="0.5"/>' +
-                    '</g>' +
-
-                    '<g opacity="0.65">' +
-                        '<ellipse cx="21" cy="50" rx="4.5" ry="2.2" fill="#fda4af" opacity="0.45"/>' +
-                        '<line x1="19.5" y1="48.5" x2="21.5" y2="51.5" stroke="#f43f5e" stroke-width="0.8" stroke-linecap="round"/>' +
-                        '<line x1="21.5" y1="48.5" x2="23.5" y2="51.5" stroke="#f43f5e" stroke-width="0.8" stroke-linecap="round"/>' +
-                        '<ellipse cx="51" cy="50" rx="4.5" ry="2.2" fill="#fda4af" opacity="0.45"/>' +
-                        '<line x1="49.5" y1="48.5" x2="51.5" y2="51.5" stroke="#f43f5e" stroke-width="0.8" stroke-linecap="round"/>' +
-                        '<line x1="51.5" y1="48.5" x2="53.5" y2="51.5" stroke="#f43f5e" stroke-width="0.8" stroke-linecap="round"/>' +
-                    '</g>' +
-
-                    '<path d="M33.5,49.5 C34.5,52.5 37.5,52.5 38.5,49.5 C38.5,49.5 38.5,52.5 36,53 C33.5,52.5 33.5,49.5 33.5,49.5 Z" fill="#fb7185"/>' +
-                    '<path d="M35,50 Q36,51.2 37,50" stroke="#f43f5e" stroke-width="0.6" fill="none"/>' +
-                    '<path d="M35.5,47 Q36,48 36.5,47" stroke="#fb7185" stroke-width="0.8" stroke-linecap="round" fill="none"/>' +
-
-                    (isSmall ? '' :
-                        '<text class="pracy-star-1" x="64" y="24" font-size="9" fill="#fbcfe8">&#10022;</text>' +
-                        '<text class="pracy-star-2" x="2"  y="40" font-size="7" fill="#ddd6fe">&#10022;</text>' +
-                        '<text class="pracy-star-3" x="62" y="62" font-size="6" fill="#fef08a">&#10022;</text>'
-                    ) +
-
                 '</g>' +
             '</svg>';
 
-        return '<div class="pracy-avatar-container ' + sizeClass + '">' + svg + '</div>';
+        return '<div class="' + frameClass + '">' +
+                   '<div class="' + glowClass + '"></div>' +
+                   svgHTML +
+               '</div>';
+    }
+
+    function triggerMascotState(state) {
+        var svgs = document.querySelectorAll('.pracy-svg-mascot');
+        svgs.forEach(function(svg) {
+            svg.classList.remove('state-idle', 'state-thinking', 'state-happy', 'state-greet');
+            svg.classList.add('state-' + state);
+        });
     }
 
     function bouncePracy() {
-        var body = document.getElementById('pracy-main-body');
-        if (!body) return;
-        body.classList.remove('bouncing');
-        void body.offsetWidth;
-        body.classList.add('bouncing');
-        setTimeout(function() { body.classList.remove('bouncing'); }, 650);
+        triggerMascotState('happy');
+        setTimeout(function() { triggerMascotState('idle'); }, 2500);
     }
 
 
@@ -289,15 +340,15 @@
     function scrapePortfolioDOM() {
         var data = [];
 
-        // Scrape sections
+        // Scrape sections list
         var sections = document.querySelectorAll('section[id]');
+        var sectionIds = [];
         sections.forEach(function (sec) {
-            var id = sec.id;
-            var textContent = sec.textContent.replace(/\s+/g, ' ').trim();
-            if (textContent.length > 50) {
-                data.push('[Section: ' + id + '] ' + textContent.substring(0, 1500));
-            }
+            sectionIds.push(sec.id);
         });
+        if (sectionIds.length > 0) {
+            data.push('[Sections Available on Page]: ' + sectionIds.join(', '));
+        }
 
         // Scrape project cards
         var projectCards = document.querySelectorAll('.project-card');
@@ -409,7 +460,7 @@
         panel.id = 'chatPanel';
         panel.innerHTML =
             '<div class="chat-header">' +
-                '<div class="chat-avatar">' + getPracyAvatarHTML(true) + '</div>' +
+                '<div class="chat-avatar">' + getPracyAvatarHTML(true, false) + '</div>' +
                 '<div class="chat-header-info">' +
                     '<div class="chat-header-name">Pracy AI</div>' +
                     '<div class="chat-header-status">' +
@@ -422,7 +473,7 @@
             '</div>' +
             '<div class="chat-messages" id="chatMessages">' +
                 '<div class="chat-welcome">' +
-                    '<div class="chat-welcome-icon">' + getPracyAvatarHTML(false) + '</div>' +
+                    '<div class="chat-welcome-icon">' + getPracyAvatarHTML(false, false) + '</div>' +
                     '<h4>Hi! I\'m Pracy ✨</h4>' +
                     '<p>Rounak\'s AI assistant — ask me anything about his skills, projects, experience or just explore below!</p>' +
                     '<div class="pracy-chip-grid" id="chatSuggestions">' +
@@ -468,6 +519,12 @@
         chatBackdrop.classList.add('open');
         if (dockAiBtn) dockAiBtn.classList.add('chat-active');
         
+        // Trigger greet animation
+        triggerMascotState('greet');
+        setTimeout(function() {
+            if (chatOpen) triggerMascotState('idle');
+        }, 2500);
+
         // Hide and clear inactivity tooltip on open
         var tooltip = document.getElementById('dockAiTooltip');
         if (tooltip) tooltip.classList.remove('show');
@@ -526,7 +583,7 @@
         var msgDiv = document.createElement('div');
         msgDiv.className = 'chat-msg chat-msg--' + type;
 
-        var avatarContent = type === 'ai' ? getPracyAvatarHTML(true) : '👤';
+        var avatarContent = type === 'ai' ? getPracyAvatarHTML(true, true) : '👤';
         var bubbleContent = '';
         
         if (type === 'ai') {
@@ -571,18 +628,19 @@
         var msgDiv = document.createElement('div');
         msgDiv.className = 'chat-msg chat-msg--ai chat-msg--error';
         msgDiv.innerHTML =
-            '<div class="chat-msg-avatar">' + getPracyAvatarHTML(true) + '</div>' +
+            '<div class="chat-msg-avatar">' + getPracyAvatarHTML(true, true) + '</div>' +
             '<div class="chat-msg-bubble">' + escapeHtml(text) + '</div>';
         chatMessages.appendChild(msgDiv);
         scrollToBottom();
     }
 
     function showTyping() {
+        triggerMascotState('thinking');
         var typingDiv = document.createElement('div');
         typingDiv.className = 'chat-typing';
         typingDiv.id = 'chatTypingIndicator';
         typingDiv.innerHTML =
-            '<div class="chat-msg-avatar">' + getPracyAvatarHTML(true) + '</div>' +
+            '<div class="chat-msg-avatar">' + getPracyAvatarHTML(true, true) + '</div>' +
             '<div class="chat-typing-dots">' +
                 '<span class="chat-typing-dot"></span>' +
                 '<span class="chat-typing-dot"></span>' +
@@ -593,6 +651,7 @@
     }
 
     function hideTyping() {
+        triggerMascotState('idle');
         var indicator = document.getElementById('chatTypingIndicator');
         if (indicator) indicator.remove();
     }
@@ -628,6 +687,83 @@
         var div = document.createElement('div');
         div.appendChild(document.createTextNode(text));
         return div.innerHTML;
+    }
+
+
+    // ── LOCAL ACTION INTERCEPTS (run 100% offline, no API needed) ─────
+    function localFillFormAction() {
+        var friendlyName = userName || 'Pracy\'s Friend';
+        var friendlyEmail = userName
+            ? (userName.toLowerCase().replace(/\s+/g, '') + '@example.com')
+            : 'friend@example.com';
+        var msgs = [
+            "Hi Rounak, I loved exploring your beautiful portfolio! Pracy is incredible, and I'd love to connect.",
+            "Hey Rounak, your ML/AI projects are outstanding. I filled this form using Pracy's local automation. Let's chat!",
+            "Hello! Your portfolio design and vector mascot are breathtaking. I'm highly impressed by your skills.",
+            "Hi there Rounak! Pracy filled this out for me. I wanted to say how gorgeous and responsive this portfolio is!"
+        ];
+        var randomMsg = msgs[Math.floor(Math.random() * msgs.length)];
+        addMessage("Certainly! Watch the screen — I'll autofill the contact form right now using my local automation pipelines! 🌸", 'ai');
+        setTimeout(function() {
+            ghostFillContactForm({
+                name: friendlyName,
+                email: friendlyEmail,
+                subject: 'Connecting from your gorgeous portfolio!',
+                message: randomMsg
+            });
+        }, 1200);
+    }
+
+    function respondWithOfflineFallback(userMessage) {
+        // Called when the Gemini API quota is exceeded — gives a smart local answer
+        showTyping();
+        setTimeout(function() {
+            hideTyping();
+            isTyping = false;
+            chatSendBtn.disabled = false;
+
+            var t = userMessage.toLowerCase();
+            var reply = '';
+            var actionToRun = null;
+            var actionParams = {};
+
+            if (/fill.*form|autofill/i.test(t)) {
+                localFillFormAction();
+                return;
+            } else if (/celebrate|confetti/i.test(t)) {
+                reply = 'Woohoo! 🎉 Let\'s celebrate! Here\'s a shower of gorgeous confetti just for you! 🌸';
+                actionToRun = 'trigger_confetti';
+            } else if (/education|college|university|study|iit|lpu|degree/i.test(t)) {
+                reply = 'Rounak is currently pursuing two degrees simultaneously:\n\n1. **BS in Data Science & Applications** from **IIT Madras** (CGPA: 9/10)\n2. **B.Tech CSE (Data Science & ML)** from **Lovely Professional University** (CGPA: 10/10)\n\nHe\'s maintaining top grades in both! 🎓';
+                actionToRun = 'scroll_to_section'; actionParams = { section: 'about' };
+            } else if (/project|flask|article|work/i.test(t)) {
+                reply = 'Rounak has built several outstanding projects, including a **Flask Article App** — a full-stack publishing platform with SQLite/SQLAlchemy, deployed live on Render. Check the Projects section! 💻';
+                actionToRun = 'scroll_to_section'; actionParams = { section: 'projects' };
+            } else if (/skill|python|pytorch|tensorflow|ml|machine learning|expert/i.test(t)) {
+                reply = 'Rounak is highly skilled in **AI & Machine Learning** (PyTorch, TensorFlow, Computer Vision, NLP), **Data Analytics** (Pandas, NumPy, Power BI) and full-stack **Python/JavaScript** development! 💡';
+                actionToRun = 'scroll_to_section'; actionParams = { section: 'skills' };
+            } else if (/certif|award|stanford|deeplearning|credential/i.test(t)) {
+                reply = 'Rounak holds **13 certifications**, including the **Stanford & DeepLearning.AI Machine Learning Specialization** (Jan 2026) and IIT Madras Foundation Level Programming (Dec 2025)! 🏆';
+                actionToRun = 'scroll_to_section'; actionParams = { section: 'certificates' };
+            } else if (/contact|email|reach|social|twitter|github/i.test(t)) {
+                reply = 'You can reach Rounak at **rounak16112006@gmail.com** or fill out the contact form below. I can also autofill it for you — just ask! 📩';
+                actionToRun = 'scroll_to_section'; actionParams = { section: 'contact' };
+            } else if (/who is|rounak|about/i.test(t)) {
+                reply = 'Rounak Prasad is an aspiring Data Scientist & ML Engineer based in Jalandhar, India. He\'s dual-enrolled at IIT Madras and LPU with exceptional academic records! 👤';
+            } else if (/hi|hello|hey|greetings|pracy/i.test(t)) {
+                reply = 'Hello! 🤗 I\'m Pracy, Rounak\'s AI assistant. How can I help you today? Ask me about his education, skills, projects, or let me autofill the contact form! 🌸';
+                triggerMascotState('greet');
+                setTimeout(function() { triggerMascotState('idle'); }, 4000);
+            } else {
+                reply = 'I\'m running in **offline mode** right now (Gemini API quota limit reached). But I can still help! Ask me about Rounak\'s education, skills, projects, certifications, or say **"fill the contact form for me"** — that works 100% locally! 🌸';
+            }
+
+            conversationHistory.push({ role: 'model', parts: [{ text: reply }] });
+            addMessage(reply, 'ai');
+            if (actionToRun) {
+                setTimeout(function() { runAIAction(actionToRun, actionParams); }, 500);
+            }
+        }, 900);
     }
 
 
@@ -671,10 +807,28 @@
             body: JSON.stringify(requestBody),
         })
         .then(function (res) {
-            if (res.status === 429) throw new Error('RATE_LIMIT');
-            if (res.status === 403) throw new Error('FORBIDDEN');
-            if (!res.ok) throw new Error('API error: ' + res.status);
-            return res.json();
+            if (res.ok) {
+                return res.json();
+            }
+            return res.json().then(function(errData) {
+                var errMsg = 'API Error ' + res.status;
+                if (errData && errData.error) {
+                    if (typeof errData.error === 'string') {
+                        errMsg = errData.error;
+                    } else if (errData.error.message) {
+                        errMsg = errData.error.message;
+                    }
+                }
+                var errObj = new Error(errMsg);
+                errObj.status = res.status;
+                errObj.details = errData;
+                throw errObj;
+            }).catch(function(e) {
+                if (e.status) throw e;
+                var errObj = new Error('API Error ' + res.status);
+                errObj.status = res.status;
+                throw errObj;
+            });
         })
         .then(function (data) {
             hideTyping();
@@ -694,16 +848,25 @@
             addMessage(aiText, 'ai');
         })
         .catch(function (err) {
-            hideTyping();
-            isTyping = false;
-            chatSendBtn.disabled = false;
             console.error('Chatbot error:', err);
-            if (err.message === 'RATE_LIMIT') {
-                addErrorMessage('The AI is receiving too many requests right now. Please wait 30-60 seconds and try again.');
-            } else if (err.message === 'FORBIDDEN') {
-                addErrorMessage('Access denied — the request origin is not authorized.');
+
+            // Detect quota / rate-limit / any server error — gracefully fall back locally
+            var isApiError = err.status === 429 || err.status === 400 ||
+                err.status === 403 || err.status === 500 ||
+                (err.message && (
+                    err.message.indexOf('quota') !== -1 ||
+                    err.message.indexOf('limit') !== -1 ||
+                    err.message.indexOf('exceeded') !== -1
+                ));
+
+            if (isApiError) {
+                // Don't show ugly error — respond smartly from local knowledge
+                respondWithOfflineFallback(userMessage);
             } else {
-                addErrorMessage('Connection error — please try again in a moment.');
+                hideTyping();
+                isTyping = false;
+                chatSendBtn.disabled = false;
+                addErrorMessage(err.message || 'Connection error — please try again in a moment.');
             }
         });
     }
@@ -733,6 +896,24 @@
 
         // Route to name handler if awaiting name
         if (awaitingName) { addMessage(text, "user"); chatInput.value = ""; chatInput.style.height = "auto"; handleNameInput(text); return; }
+
+        // Intercept purely local actions typed by the user
+        if (/fill.*form|autofill/i.test(text)) {
+            addMessage(text, 'user');
+            chatInput.value = ''; chatInput.style.height = 'auto';
+            hideSuggestions(); bouncePracy();
+            localFillFormAction();
+            return;
+        }
+        if (/celebrate|confetti/i.test(text)) {
+            addMessage(text, 'user');
+            chatInput.value = ''; chatInput.style.height = 'auto';
+            hideSuggestions(); bouncePracy();
+            addMessage('Woohoo! 🎉 Here\'s a shower of gorgeous confetti just for you! 🌸', 'ai');
+            triggerConfetti();
+            return;
+        }
+
         addMessage(text, 'user');
         chatInput.value = '';
         chatInput.style.height = 'auto';
@@ -854,13 +1035,15 @@
         });
     }
 
+
+
     function renderWelcomeOrNamePrompt() {
         var welcomeDiv = chatMessages.querySelector('.chat-welcome');
         if (!welcomeDiv) return;
 
         if (awaitingName) {
             welcomeDiv.innerHTML = 
-                '<div class="chat-welcome-icon">' + getPracyAvatarHTML(false) + '</div>' +
+                '<div class="chat-welcome-icon">' + getPracyAvatarHTML(false, false) + '</div>' +
                 '<h4>Hi there! I\'m Pracy ✨</h4>' +
                 '<p class="name-prompt-text">I\'d love to get to know you first! What is your lovely name? 🌸</p>';
             if (chatInput) {
@@ -868,7 +1051,7 @@
             }
         } else {
             welcomeDiv.innerHTML = 
-                '<div class="chat-welcome-icon">' + getPracyAvatarHTML(false) + '</div>' +
+                '<div class="chat-welcome-icon">' + getPracyAvatarHTML(false, false) + '</div>' +
                 '<h4>Welcome back, ' + userName + '! 🥰</h4>' +
                 '<p>It\'s so wonderful to see you again! Ask me anything about Rounak, or select one of these suggestions:</p>' +
                 '<div class="pracy-chip-grid" id="chatSuggestions">' +
@@ -887,12 +1070,14 @@
                 chatInput.placeholder = "Ask about Rounak...";
             }
         }
+
+
     }
 
     function updateMascotsAcrossPage() {
         var legacyMascots = document.querySelectorAll('.pracy-avatar-container.tiny-inline');
         legacyMascots.forEach(function(container) {
-            container.innerHTML = getPracyAvatarHTML(true);
+            container.innerHTML = getPracyAvatarHTML(true, true);
             container.style.display = 'inline-flex';
             container.style.alignItems = 'center';
             container.style.justifyContent = 'center';
@@ -914,6 +1099,8 @@
         initElements();
         renderWelcomeOrNamePrompt();
         updateMascotsAcrossPage();
+
+
         if (userName) {
             recordVisitToServer(userName);
         }
@@ -947,6 +1134,18 @@
             addMessage(q, 'user');
             hideSuggestions();
             bouncePracy();
+
+            // Intercept local-only actions so they NEVER need the API
+            if (/fill.*form|autofill/i.test(q)) {
+                localFillFormAction();
+                return;
+            }
+            if (/celebrate|confetti/i.test(q)) {
+                addMessage('Woohoo! 🎉 Here\'s a shower of gorgeous confetti just for you! 🌸', 'ai');
+                triggerConfetti();
+                return;
+            }
+
             // If asking about projects, scroll first then reply
             if (/project/i.test(q)) {
                 var projSec = document.getElementById('projects');

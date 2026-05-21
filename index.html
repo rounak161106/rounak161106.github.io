@@ -1211,6 +1211,168 @@
               <i class="fab fa-twitter"></i>
             </a>
           </div>
+          <!-- Pracy AI Interactive Widget -->
+          <div class="pracy-contact-widget" data-aos="fade-up" data-aos-delay="200">
+            <div class="pracy-hologram-container">
+              <svg id="pracyContactMascotSvg" class="pracy-svg-mascot state-idle pracy-hologram-canvas" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="cyberHairGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#c084fc" />
+                    <stop offset="50%" stop-color="#f472b6" />
+                    <stop offset="100%" stop-color="#22d3ee" />
+                  </linearGradient>
+                  <linearGradient id="cyberEyeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#f472b6" />
+                    <stop offset="100%" stop-color="#8b5cf6" />
+                  </linearGradient>
+                  <linearGradient id="cyberSuitGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#1e1e38" />
+                    <stop offset="100%" stop-color="#0f172a" />
+                  </linearGradient>
+                  <filter id="cyberNeonGlow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="2.5" result="blur" />
+                    <feMerge>
+                      <feMergeNode in="blur" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
+                </defs>
+
+                <!-- Background Solid projection ring that acts as visual boundary frame -->
+                <circle cx="50" cy="53" r="39" fill="rgba(12, 10, 24, 0.9)" stroke="rgba(167, 139, 250, 0.4)" stroke-width="1.8" />
+
+                <!-- Background Cyber Orbit Ring -->
+                <g class="cyber-ring-group">
+                  <circle cx="50" cy="53" r="44" fill="none" stroke="rgba(167, 139, 250, 0.15)" stroke-width="0.8" />
+                  <circle cx="50" cy="53" r="44" fill="none" stroke="#ec4899" stroke-width="1.2" stroke-dasharray="10 15" class="cyber-dashed-ring" />
+                </g>
+
+                <!-- Floating Holographic Hexagons / Particles -->
+                <g class="cyber-particles">
+                  <polygon points="12,30 15,28 18,30 18,34 15,36 12,34" fill="#22d3ee" opacity="0.5" class="float-hex-1" />
+                  <polygon points="82,45 85,43 88,45 88,49 85,51 82,49" fill="#f472b6" opacity="0.5" class="float-hex-2" />
+                </g>
+
+                <!-- Cybernetic Floating Headset Rings / Halo -->
+                <ellipse cx="50" cy="18" rx="20" ry="3.5" fill="none" stroke="#22d3ee" stroke-width="1.5" filter="url(#cyberNeonGlow)" class="cyber-halo" />
+
+                <!-- MAIN CHARACTER GROUP -->
+                <g class="mascot-character">
+                  <!-- Suit / Collar / Shoulders -->
+                  <g class="mascot-suit">
+                    <path d="M 32,82 Q 32,70 50,68 Q 68,70 68,82 Z" fill="url(#cyberSuitGrad)" stroke="rgba(255,255,255,0.05)" />
+                    <path d="M 38,70 L 44,76 L 50,70 L 56,76 L 62,70" fill="none" stroke="#ec4899" stroke-width="1.8" filter="url(#cyberNeonGlow)" />
+                    <polygon points="50,72 53,77 50,82 47,77" fill="#22d3ee" filter="url(#cyberNeonGlow)" />
+                  </g>
+
+                  <!-- Neck -->
+                  <path d="M 46,65 L 46,72 L 54,72 L 54,65 Z" fill="#ffe5db" />
+
+                  <!-- Left Waving Arm/Hand Group -->
+                  <g class="left-arm-group">
+                    <!-- Arm Sleeve -->
+                    <path d="M 32,70 Q 24,72 20,63" fill="none" stroke="#22d3ee" stroke-width="4.5" stroke-linecap="round" />
+                    <!-- Cuff -->
+                    <path d="M 21,64 L 19,61" stroke="#ec4899" stroke-width="1.8" stroke-linecap="round" />
+                    <!-- Hand Glove -->
+                    <circle cx="19" cy="59" r="2.8" fill="#ffffff" stroke="#3b82f6" stroke-width="0.8" />
+                  </g>
+
+                  <!-- Right Arm/Hand Group -->
+                  <g class="right-arm-group">
+                    <!-- Arm Sleeve -->
+                    <path d="M 68,70 Q 76,72 80,63" fill="none" stroke="#22d3ee" stroke-width="4.5" stroke-linecap="round" />
+                    <!-- Cuff -->
+                    <path d="M 79,64 L 81,61" stroke="#ec4899" stroke-width="1.8" stroke-linecap="round" />
+                    <!-- Hand Glove -->
+                    <circle cx="81" cy="59" r="2.8" fill="#ffffff" stroke="#3b82f6" stroke-width="0.8" />
+                  </g>
+
+                  <!-- Head Group (contains face, eyes, mouth, hair) -->
+                  <g class="mascot-head-group">
+                    <!-- Back hair -->
+                    <path d="M 28,52 Q 22,25 50,22 Q 78,25 72,52 L 74,78 Q 70,82 66,72 L 64,52 L 36,52 L 34,72 Q 30,82 26,78 Z" fill="url(#cyberHairGrad)" />
+
+                    <!-- Face Base (Skin) -->
+                    <path d="M 33,48 C 33,35 67,35 67,48 C 67,60 58,66 50,66 C 42,66 33,60 33,48 Z" fill="#ffe5db" />
+
+                    <!-- Cute Cheek Blush -->
+                    <ellipse cx="38" cy="55" rx="5" ry="2.5" fill="#ff2e93" opacity="0.6" />
+                    <ellipse cx="62" cy="55" rx="5" ry="2.5" fill="#ff2e93" opacity="0.6" />
+
+                    <!-- Sparkly Anime Eyes -->
+                    <g class="mascot-eyes">
+                      <!-- Left Eye -->
+                      <g class="left-eye-group">
+                        <ellipse cx="41" cy="48" rx="5.5" ry="7.5" fill="url(#cyberEyeGrad)" />
+                        <ellipse cx="41" cy="48" rx="4" ry="6" fill="#020617" />
+                        <circle cx="39.2" cy="44.8" r="1.8" fill="#ffffff" />
+                        <circle cx="42.8" cy="50.8" r="0.9" fill="#ffffff" />
+                        <path d="M 35,46 Q 41,42.5 47,46" fill="none" stroke="#020617" stroke-width="2" stroke-linecap="round" />
+                      </g>
+                      <!-- Right Eye -->
+                      <g class="right-eye-group">
+                        <ellipse cx="59" cy="48" rx="5.5" ry="7.5" fill="url(#cyberEyeGrad)" />
+                        <ellipse cx="59" cy="48" rx="4" ry="6" fill="#020617" />
+                        <circle cx="57.2" cy="44.8" r="1.8" fill="#ffffff" />
+                        <circle cx="60.8" cy="50.8" r="0.9" fill="#ffffff" />
+                        <path d="M 53,46 Q 59,42.5 65,46" fill="none" stroke="#020617" stroke-width="2" stroke-linecap="round" />
+                      </g>
+                    </g>
+
+                    <!-- Cute Eyebrows -->
+                    <path d="M 36,41.5 Q 41,39.5 45,42.5" fill="none" stroke="#020617" stroke-width="1" stroke-linecap="round" />
+                    <path d="M 55,42.5 Q 59,39.5 64,41.5" fill="none" stroke="#020617" stroke-width="1" stroke-linecap="round" />
+
+                    <!-- State-based Cute Mouths (High Contrast) -->
+                    <path d="M 48,58 Q 50,60 52,58" fill="none" stroke="#ff1493" stroke-width="2" stroke-linecap="round" class="mouth-idle" />
+                    <ellipse cx="50" cy="58" rx="2" ry="2.8" fill="none" stroke="#ff1493" stroke-width="2" class="mouth-thinking" />
+                    <path d="M 46,57 Q 50,63 54,57" fill="#ff4d94" stroke="#ff1493" stroke-width="1.5" stroke-linecap="round" class="mouth-happy" />
+                    <path d="M 47,58 Q 50,61 53,58" fill="none" stroke="#ff1493" stroke-width="2" stroke-linecap="round" class="mouth-greet" />
+
+                    <!-- Cybernetic Cheek Decals -->
+                    <path d="M 34,51 L 36,53" stroke="#22d3ee" stroke-width="1" stroke-linecap="round" />
+                    <path d="M 66,51 L 64,53" stroke="#22d3ee" stroke-width="1" stroke-linecap="round" />
+
+                    <!-- Cute Cyber Hairclips / Star clips -->
+                    <g filter="url(#cyberNeonGlow)">
+                      <polygon points="31,38 33,39 32,41 30,41 29,39" fill="#ec4899" />
+                      <polygon points="69,38 71,39 70,41 68,41 67,39" fill="#22d3ee" />
+                    </g>
+
+                    <!-- Front Hair (Bangs & side locks framing face) -->
+                    <path d="M 33,40 Q 50,33 67,40 Q 67,46 64,52 Q 62,38 50,38 Q 38,38 36,52 Q 33,46 33,40" fill="url(#cyberHairGrad)" />
+                    <path d="M 30,40 Q 25,58 31,68 Q 33,68 32,58 Z" fill="url(#cyberHairGrad)" />
+                    <path d="M 70,40 Q 75,58 69,68 Q 67,68 68,58 Z" fill="url(#cyberHairGrad)" />
+
+                    <!-- Shiny Hair Highlights (Anime gloss effect) -->
+                    <ellipse cx="43" cy="33" rx="3.5" ry="1.8" fill="#ffffff" opacity="0.75" transform="rotate(-15 43 33)" />
+                    <ellipse cx="57" cy="33" rx="3.5" ry="1.8" fill="#ffffff" opacity="0.75" transform="rotate(15 57 33)" />
+                  </g>
+
+                  <!-- Glowing Cybernetic Ear Headphones -->
+                  <g class="cyber-headphones">
+                    <circle cx="28" cy="48" r="4.5" fill="#1e1e38" stroke="#22d3ee" stroke-width="1.5" filter="url(#cyberNeonGlow)" />
+                    <circle cx="28" cy="48" r="2" fill="#ec4899" />
+                    <circle cx="72" cy="48" r="4.5" fill="#1e1e38" stroke="#22d3ee" stroke-width="1.5" filter="url(#cyberNeonGlow)" />
+                    <circle cx="72" cy="48" r="2" fill="#ec4899" />
+                  </g>
+                </g>
+              </svg>
+              <div class="hologram-scanlines"></div>
+              <div class="pracy-widget-status">
+                <span class="status-dot pulsing"></span>
+                <span class="status-text">Pracy Online</span>
+              </div>
+            </div>
+            <div class="pracy-widget-info">
+              <h4>Pracy AI Assistant</h4>
+              <p>I can help you navigate, details skills, or even autofill this message form for you! Just say hello. 🌸</p>
+              <button type="button" onclick="window._chatbotToggle && window._chatbotToggle()" class="btn btn-secondary btn-sm pracy-widget-btn">
+                <i class="fas fa-comment-dots"></i> Chat Now
+              </button>
+            </div>
+          </div>
         </div>
 
         <div class="contact-form-wrapper" data-aos="fade-left">

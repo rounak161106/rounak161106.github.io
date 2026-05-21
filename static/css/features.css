@@ -1269,3 +1269,11 @@
 @media (max-width: 480px) {
     .blog-hero h1, .blog-hero h2 { font-size: 1.5rem; }
 }
+
+.orbit-item--ai .orbit-icon {
+    background: rgba(139, 92, 246, 0.15);
+    color: #a78bfa;
+}
+.orbit-item--ai:hover .orbit-icon {
+    box-shadow: 0 0 18px rgba(139, 92, 246, 0.45);
+}

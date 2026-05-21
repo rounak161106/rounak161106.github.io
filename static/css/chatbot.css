@@ -1146,3 +1146,438 @@
     transform: scale(1.015);
     transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
+
+/* ===================================================================
+   HOLOGRAPHIC MASCOT AND CONTACT WIDGET STYLES
+   =================================================================== */
+
+.pracy-contact-widget {
+    display: flex;
+    gap: 1.25rem;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 1.1rem;
+    margin-top: 1.5rem;
+    box-shadow: 
+        0 12px 40px rgba(0, 0, 0, 0.25),
+        0 0 0 1px rgba(255, 255, 255, 0.02) inset;
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s;
+    transform-style: preserve-3d;
+    perspective: 1000px;
+}
+
+.pracy-contact-widget:hover {
+    box-shadow: 
+        0 20px 50px rgba(0, 0, 0, 0.35),
+        0 0 20px rgba(139, 92, 246, 0.25);
+    border-color: rgba(139, 92, 246, 0.3);
+}
+
+.pracy-hologram-container {
+    width: 105px;
+    height: 105px;
+    border-radius: 16px;
+    overflow: visible;
+    position: relative;
+    border: 1.5px solid rgba(139, 92, 246, 0.35);
+    box-shadow: 
+        0 0 20px rgba(139, 92, 246, 0.15),
+        0 4px 10px rgba(0, 0, 0, 0.3);
+    flex-shrink: 0;
+    background: rgba(8, 8, 16, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateZ(25px); /* Push out slightly for 3D parallax depth */
+}
+
+.pracy-hologram-canvas {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.hologram-scanlines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%);
+    background-size: 100% 4px;
+    z-index: 2;
+    opacity: 0.65;
+}
+
+.pracy-widget-status {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%) translateZ(10px);
+    background: rgba(5, 5, 10, 0.85);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 2px 7px;
+    border-radius: 8px;
+    font-size: 0.64rem;
+    white-space: nowrap;
+    z-index: 3;
+    color: #fff;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.status-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #10b981;
+}
+
+.status-dot.pulsing {
+    animation: statusPulse 1.8s infinite ease-in-out;
+}
+
+@keyframes statusPulse {
+    0% { transform: scale(0.9); opacity: 0.6; }
+    50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 6px #10b981; }
+    100% { transform: scale(0.9); opacity: 0.6; }
+}
+
+.pracy-widget-info {
+    flex-grow: 1;
+    text-align: left;
+    transform: translateZ(15px);
+}
+
+.pracy-widget-info h4 {
+    color: #fff;
+    margin-bottom: 0.2rem;
+    font-size: 0.98rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.pracy-widget-info p {
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 0.8rem;
+    line-height: 1.35;
+    margin-bottom: 0.6rem;
+}
+
+.pracy-widget-btn {
+    background: var(--gradient-primary);
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.78rem;
+    padding: 0.38rem 0.9rem;
+    border-radius: 8px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+
+.pracy-widget-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+}
+
+/* Tiny frames for chat bubble & header */
+.pracy-avatar-small-frame {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    position: relative;
+    overflow: visible;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(139, 92, 246, 0.35);
+    background: rgba(10, 10, 20, 0.4);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.pracy-avatar-small-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
+}
+
+/* Welcome Card Big Frame */
+.pracy-avatar-welcome-frame {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    position: relative;
+    overflow: visible;
+    margin: 0 auto 0.75rem;
+    border: 2px solid rgba(139, 92, 246, 0.55);
+    box-shadow: 
+        0 0 20px rgba(139, 92, 246, 0.25),
+        0 4px 12px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(8, 8, 16, 0.6);
+}
+
+.pracy-avatar-welcome-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
+}
+
+/* Mobile responsive layout */
+@media (max-width: 768px) {
+    .pracy-contact-widget {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.25rem;
+        gap: 1rem;
+    }
+    
+    .pracy-widget-info {
+        text-align: center;
+    }
+}
+
+/* ==========================================================================
+   PRACY V3 DYNAMIC VECTOR CYBER-GIRL MASCOT ANIMATIONS (BREAKOUT & WAVING)
+   ========================================================================== */
+
+/* Outer SVG frame sizing and positioning */
+.pracy-svg-mascot {
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: visible;
+    filter: drop-shadow(0 0 8px rgba(167, 139, 250, 0.25));
+    transition: filter 0.3s ease;
+}
+
+.pracy-svg-mascot:hover {
+    filter: drop-shadow(0 0 14px rgba(236, 72, 153, 0.45));
+}
+
+/* Transform Origins for precise rotational and scaling animations */
+.mascot-character {
+    transform-origin: 50px 80px;
+    animation: cyberBreathing 3.6s ease-in-out infinite;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.mascot-head-group {
+    transform-origin: 50px 52px;
+    animation: cyberHeadBob 4.8s ease-in-out infinite;
+}
+
+.left-arm-group {
+    transform-origin: 32px 70px;
+    transition: transform 0.3s ease;
+}
+
+.left-eye-group {
+    transform-origin: 41px 48px;
+    animation: cyberBlink 4.2s infinite;
+}
+
+.right-eye-group {
+    transform-origin: 59px 48px;
+    animation: cyberBlink 4.2s infinite;
+}
+
+.cyber-dashed-ring {
+    transform-origin: 50px 50px;
+    animation: cyberRingRotate 18s linear infinite;
+}
+
+.cyber-halo {
+    transform-origin: 50px 18px;
+    animation: cyberHaloFloat 3s ease-in-out infinite;
+}
+
+.float-hex-1 {
+    transform-origin: 15px 32px;
+    animation: floatHex1 5s ease-in-out infinite;
+}
+
+.float-hex-2 {
+    transform-origin: 85px 47px;
+    animation: floatHex2 6s ease-in-out infinite;
+}
+
+/* 1. Cyber Breathing (Organic body movement) */
+@keyframes cyberBreathing {
+    0%, 100% {
+        transform: translateY(0) scaleY(1);
+    }
+    50% {
+        transform: translateY(-0.8px) scaleY(0.985) scaleX(1.005);
+    }
+}
+
+/* 2. Head Bobbing */
+@keyframes cyberHeadBob {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-0.6px) rotate(1deg);
+    }
+}
+
+/* 3. High-Fidelity Eye Blinking */
+@keyframes cyberBlink {
+    0%, 90%, 94%, 98%, 100% {
+        transform: scaleY(1);
+    }
+    92%, 96% {
+        transform: scaleY(0.08);
+    }
+}
+
+/* 4. Dashed Background Ring Rotation */
+@keyframes cyberRingRotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* 5. Cybernetic Halo Float */
+@keyframes cyberHaloFloat {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+        filter: drop-shadow(0 0 1px #8b5cf6);
+    }
+    50% {
+        transform: translateY(-1.5px) rotate(-1.5deg);
+        filter: drop-shadow(0 0 4px #a78bfa);
+    }
+}
+
+/* 6. Particles Floating */
+@keyframes floatHex1 {
+    0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.3; }
+    50% { transform: translateY(-3px) rotate(10deg); opacity: 0.55; }
+}
+
+@keyframes floatHex2 {
+    0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.4; }
+    50% { transform: translateY(-4px) rotate(-12deg); opacity: 0.65; }
+}
+
+
+/* ==========================================================================
+   DYNAMIC INTERACTIVE MASCOT STATE STYLES
+   ========================================================================== */
+
+/* State-based Mouth & Eye displays */
+.pracy-svg-mascot .mouth-idle,
+.pracy-svg-mascot .mouth-thinking,
+.pracy-svg-mascot .mouth-happy,
+.pracy-svg-mascot .mouth-greet {
+    display: none;
+}
+
+.pracy-svg-mascot .eye-closed-left,
+.pracy-svg-mascot .eye-closed-right {
+    display: none;
+}
+
+/* Default state: Idle */
+.pracy-svg-mascot.state-idle .mouth-idle {
+    display: block;
+}
+
+/* GREET State (3D circle breakout & enthusiastic hand wave!) */
+.pracy-svg-mascot.state-greet .mouth-greet {
+    display: block;
+}
+.pracy-svg-mascot.state-greet .left-eye-group {
+    animation: none;
+    transform: scaleY(0.08); /* Left eye winks cute */
+}
+.pracy-svg-mascot.state-greet .right-eye-group {
+    animation: none;
+    transform: scaleY(1);
+}
+.pracy-svg-mascot.state-greet .mascot-character {
+    animation: popAndGreet 3.5s ease-in-out;
+}
+.pracy-svg-mascot.state-greet .left-arm-group {
+    animation: waveHand 3.5s ease-in-out;
+}
+
+@keyframes popAndGreet {
+    0% { transform: translateY(0) scale(1); }
+    15% { transform: translateY(-13px) scale(1.18); } /* Break out of circle frame! */
+    80% { transform: translateY(-13px) scale(1.18); }
+    100% { transform: translateY(0) scale(1); } /* Float back down smoothly */
+}
+
+@keyframes waveHand {
+    0%, 100% { transform: rotate(0deg); }
+    12% { transform: rotate(-65deg); } /* Swing arm up high */
+    20%, 36%, 52%, 68% { transform: rotate(-85deg); } /* Wave hand back & forth! */
+    28%, 44%, 60%, 76% { transform: rotate(-55deg); }
+    84% { transform: rotate(-65deg); }
+}
+
+/* HAPPY State (Smiling broadly, cute cheek glows & happy bounce!) */
+.pracy-svg-mascot.state-happy .mouth-happy {
+    display: block;
+}
+.pracy-svg-mascot.state-happy .mascot-character {
+    animation: popAndHappy 2.8s ease-in-out;
+}
+.pracy-svg-mascot.state-happy .mascot-head-group {
+    animation: cyberHeadHappy 1.4s ease-in-out infinite;
+}
+
+@keyframes popAndHappy {
+    0% { transform: translateY(0) scale(1); }
+    15% { transform: translateY(-8px) scale(1.12); }
+    85% { transform: translateY(-8px) scale(1.12); }
+    100% { transform: translateY(0) scale(1); }
+}
+
+@keyframes cyberHeadHappy {
+    0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+    30% { transform: translateY(-2px) rotate(2deg) scale(1.02); }
+    70% { transform: translateY(-1px) rotate(-2deg) scale(1.02); }
+}
+
+/* THINKING State (Close eyes peacefully & pulse/spin fast) */
+.pracy-svg-mascot.state-thinking .mouth-thinking {
+    display: block;
+}
+.pracy-svg-mascot.state-thinking .left-eye-group,
+.pracy-svg-mascot.state-thinking .right-eye-group {
+    animation: none;
+    transform: scaleY(0.08);
+}
+.pracy-svg-mascot.state-thinking .cyber-dashed-ring {
+    animation: cyberRingRotate 4s linear infinite;
+}
+.pracy-svg-mascot.state-thinking .cyber-halo {
+    animation: cyberHaloFloatThinking 1.2s ease-in-out infinite;
+}
+@keyframes cyberHaloFloatThinking {
+    0%, 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 2px #3b82f6); }
+    50% { transform: translateY(-2.5px) scale(1.05); filter: drop-shadow(0 0 6px #3b82f6); }
+}
+

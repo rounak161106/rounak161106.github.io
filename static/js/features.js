@@ -728,8 +728,8 @@
                     '<button class="orbit-ai-tooltip-close" id="dockAiTooltipClose" aria-label="Dismiss">&times;</button>' +
                 '</div>' +
                 '<button class="orbit-item orbit-item--ai" id="dockAi" aria-label="Chat with Pracy AI">' +
-                    '<div class="orbit-icon">' +
-                        '<div class="pracy-avatar-container tiny-inline" style="transform: scale(0.55); margin: 0; display: inline-flex;">' +
+                    '<div class="orbit-icon" style="border-radius: 50%; overflow: hidden; border: 1px solid rgba(139, 92, 246, 0.3);">' +
+                        '<div class="pracy-avatar-container tiny-inline" style="margin: 0; display: inline-flex; width: 100%; height: 100%;">' +
                             '<div class="pracy-mascot">' +
                                 '<div class="pracy-ears">' +
                                     '<div class="pracy-ear left"></div>' +
