@@ -305,6 +305,18 @@
 .chat-msg-bubble p { margin-bottom: 0.5rem; }
 .chat-msg-bubble p:last-child { margin-bottom: 0; }
 
+/* Typewriter cursor blink while AI is streaming text */
+.chat-msg-typing-anim::after {
+    content: '▋';
+    display: inline-block;
+    color: var(--primary-color);
+    animation: blink-cursor 0.7s step-end infinite;
+    margin-left: 1px;
+}
+@keyframes blink-cursor {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0; }
+}
 
 /* ===================================================================
    4. TYPING INDICATOR

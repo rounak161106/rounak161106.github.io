@@ -1487,9 +1487,9 @@ body:hover .cursor-follower {
 .contact-content {
     display: grid;
     grid-template-columns: 1fr 1.2fr;
-    gap: 4rem;
-    margin-top: 3rem;
-    align-items: stretch;
+    gap: 2.5rem;
+    margin-top: 2rem;
+    align-items: start;
 }
 
 .contact-info h3 {
@@ -1552,6 +1552,98 @@ body:hover .cursor-follower {
     gap: 1rem;
 }
 
+/* ─── Availability & Response Stats Card ─── */
+.contact-availability-card {
+    margin-top: 1.5rem;
+    padding: 1.25rem 1.4rem;
+    background: rgba(102, 126, 234, 0.06);
+    border: 1px solid rgba(102, 126, 234, 0.18);
+    border-radius: var(--radius-md);
+    backdrop-filter: blur(12px);
+}
+
+.avail-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(52, 211, 153, 0.12);
+    border: 1px solid rgba(52, 211, 153, 0.3);
+    border-radius: 9999px;
+    padding: 0.3rem 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.avail-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #34d399;
+    box-shadow: 0 0 8px #34d399;
+    animation: availPulse 2s ease-in-out infinite;
+}
+
+@keyframes availPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50%       { transform: scale(1.4); opacity: 0.6; }
+}
+
+.avail-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #34d399;
+    letter-spacing: 0.03em;
+}
+
+.contact-response-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.crs-item {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    color: var(--text-secondary);
+    font-size: 0.88rem;
+}
+
+.crs-item i {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(102, 126, 234, 0.15);
+    border-radius: 8px;
+    color: var(--primary-color);
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+.crs-item div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.05rem;
+}
+
+.crs-item strong {
+    color: var(--text-primary);
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+.crs-item span {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.contact-right-col {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
 .contact-form-wrapper {
     position: relative;
 }
@@ -1580,13 +1672,13 @@ body:hover .cursor-follower {
 .form-group input,
 .form-group textarea {
     width: 100%;
-    padding: 1rem 1.25rem 1rem 3rem;
+    padding: 0.8rem 1.1rem 0.8rem 2.8rem;
     background: rgba(15, 23, 42, 0.55) !important;
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
     border-radius: var(--radius-md);
     color: var(--text-primary);
     font-family: var(--font-primary);
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     backdrop-filter: blur(10px);
 }
@@ -1645,7 +1737,7 @@ body:hover .cursor-follower {
 
 .form-group textarea {
     resize: vertical;
-    min-height: 120px;
+    min-height: 90px;
 }
 
 .form-status {
@@ -2096,7 +2188,7 @@ body:hover .cursor-follower {
 /* ===== HIGH-END CONTACT FORM SPICINESS ===== */
 .contact-form-wrapper {
     position: relative;
-    padding: 1.8rem 2rem;
+    padding: 1.25rem 1.5rem;
     background: transparent !important;
     border: none !important;
     border-radius: var(--radius-lg);

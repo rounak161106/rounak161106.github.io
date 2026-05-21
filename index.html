@@ -1197,20 +1197,6 @@
             </div>
           </div>
 
-          <div class="social-links">
-            <a href="https://www.linkedin.com/in/rounakprasad" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="LinkedIn">
-              <i class="fab fa-linkedin-in"></i>
-            </a>
-            <a href="https://github.com/rounak161106" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="GitHub">
-              <i class="fab fa-github"></i>
-            </a>
-            <a href="mailto:rounak16112006@gmail.com" class="social-link" aria-label="Email">
-              <i class="fas fa-envelope"></i>
-            </a>
-            <a href="https://x.com/rou_nak06" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Twitter">
-              <i class="fab fa-twitter"></i>
-            </a>
-          </div>
           <!-- Pracy AI Interactive Widget -->
           <div class="pracy-contact-widget" data-aos="fade-up" data-aos-delay="200">
             <div class="pracy-hologram-container">
@@ -1374,47 +1360,79 @@
             </div>
           </div>
         </div>
+        <div class="contact-right-col" data-aos="fade-left">
+          <div class="contact-form-wrapper">
+            <form class="contact-form" id="contactForm" action="https://api.web3forms.com/submit" method="POST">
+              <!-- ADD THIS HIDDEN INPUT WITH YOUR ACCESS KEY -->
+              <input type="hidden" name="access_key" value="0bb3ca01-4a7e-4278-86ec-85ee902b35fc" />
 
-        <div class="contact-form-wrapper" data-aos="fade-left">
-          <form class="contact-form" id="contactForm" action="https://api.web3forms.com/submit" method="POST">
-            <!-- ADD THIS HIDDEN INPUT WITH YOUR ACCESS KEY -->
-            <input type="hidden" name="access_key" value="0bb3ca01-4a7e-4278-86ec-85ee902b35fc" />
+              <!-- Optional: Redirect after submission -->
+              <input type="hidden" name="redirect" value="https://rounak161106.github.io/#contact" />
+              <div class="form-group form-group-full">
+                <label for="contactName" class="sr-only">Your Name</label>
+                <input type="text" id="contactName" name="name" placeholder="Your Name" required aria-label="Your Name" />
+                <i class="fas fa-user"></i>
+              </div>
 
-            <!-- Optional: Redirect after submission -->
-            <input type="hidden" name="redirect" value="https://rounak161106.github.io/#contact" />
-            <div class="form-group form-group-full">
-              <label for="contactName" class="sr-only">Your Name</label>
-              <input type="text" id="contactName" name="name" placeholder="Your Name" required aria-label="Your Name" />
-              <i class="fas fa-user"></i>
+              <div class="form-group form-group-full">
+                <label for="contactEmail" class="sr-only">Your Email</label>
+                <input type="email" id="contactEmail" name="email" placeholder="Your Email" required aria-label="Your Email" />
+                <i class="fas fa-envelope"></i>
+              </div>
+
+              <div class="form-group form-group-full">
+                <label for="contactSubject" class="sr-only">Subject</label>
+                <input type="text" id="contactSubject" name="subject" placeholder="Subject" required aria-label="Subject" />
+                <i class="fas fa-tag"></i>
+              </div>
+
+              <div class="form-group form-group-full form-group-textarea">
+                <label for="contactMessage" class="sr-only">Your Message</label>
+                <textarea id="contactMessage" name="message" placeholder="Your Message" rows="5" required aria-label="Your Message"></textarea>
+                <i class="fas fa-comment"></i>
+              </div>
+
+              <div class="form-group-full" style="display: flex; justify-content: flex-end;">
+                <button type="submit" class="btn btn-primary" style="width: auto; padding: 0.9rem 2.2rem; border-radius: 12px; font-weight: 600;">
+                  <span>Send Message</span>
+                  <i class="fas fa-paper-plane"></i>
+                </button>
+              </div>
+            </form>
+
+            <div class="form-status" id="formStatus"></div>
+          </div>
+
+          <!-- Availability & Response Stats -->
+          <div class="contact-availability-card">
+            <div class="avail-badge">
+              <span class="avail-dot"></span>
+              <span class="avail-label">Open to Opportunities</span>
             </div>
-
-            <div class="form-group form-group-full">
-              <label for="contactEmail" class="sr-only">Your Email</label>
-              <input type="email" id="contactEmail" name="email" placeholder="Your Email" required aria-label="Your Email" />
-              <i class="fas fa-envelope"></i>
+            <div class="contact-response-stats">
+              <div class="crs-item">
+                <i class="fas fa-clock"></i>
+                <div>
+                  <strong>Response Time</strong>
+                  <span>Within 24 hours</span>
+                </div>
+              </div>
+              <div class="crs-item">
+                <i class="fas fa-briefcase"></i>
+                <div>
+                  <strong>Available For</strong>
+                  <span>Internships &amp; Projects</span>
+                </div>
+              </div>
+              <div class="crs-item">
+                <i class="fas fa-globe"></i>
+                <div>
+                  <strong>Timezone</strong>
+                  <span>IST (UTC +5:30)</span>
+                </div>
+              </div>
             </div>
-
-            <div class="form-group form-group-full">
-              <label for="contactSubject" class="sr-only">Subject</label>
-              <input type="text" id="contactSubject" name="subject" placeholder="Subject" required aria-label="Subject" />
-              <i class="fas fa-tag"></i>
-            </div>
-
-            <div class="form-group form-group-full form-group-textarea">
-              <label for="contactMessage" class="sr-only">Your Message</label>
-              <textarea id="contactMessage" name="message" placeholder="Your Message" rows="5" required aria-label="Your Message"></textarea>
-              <i class="fas fa-comment"></i>
-            </div>
-
-            <div class="form-group-full" style="display: flex; justify-content: flex-end;">
-              <button type="submit" class="btn btn-primary" style="width: auto; padding: 0.9rem 2.2rem; border-radius: 12px; font-weight: 600;">
-                <span>Send Message</span>
-                <i class="fas fa-paper-plane"></i>
-              </button>
-            </div>
-          </form>
-
-          <div class="form-status" id="formStatus"></div>
+          </div>
         </div>
       </div>
     </div>
