@@ -31,6 +31,75 @@
     var formFillStep = null;  // null | 'name' | 'email' | 'message'
     var formFillData = {};    // { name, email, message }
 
+    // ── LOCAL OFFLINE REFRAMER (Super intelligent backup for offline mode) ──
+    function localReframer(goalText, senderName) {
+        var text = goalText.trim();
+
+        // 1. Strip meta-instructions (word count requests, send commands, fill commands)
+        text = text.replace(/(exaggerate|impress|flatter|words|word|count|send\s+it|fill\s+email|random\s+email|fill\s+the\s+email|send\s+the\s+form|send\s+message|hit\s+send|any\s+random\s+one)/gi, '');
+        
+        // Clean up punctuation and double spaces from stripping
+        text = text.replace(/\s+/g, ' ').replace(/\s*([,.!?])\s*/g, '$1 ').trim();
+        text = text.replace(/^[.,!?\s]+|[.,!?\s]+$/g, ''); // strip leading/trailing punctuation
+
+        // 2. Strip leading speech prefixes
+        text = text.replace(/^(saying\s+that|tell\s+that|to\s+say\s+that|say\s+that|that|telling\s+him\s+that|to\s+tell\s+him\s+that|to\s+tell\s+that)/i, '');
+        text = text.trim();
+
+        // Capitalize first letter
+        if (text) {
+            text = text.charAt(0).toUpperCase() + text.slice(1);
+        }
+
+        // 3. Build a beautiful, rich response using smart matching!
+        var low = text.toLowerCase();
+        var body = '';
+
+        if (low.includes('awesome') || low.includes('cool') || low.includes('pracy') || low.includes('like') || low.includes('love') || low.includes('impress') || low.includes('good') || low.includes('great')) {
+            body = "I recently visited your portfolio website and wanted to reach out because I was absolutely blown away by the design and layout! The integration of Pracy AI as your personal chatbot assistant is incredibly cool, fluid, and premium. You have done an outstanding job combining your AI/ML skills with stellar web design, and it truly represents a world-class professional portfolio.";
+        } else if (low.includes('work') || low.includes('collaborate') || low.includes('project') || low.includes('connect')) {
+            body = "I recently came across your outstanding portfolio and was highly impressed by your dual-degree academic journey at IIT Madras and LPU, as well as your strong portfolio of Machine Learning and full-stack projects. I would love to connect, get to know you better, and explore how we could work together on future collaborations or projects.";
+        } else if (low.includes('hire') || low.includes('intern') || low.includes('job') || low.includes('opportunity')) {
+            body = "I am reaching out to discuss potential internship and career opportunities. After reviewing your impressive background, academic achievements, and highly detailed machine learning credentials, I believe your skills in data science, PyTorch, and Python would be a fantastic asset to our team. I would love to schedule a time to chat!";
+        } else {
+            // Fallback: If they provided a generic/custom message, just use it but clean it up nicely
+            body = text || "I recently came across your incredible portfolio and wanted to reach out to connect and explore how we could work together in the future. I am highly impressed by your expertise in Machine Learning, AI, and your outstanding academic achievements.";
+        }
+
+        return body;
+    }
+
+    // ── SUBJECT GENERATOR (always returns a clean professional subject) ──
+    function generateSubject(goalText) {
+        var low = (goalText || '').toLowerCase();
+        if (low.includes('awesome') || low.includes('pracy') || low.includes('cool') || low.includes('love') || low.includes('like') || low.includes('great') || low.includes('good') || low.includes('impress') || low.includes('amazing') || low.includes('incredible') || low.includes('wow')) {
+            return 'Your Portfolio & Pracy AI — Just Wow!';
+        }
+        if (low.includes('collab') || low.includes('collaborate') || low.includes('work together') || low.includes('team up')) {
+            return 'Collaboration Opportunity';
+        }
+        if (low.includes('project') || low.includes('build') || low.includes('develop')) {
+            return 'Project Discussion';
+        }
+        if (low.includes('hire') || low.includes('intern') || low.includes('job') || low.includes('role') || low.includes('opportunity') || low.includes('recruit')) {
+            return 'Internship / Hiring Inquiry';
+        }
+        if (low.includes('connect') || low.includes('network') || low.includes('reach out') || low.includes('get in touch')) {
+            return 'Connecting via Your Portfolio';
+        }
+        if (low.includes('question') || low.includes('ask') || low.includes('query') || low.includes('help')) {
+            return 'Quick Question';
+        }
+        // Generic fallback: take first 5 meaningful words from goal, clean them up
+        var clean = goalText.replace(/(fill|form|random|email|send|it|the|in|about|words?|and|tell|that|him|rounak|please|exaggerate|impress|flatter)/gi, '').trim();
+        var words = clean.split(/\s+/).filter(Boolean).slice(0, 5).join(' ');
+        if (words.length > 3) {
+            return words.charAt(0).toUpperCase() + words.slice(1);
+        }
+        return 'Reaching Out from Your Portfolio';
+    }
+
+
     // -- PRACY -- KAWAII CHIBI SPRITE --────────────────────────────────────────
     function getPracyAvatarHTML(isSmall, isStatic) {
         var sizeClass = isSmall ? 'pracy-avatar-small-img' : 'pracy-avatar-welcome-img';
@@ -743,57 +812,150 @@
     }
 
     function handleFormFillInput(text) {
-        if (formFillStep !== 'collecting') return;
-
         // Parse the single combined response
         var raw = text.trim();
 
-        // Extract email using regex
+        // 1. Extract email or generate a fallback from user name
         var emailMatch = raw.match(/[\w.+-]+@[\w-]+\.[a-z]{2,}/i);
-        var email = emailMatch ? emailMatch[0] : '';
-
-        // Split remaining text (before and after email)
-        var withoutEmail = raw.replace(email, '').replace(/,\s*,/, ',').trim();
-        var parts = withoutEmail.split(/,|\n/).map(function(p) { return p.trim(); }).filter(Boolean);
-
-        var name = parts[0] || '';
-        var goal = parts.slice(1).join(' ').trim() || raw;
-
-        if (!name || !email) {
-            addMessage(
-                "Hmm, I couldn\'t quite parse that. Please share your **name, email, and message** together — for example:\n\n" +
-                "\"Ram, ram@gmail.com, I want to collaborate on a project\"",
-                'ai'
-            );
-            return;
+        var email = '';
+        if (emailMatch) {
+            email = emailMatch[0];
+        } else {
+            // Generate standard/random email using their known name
+            var cleanName = (userName || 'guest').toLowerCase().replace(/[^a-z0-9]/g, '');
+            email = cleanName + '@gmail.com';
         }
+
+        // 2. Split remaining text (before and after email)
+        var withoutEmail = raw.replace(email, '').replace(/,\s*,/, ',').trim();
+        
+        // Strip common "fill form" prefix instructions so they don't get treated as the user's name
+        var cleanedText = withoutEmail.replace(/^(please\s+)?(auto)?fill\s+(the\s+)?form\s*(for\s+)?/i, '')
+                                     .replace(/^fill\s+it\s+in\s+the\s+form\s*(for\s+)?/i, '')
+                                     .replace(/^autofill\s*(for\s+)?/i, '')
+                                     .trim();
+
+        var parts = cleanedText.split(/,|\n/).map(function(p) { return p.trim(); }).filter(Boolean);
+
+        // 3. Extract or use existing name and goal
+        var name = '';
+        var goal = '';
+
+        // If the user's message has multiple comma-separated parts, check if the first part is a name
+        // (usually less than 4 words, and not containing action verbs like "tell", "say", "write")
+        if (parts.length > 1 && parts[0].split(/\s+/).length <= 3 && !/^(tell|say|write|message|send|please|inform)/i.test(parts[0])) {
+            name = parts[0];
+            goal = parts.slice(1).join(' ').trim();
+        } else {
+            name = userName || 'Guest';
+            goal = cleanedText;
+        }
+
+        // Clean up any remaining instructions from the goal (e.g. "tell rounak that", "write a message saying")
+        goal = goal.replace(/^(tell|say|write|message|send|inform)\s+(rounak|him)\s+(that|to|about)?/i, '').trim();
+
+        // 4. Backward-scanning intelligence: If the goal is very short or just an instruction to fill
+        // (like "fill it", "do it", "i already said to fill it"), scan backward in history to find the user's actual goal message!
+        if (/^(fill\s+it|do\s+it|fill|go|send\s+it|i\s+already\s+said\s+to\s+fill\s+it)$/i.test(goal) || goal.length < 8) {
+            for (var i = conversationHistory.length - 1; i >= 0; i--) {
+                var hist = conversationHistory[i];
+                if (hist.role === 'user' && hist.parts && hist.parts[0] && hist.parts[0].text) {
+                    var histText = hist.parts[0].text.trim();
+                    // Ignore short commands
+                    if (histText.length > 15 && !/fill.*form|autofill/i.test(histText)) {
+                        goal = histText.replace(/^(tell|say|write|message|send|inform)\s+(rounak|him)\s+(that|to|about)?/i, '').trim();
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Ensure we capitalized the parsed name correctly
+        name = name.split(' ').map(function(word) {
+            return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+        }).join(' ');
 
         formFillStep = null;
         if (chatInput) chatInput.placeholder = 'Ask about Rounak...';
 
-        // Build a descriptive, structured professional message
-        var polishedMessage =
-            'Hi Rounak,\n\n' +
-            'My name is ' + name + ' and I recently came across your incredible portfolio. ' +
-            goal.charAt(0).toUpperCase() + goal.slice(1).replace(/[.!?]*$/, '') + '. ' +
-            'I was genuinely impressed by your expertise in Machine Learning, AI, and your outstanding academic achievements at IIT Madras and LPU.\n\n' +
-            'I would love to get in touch and explore how we could work together. Please feel free to reach me at ' + email + '.\n\n' +
-            'Looking forward to hearing from you!\n\n' +
-            'Best regards,\n' + name;
+        // Show a crafting indicator immediately
+        addMessage('On it! Crafting your message... ✍️🌸', 'ai', true);
 
-        addMessage(
-            "Got it! Filling the form now — review the details and click **Send Message** when you\'re happy with it! 📨🌸",
-            'ai'
-        );
+        // ── Ask Gemini to craft the message based on user's exact instructions ──
+        var craftPrompt =
+            'A user wants to send a contact message to Rounak Prasad (a Data Science & ML student). ' +
+            'Sender name: "' + name + '". Sender email: "' + email + '".\n' +
+            'Their raw instructions: "' + goal + '"\n\n' +
+            'Follow their instructions EXACTLY — match their requested tone, length, style and content. ' +
+            'Write ONLY the message body text (no subject line, no greeting like "Hi Rounak", no sign-off like "Best regards"). ' +
+            'Start directly with the message content. Keep it natural and human. ' +
+            'If they asked for a specific word count, honour it precisely.';
 
-        setTimeout(function() {
-            ghostFillContactForm({
-                name: name,
-                email: email,
-                subject: 'Connecting from your portfolio — ' + goal.split(' ').slice(0, 5).join(' ') + '...',
-                message: polishedMessage
-            });
-        }, 900);
+        var craftRequestBody = {
+            systemInstruction: { parts: [{ text: 'You are a message drafting assistant. Follow the user instructions exactly and output ONLY the raw message body with no extra commentary.' }] },
+            contents: [{ role: 'user', parts: [{ text: craftPrompt }] }],
+            generationConfig: { temperature: 0.8, topP: 0.9, maxOutputTokens: 512 }
+        };
+
+        fetch(WORKER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(craftRequestBody)
+        })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            var craftedBody = '';
+            try {
+                if (data.error || !data.candidates || data.candidates.length === 0) {
+                    craftedBody = localReframer(goal, name);
+                } else {
+                    craftedBody = data.candidates[0].content.parts[0].text.trim();
+                }
+            } catch (e) {
+                craftedBody = localReframer(goal, name);
+            }
+
+            var polishedMessage =
+                'Hi Rounak,\n\n' +
+                craftedBody +
+                '\n\nBest regards,\n' + name;
+
+            var subject = generateSubject(goal);
+
+            addMessage(
+                "Done! I've filled the form for you — take a look and hit **Send Message** when you're ready! 📨🌸",
+                'ai'
+            );
+
+            setTimeout(function() {
+                ghostFillContactForm({
+                    name: name,
+                    email: email,
+                    subject: subject,
+                    message: polishedMessage
+                });
+            }, 900);
+        })
+        .catch(function() {
+            // Fallback: use smart local reframer
+            var craftedBody = localReframer(goal, name);
+            var polishedMessage = 'Hi Rounak,\n\n' + craftedBody + '\n\nBest regards,\n' + name;
+            
+            var subject = generateSubject(goal);
+
+            addMessage(
+                "Done! I've filled the form for you — take a look and hit **Send Message** when you're ready! 📨🌸",
+                'ai'
+            );
+            setTimeout(function() {
+                ghostFillContactForm({
+                    name: name,
+                    email: email,
+                    subject: subject,
+                    message: polishedMessage
+                });
+            }, 900);
+        });
     }
 
     function respondWithOfflineFallback(userMessage) {
@@ -808,8 +970,22 @@
             var actionToRun = null;
             var actionParams = {};
 
-            if (/fill.*form|autofill/i.test(t)) {
-                localFillFormAction();
+            // Intercept purely local actions typed by the user in offline mode
+            var isFormFillIntent = 
+                /fill.*(form|detail|email|name|it|random)/i.test(t) || 
+                /autofill/i.test(t) ||
+                /send.*(message|email|form)/i.test(t) ||
+                /tell\s+(rounak|him)/i.test(t) ||
+                /contact\s+(rounak|him)/i.test(t);
+
+            if (isFormFillIntent) {
+                // Scroll to contact section so they see the action live side-by-side!
+                var contactSec = document.getElementById('contact');
+                if (contactSec) {
+                    contactSec.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                formFillStep = 'collecting';
+                handleFormFillInput(userMessage);
                 return;
             } else if (/celebrate|confetti/i.test(t)) {
                 reply = 'Woohoo! 🎉 Let\'s celebrate! Here\'s a shower of gorgeous confetti just for you! 🌸';
@@ -984,11 +1160,27 @@
         if (formFillStep) { addMessage(text, 'user'); chatInput.value = ''; chatInput.style.height = 'auto'; handleFormFillInput(text); return; }
 
         // Intercept purely local actions typed by the user
-        if (/fill.*form|autofill/i.test(text)) {
+        var isFormFillIntent = 
+            /fill.*(form|detail|email|name|it|random)/i.test(text) || 
+            /autofill/i.test(text) ||
+            /send.*(message|email|form)/i.test(text) ||
+            /tell\s+(rounak|him)/i.test(text) ||
+            /contact\s+(rounak|him)/i.test(text) ||
+            (formFillStep === null && /write.*message/i.test(text));
+
+        if (isFormFillIntent) {
             addMessage(text, 'user');
             chatInput.value = ''; chatInput.style.height = 'auto';
             hideSuggestions(); bouncePracy();
-            localFillFormAction();
+            
+            // Scroll to contact section so they see the action live side-by-side!
+            var contactSec = document.getElementById('contact');
+            if (contactSec) {
+                contactSec.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+
+            formFillStep = 'collecting';
+            handleFormFillInput(text);
             return;
         }
         if (/celebrate|confetti/i.test(text)) {
