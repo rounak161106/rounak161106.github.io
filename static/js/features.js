@@ -29,6 +29,15 @@
     ];
 
     // ── UTILS ────────────────────────────────────────────────────────
+    function fetchWithTimeout(url, options, timeoutMs) {
+        return Promise.race([
+            fetch(url, options),
+            new Promise(function (_, reject) {
+                setTimeout(function () { reject(new Error('Timeout')); }, timeoutMs || 6000);
+            })
+        ]);
+    }
+
     function inject(html) {
         var d = document.createElement('div');
         d.innerHTML = html.trim();
@@ -391,8 +400,8 @@
         box.innerHTML = '<div class="lc-card" style="display:flex;justify-content:center;align-items:center;min-height:200px;">' + skelLines(4) + '</div>';
 
         Promise.all([
-            fetch('https://alfa-leetcode-api.onrender.com/' + LEETCODE_USERNAME).then(function (r) { return r.json(); }).catch(function () { return null; }),
-            fetch('https://alfa-leetcode-api.onrender.com/' + LEETCODE_USERNAME + '/solved').then(function (r) { return r.json(); }).catch(function () { return null; })
+            fetchWithTimeout('https://alfa-leetcode-api.onrender.com/' + LEETCODE_USERNAME, {}, 6000).then(function (r) { return r.json(); }).catch(function () { return null; }),
+            fetchWithTimeout('https://alfa-leetcode-api.onrender.com/' + LEETCODE_USERNAME + '/solved', {}, 6000).then(function (r) { return r.json(); }).catch(function () { return null; })
         ]).then(function (results) {
             var u = results[0] || { username: LEETCODE_USERNAME, name: 'Rounak Prasad', avatar: '', ranking: 'N/A', about: 'Practicing DSA on LeetCode.' };
             var s = results[1] || { solvedProblem: 21, easySolved: 20, mediumSolved: 1, hardSolved: 0 };
@@ -430,8 +439,8 @@
         box.innerHTML = '<div class="lc-card" style="display:flex;justify-content:center;align-items:center;min-height:200px;">' + skelLines(4) + '</div>';
 
         Promise.all([
-            fetch('https://codeforces.com/api/user.info?handles=' + CODEFORCES_USERNAME).then(function (r) { return r.json(); }).catch(function () { return null; }),
-            fetch('https://codeforces.com/api/user.status?handle=' + CODEFORCES_USERNAME).then(function (r) { return r.json(); }).catch(function () { return null; })
+            fetchWithTimeout('https://codeforces.com/api/user.info?handles=' + CODEFORCES_USERNAME, {}, 6000).then(function (r) { return r.json(); }).catch(function () { return null; }),
+            fetchWithTimeout('https://codeforces.com/api/user.status?handle=' + CODEFORCES_USERNAME, {}, 6000).then(function (r) { return r.json(); }).catch(function () { return null; })
         ]).then(function (results) {
             var info = results[0] && results[0].status === 'OK' ? results[0].result[0] : null;
             var subs = results[1] && results[1].status === 'OK' ? results[1].result : [];
@@ -692,8 +701,11 @@
     inject(
         '<nav class="orbit-dock" id="orbitDock" aria-label="Quick launch dock">' +
             '<div class="orbit-dock-inner">' +
-
-                '<button class="orbit-item orbit-item--ai" id="dockAi" aria-label="Chat with Rounak AI">' +
+                '<div class="orbit-ai-tooltip" id="dockAiTooltip">' +
+                    '<span>Hi, I\'m Lumi! Let\'s chat! ✨</span>' +
+                    '<button class="orbit-ai-tooltip-close" id="dockAiTooltipClose" aria-label="Dismiss">&times;</button>' +
+                '</div>' +
+                '<button class="orbit-item orbit-item--ai" id="dockAi" aria-label="Chat with Lumi AI">' +
                     '<div class="orbit-icon">' +
                         '<i class="fas fa-robot"></i>' +
                         '<span class="orbit-ai-dot"></span>' +

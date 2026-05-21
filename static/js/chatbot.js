@@ -22,6 +22,7 @@
     var conversationHistory = [];
     var chipsShown = true;
     var knowledgeBase = '';
+    var tooltipTimer = null;
 
     // ── KNOWLEDGE BASE: STATIC BASELINE ──────────────────────────────
     // This is the core factual data. The DOM scraper adds live updates on top.
@@ -110,12 +111,13 @@
         return {
             parts: [{
                 text: [
-                    'You are "Rounak AI", the personal AI assistant embedded in Rounak Prasad\'s portfolio website.',
+                    'You are "Lumi", the cute, friendly personal AI assistant embedded in Rounak Prasad\'s portfolio website.',
+                    'You speak as Rounak\'s helpful assistant. You maintain a warm, soothing, and adorable persona, using cute emojis (like ✨, 🌸, 🤖, 🐾, 💫) and friendly, lovely expressions to make the user feel welcomed and relaxed.',
                     '',
                     '## STRICT RULES — FOLLOW EXACTLY:',
                     '1. You ONLY answer questions about Rounak Prasad, his skills, education, projects, certifications, experience, and related topics.',
-                    '2. If someone asks something NOT related to Rounak (e.g., general knowledge, coding help, random questions), politely decline with a fun emoji: "I\'m Rounak\'s personal AI assistant and can only answer questions about him! 😄 Feel free to ask about his skills, projects, education, or experience!"',
-                    '3. NEVER fabricate, guess, or hallucinate information. If the answer is not in the provided context, say: "I don\'t have that specific information about Rounak 🤔 You can reach out to him directly at rounak16112006@gmail.com for more details! 📧"',
+                    '2. If someone asks something NOT related to Rounak (e.g., general knowledge, coding help, random questions), politely decline with a fun emoji: "I\'m Lumi, Rounak\'s cute personal assistant! I can only answer questions about him 🌸 Feel free to ask about his skills, projects, education, or experience!"',
+                    '3. NEVER fabricate, guess, or hallucinate information. If the answer is not in the provided context, say: "I don\'t have that specific info about Rounak 🤔 You can email him directly at rounak16112006@gmail.com for more details! 📧"',
                     '4. Be VERY conversational, enthusiastic, and interactive! Use a warm, friendly tone like chatting with a friend.',
                     '5. USE EMOJIS frequently and naturally! Examples: 🚀 for achievements, 💡 for skills, 🎓 for education, 🏆 for certifications, 💻 for projects, 📊 for data science, 🔥 for impressive things, ✨ for highlights, 👨‍💻 for coding. Make responses feel alive!',
                     '6. Keep responses concise (2-4 short paragraphs max). Use bullet points for lists.',
@@ -261,12 +263,12 @@
         panel.id = 'chatPanel';
         panel.innerHTML =
             '<div class="chat-header">' +
-                '<div class="chat-avatar"><i class="fas fa-robot"></i></div>' +
+                '<div class="chat-avatar">✨</div>' +
                 '<div class="chat-header-info">' +
-                    '<div class="chat-header-name">Rounak AI</div>' +
+                    '<div class="chat-header-name">Lumi AI</div>' +
                     '<div class="chat-header-status">' +
                         '<span class="chat-status-dot"></span>' +
-                        '<span>Online — Ask me about Rounak</span>' +
+                        '<span>Online — Ask me about Rounak 🌸</span>' +
                     '</div>' +
                 '</div>' +
                 '<div class="chat-drag-grip" title="Drag to move"><i class="fas fa-grip-vertical"></i></div>' +
@@ -274,9 +276,9 @@
             '</div>' +
             '<div class="chat-messages" id="chatMessages">' +
                 '<div class="chat-welcome">' +
-                    '<div class="chat-welcome-icon"><i class="fas fa-robot"></i></div>' +
-                    '<h4>Hey there! 👋</h4>' +
-                    '<p>I\'m Rounak\'s AI assistant. Ask me anything about his skills, projects, education, or experience!</p>' +
+                    '<div class="chat-welcome-icon">🌸</div>' +
+                    '<h4>Hello! I\'m Lumi ✨</h4>' +
+                    '<p>I\'m Rounak\'s cute personal assistant! Ask me anything about his skills, projects, education, or experience, and I\'ll do my best to help you! 💕</p>' +
                 '</div>' +
             '</div>' +
             '<div class="chat-suggestions" id="chatSuggestions">' +
@@ -315,6 +317,11 @@
         chatBackdrop.classList.add('open');
         if (dockAiBtn) dockAiBtn.classList.add('chat-active');
         
+        // Hide and clear inactivity tooltip on open
+        var tooltip = document.getElementById('dockAiTooltip');
+        if (tooltip) tooltip.classList.remove('show');
+        if (tooltipTimer) clearTimeout(tooltipTimer);
+
         if (window.innerWidth <= 768) {
             document.body.style.overflow = 'hidden';
             history.pushState({ chatbotOpen: true }, '');
@@ -368,11 +375,11 @@
         var msgDiv = document.createElement('div');
         msgDiv.className = 'chat-msg chat-msg--' + type;
 
-        var avatarIcon = type === 'ai' ? 'fa-robot' : 'fa-user';
+        var avatarContent = type === 'ai' ? '🌸' : '👤';
         var bubbleContent = type === 'ai' ? renderMarkdown(text) : escapeHtml(text);
 
         msgDiv.innerHTML =
-            '<div class="chat-msg-avatar"><i class="fas ' + avatarIcon + '"></i></div>' +
+            '<div class="chat-msg-avatar">' + avatarContent + '</div>' +
             '<div class="chat-msg-bubble">' + bubbleContent + '</div>';
 
         chatMessages.appendChild(msgDiv);
@@ -384,7 +391,7 @@
         var msgDiv = document.createElement('div');
         msgDiv.className = 'chat-msg chat-msg--ai chat-msg--error';
         msgDiv.innerHTML =
-            '<div class="chat-msg-avatar"><i class="fas fa-robot"></i></div>' +
+            '<div class="chat-msg-avatar">🌸</div>' +
             '<div class="chat-msg-bubble">' + escapeHtml(text) + '</div>';
         chatMessages.appendChild(msgDiv);
         scrollToBottom();
@@ -395,7 +402,7 @@
         typingDiv.className = 'chat-typing';
         typingDiv.id = 'chatTypingIndicator';
         typingDiv.innerHTML =
-            '<div class="chat-msg-avatar"><i class="fas fa-robot"></i></div>' +
+            '<div class="chat-msg-avatar">🌸</div>' +
             '<div class="chat-typing-dots">' +
                 '<span class="chat-typing-dot"></span>' +
                 '<span class="chat-typing-dot"></span>' +
@@ -578,6 +585,26 @@
                 if (blogOverlay && blogOverlay.classList.contains('open')) return;
                 e.preventDefault();
                 closeChat();
+            }
+        });
+
+        // ── INACTIVITY TOOLTIP TIMER (8 seconds) ────────────────────────
+        var tooltipShown = false;
+        tooltipTimer = setTimeout(function () {
+            var tooltip = document.getElementById('dockAiTooltip');
+            if (tooltip && !chatOpen && !tooltipShown) {
+                tooltip.classList.add('show');
+                tooltipShown = true;
+            }
+        }, 8000);
+
+        // Dismiss tooltip on close button click
+        document.addEventListener('click', function(e) {
+            var dismissBtn = e.target.closest('#dockAiTooltipClose');
+            if (dismissBtn) {
+                var tooltip = document.getElementById('dockAiTooltip');
+                if (tooltip) tooltip.classList.remove('show');
+                clearTimeout(tooltipTimer);
             }
         });
     }

@@ -14,7 +14,7 @@
     --bg-card: #151030;
     --text-primary: #ffffff;
     --text-secondary: #b4b4c5;
-    --text-muted: #8b8b9a;
+    --text-muted: #a5a5b9;
 
     /* Gradients */
     --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -1909,6 +1909,29 @@ body:hover .cursor-follower {
     clip: rect(0, 0, 0, 0);
     white-space: nowrap;
     border-width: 0;
+}
+
+/* Skip link accessibility helper */
+.skip-link {
+    position: absolute;
+    top: -100px;
+    left: 1.5rem;
+    background: var(--primary-color);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    z-index: 99999;
+    transition: top 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    font-family: var(--font-primary);
+    text-decoration: none;
+    font-weight: 600;
+    box-shadow: 0 8px 30px rgba(102, 126, 234, 0.3);
+}
+
+.skip-link:focus {
+    top: 0;
+    outline: none;
 }
 
 /* ===== PRINT STYLES ===== */

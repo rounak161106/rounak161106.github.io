@@ -80,7 +80,7 @@ function renderProjects(filter = 'all') {
     projectsGrid.innerHTML = filteredProjects.map(project => `
         <div class="project-card" data-category="${project.category}" data-aos="fade-up">
             <div class="project-image">
-                ${project.image ? `<img src="${project.image}" alt="${project.title}" loading="lazy" decoding="async">` : `
+                ${project.image ? `<img src="${project.image}" alt="${project.title}" loading="lazy" decoding="async" width="400" height="224">` : `
                     <div class="project-placeholder">
                         <i class="fas fa-${project.category === 'ml' ? 'brain' : project.category === 'dl' ? 'network-wired' : 'code'}"></i>
                     </div>

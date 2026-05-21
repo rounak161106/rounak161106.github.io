@@ -163,10 +163,18 @@ if (typingText) {
 }
 
 // ===== ANIMATED COUNTERS =====
+// Dynamically update projects target count if projectsData is loaded
+const statsProjectsEl = document.getElementById('statsProjects');
+if (statsProjectsEl && typeof projectsData !== 'undefined') {
+    statsProjectsEl.setAttribute('data-target', projectsData.length);
+}
+
 const statNumbers = document.querySelectorAll('.stat-number');
 
 function animateCounter(element) {
-    const target = parseInt(element.getAttribute('data-target'));
+    const rawTarget = element.getAttribute('data-target');
+    const isDecimal = rawTarget.indexOf('.') !== -1;
+    const target = parseFloat(rawTarget);
     const duration = 2000;
     const increment = target / (duration / 16);
     let current = 0;
@@ -174,10 +182,10 @@ function animateCounter(element) {
     const updateCounter = () => {
         current += increment;
         if (current < target) {
-            element.textContent = Math.ceil(current);
+            element.textContent = isDecimal ? current.toFixed(1) : Math.ceil(current);
             requestAnimationFrame(updateCounter);
         } else {
-            element.textContent = target;
+            element.textContent = isDecimal ? target.toFixed(1) : target;
         }
     };
     

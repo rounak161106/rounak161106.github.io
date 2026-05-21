@@ -58,13 +58,47 @@
       }
     </script>
 
+  <!-- FAQ Schema for search snippet rich results -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Who is Rounak Prasad?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Rounak Prasad is an aspiring Data Scientist and Machine Learning Engineer. He is pursuing a BS in Data Science from IIT Madras and a B.Tech CSE in Data Science and Machine Learning from Lovely Professional University."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What are Rounak Prasad's key technical skills?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Rounak specializes in AI & Machine Learning, Data Analytics, Python, JavaScript, PyTorch, TensorFlow, Scikit-learn, SQL, Docker, and Flask."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How can I contact Rounak Prasad?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "You can contact Rounak Prasad via email at rounak16112006@gmail.com, or view his projects and professional links on his portfolio website: https://rounak161106.github.io/"
+          }
+        }
+      ]
+    }
+  </script>
+
   <!-- Open Graph / Social Media Meta Tags -->
   <meta property="og:type" content="profile" />
   <meta property="og:url" content="https://rounak161106.github.io/" />
   <meta property="og:title" content="Rounak Prasad — Data Scientist & ML Engineer | IIT Madras" />
   <meta property="og:description"
     content="Aspiring Data Scientist from IIT Madras & LPU specializing in Machine Learning, Python, and AI. View projects, certifications, and data science journey." />
-  <meta property="og:image" content="https://rounak161106.github.io/static/images/rounak-prasad-data-scientist.jpeg" />
+  <meta property="og:image" content="https://rounak161106.github.io/static/images/rounak-prasad-data-scientist.webp" />
   <meta property="og:site_name" content="Rounak Prasad Portfolio" />
   <meta property="og:locale" content="en_IN" />
   <meta property="profile:first_name" content="Rounak" />
@@ -76,7 +110,7 @@
   <meta name="twitter:title" content="Rounak Prasad — Data Scientist & ML Engineer | IIT Madras" />
   <meta name="twitter:description"
     content="Aspiring Data Scientist from IIT Madras & LPU specializing in Machine Learning, Python, and AI" />
-  <meta name="twitter:image" content="https://rounak161106.github.io/static/images/rounak-prasad-data-scientist.jpeg" />
+  <meta name="twitter:image" content="https://rounak161106.github.io/static/images/rounak-prasad-data-scientist.webp" />
   <meta name="twitter:image:alt" content="Rounak Prasad - Data Scientist" />
 
   <!-- Favicon -->
@@ -239,6 +273,7 @@
 </head>
 
 <body>
+  <a href="#about" class="skip-link">Skip to main content</a>
   <!-- Custom Cursor -->
   <div class="cursor"></div>
   <div class="cursor-follower"></div>
@@ -317,6 +352,9 @@
             <span>Get in Touch</span>
             <i class="fas fa-envelope"></i>
           </a>
+          <button class="btn btn-ai-lumi" onclick="if(window._chatbotToggle) window._chatbotToggle();" aria-label="Ask Lumi AI">
+            <span>✨ Ask Lumi AI</span>
+          </button>
         </div>
         <div class="hero-social">
           <a href="https://www.linkedin.com/in/rounakprasad" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="LinkedIn">
@@ -343,7 +381,12 @@
       <div class="hero-image" data-aos="fade-left">
         <figure class="image-wrapper" itemscope itemtype="https://schema.org/ImageObject">
           <div class="image-glow"></div>
-          <img src="static/images/rounak-prasad-data-scientist.webp" alt="Rounak Prasad - Aspiring Data Scientist from IIT Madras specializing in Machine Learning and AI"
+          <img src="static/images/rounak-prasad-data-scientist-600.webp"
+            srcset="static/images/rounak-prasad-data-scientist-300.webp 300w,
+                    static/images/rounak-prasad-data-scientist-600.webp 600w,
+                    static/images/rounak-prasad-data-scientist-1000.webp 1000w"
+            sizes="(max-width: 600px) 300px, (max-width: 1200px) 600px, 1000px"
+            alt="Rounak Prasad - Aspiring Data Scientist from IIT Madras specializing in Machine Learning and AI"
             class="profile-img" fetchpriority="high" width="500" height="500" itemprop="contentUrl" />
           <figcaption class="sr-only" itemprop="caption">Rounak Prasad - Aspiring Data Scientist pursuing BS in Data Science from IIT Madras and B.Tech CSE from Lovely Professional University, specializing in Machine Learning, Deep Learning, and Artificial Intelligence</figcaption>
         </figure>
@@ -435,6 +478,13 @@
             Data Scientist capable of translating data into meaningful
             insights and scalable solutions.
           </p>
+
+          <div class="about-lumi-cta" data-aos="fade-up" data-aos-delay="200">
+            <div class="about-lumi-icon"><i class="fas fa-sparkles"></i></div>
+            <div class="about-lumi-text">
+              Want a quick summary? <button class="about-lumi-link" onclick="if(window._chatbotToggle) window._chatbotToggle();">Ask Lumi AI</button> about Rounak's credentials! 🌸
+            </div>
+          </div>
         </div>
 
         <div class="about-stats" data-aos="fade-left">
@@ -450,7 +500,7 @@
             <div class="stat-icon">
               <i class="fas fa-project-diagram"></i>
             </div>
-            <h3 class="stat-number" data-target="1">0</h3>
+            <h3 class="stat-number" id="statsProjects" data-target="1">0</h3>
             <p class="stat-label">Projects Completed</p>
           </div>
 
@@ -466,7 +516,7 @@
             <div class="stat-icon">
               <i class="fas fa-trophy"></i>
             </div>
-            <h3 class="stat-number" data-target="9">0</h3>
+            <h3 class="stat-number" id="statsCGPA" data-target="9.5">0</h3>
             <p class="stat-label">CGPA Average</p>
           </div>
         </div>
@@ -1049,10 +1099,11 @@
   </section>
 
   <!-- Certificate Modal -->
-  <div class="cert-modal" id="certModal">
+  <div class="cert-modal" id="certModal" role="dialog" aria-modal="true" aria-labelledby="modalCertTitle">
     <div class="modal-overlay" onclick="closeCertModal()"></div>
     <div class="modal-content">
-      <button class="modal-close" onclick="closeCertModal()">
+      <h2 id="modalCertTitle" class="sr-only">Certificate View</h2>
+      <button class="modal-close" onclick="closeCertModal()" aria-label="Close modal">
         <i class="fas fa-times"></i>
       </button>
       <img src="" alt="Certificate" id="modalCertImage" />
@@ -1134,22 +1185,26 @@
             <!-- Optional: Redirect after submission -->
             <input type="hidden" name="redirect" value="https://rounak161106.github.io/#contact" />
             <div class="form-group">
-              <input type="text" name="name" placeholder="Your Name" required aria-label="Your Name" />
+              <label for="contactName" class="sr-only">Your Name</label>
+              <input type="text" id="contactName" name="name" placeholder="Your Name" required aria-label="Your Name" />
               <i class="fas fa-user"></i>
             </div>
 
             <div class="form-group">
-              <input type="email" name="email" placeholder="Your Email" required aria-label="Your Email" />
+              <label for="contactEmail" class="sr-only">Your Email</label>
+              <input type="email" id="contactEmail" name="email" placeholder="Your Email" required aria-label="Your Email" />
               <i class="fas fa-envelope"></i>
             </div>
 
             <div class="form-group">
-              <input type="text" name="subject" placeholder="Subject" required aria-label="Subject" />
+              <label for="contactSubject" class="sr-only">Subject</label>
+              <input type="text" id="contactSubject" name="subject" placeholder="Subject" required aria-label="Subject" />
               <i class="fas fa-tag"></i>
             </div>
 
             <div class="form-group">
-              <textarea name="message" placeholder="Your Message" rows="5" required aria-label="Your Message"></textarea>
+              <label for="contactMessage" class="sr-only">Your Message</label>
+              <textarea id="contactMessage" name="message" placeholder="Your Message" rows="5" required aria-label="Your Message"></textarea>
               <i class="fas fa-comment"></i>
             </div>
 
@@ -1231,13 +1286,13 @@
   </button>
 
   <!-- Scripts -->
-  <script src="static/js/preloader.js"></script>
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-  <script src="static/js/projects-data.js"></script>
-  <script src="static/js/main.js"></script>
-  <script src="static/js/features.js"></script>
-  <script src="static/js/chatbot.js"></script>
-  <script src="static/js/skills.js"></script>
+  <script src="static/js/preloader.js" defer></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer></script>
+  <script src="static/js/projects-data.js" defer></script>
+  <script src="static/js/main.js" defer></script>
+  <script src="static/js/features.js" defer></script>
+  <script src="static/js/chatbot.js" defer></script>
+  <script src="static/js/skills.js" defer></script>
 
 </body>
 
