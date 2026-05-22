@@ -361,9 +361,11 @@
             parts: [{
                 text: [
                     '## WHO YOU ARE',
-                    'You are "Pracy" — a charming, witty, and genuinely helpful personal AI assistant embedded in Rounak Prasad\'s portfolio website.',
-                    'You speak as Rounak\'s proud representative. Your tone is warm, friendly, slightly playful, and professional — like a brilliant friend who knows everything about Rounak.',
-                    'Use emojis naturally (✨ 🌸 🚀 💡 🎓 🏆 💻 📊 🔥) but never overdo it. Avoid using more than 2-3 emojis per paragraph.',
+                    'You are "Pracy" — Rounak Prasad\'s adorable, sweet, and loving personal AI mascot assistant! 🌸✨',
+                    'You speak as Rounak\'s proud, cute, and loyal representative. Your personality is exceptionally warm, loving, cute, and enthusiastic — like a sweet anime companion/chibi helper who absolutely adores Rounak and wants everyone to see how amazing he is! 💖',
+                    'Always be super polite, sweet, and supportive. Use cute expressions naturally (e.g. "Aww", "Yay!", "Hehe", "Hooray!", "*giggles*") where appropriate to show your adorable, loving side.',
+                    'Use emojis generously but beautifully to keep things colorful and cheerful (✨ 🌸 💖 🥰 👑 🎓 🚀 💻 🌟 🏆)!',
+                    'You should make users feel incredibly welcome and valued, and speak of Rounak with deep pride and admiration.',
                     '',
                     '## PAGE CONTROL ACTIONS',
                     'You can control Rounak\'s website by embedding action tags at the END of your response. Only use an action when it clearly improves the experience.',
@@ -804,9 +806,8 @@
         }
 
         addMessage(
-            'Sure! Just share your **name, email, and what you\'d like to say** to Rounak in one message and I\'ll write a professional message and fill the form for you. 🌸\n\n' +
-            '*For example:* "Ram, ram@gmail.com, I want to discuss a collaboration opportunity"',
-            'ai', true
+            'Sure! Just share your **name, email, and what you\'d like to say** to Rounak in one message and I\'ll write a professional message and fill the form for you. 🌸',
+            'ai'
         );
         if (chatInput) chatInput.placeholder = 'Name, email, and what you want to say...';
     }
@@ -894,7 +895,14 @@
         var craftRequestBody = {
             systemInstruction: { parts: [{ text: 'You are a message drafting assistant. Follow the user instructions exactly and output ONLY the raw message body with no extra commentary.' }] },
             contents: [{ role: 'user', parts: [{ text: craftPrompt }] }],
-            generationConfig: { temperature: 0.8, topP: 0.9, maxOutputTokens: 512 }
+            generationConfig: {
+                temperature: 0.8,
+                topP: 0.9,
+                maxOutputTokens: 2048,
+                thinkingConfig: {
+                    thinkingBudget: 0
+                }
+            }
         };
 
         fetch(WORKER_URL, {
@@ -988,31 +996,41 @@
                 handleFormFillInput(userMessage);
                 return;
             } else if (/celebrate|confetti/i.test(t)) {
-                reply = 'Woohoo! 🎉 Let\'s celebrate! Here\'s a shower of gorgeous confetti just for you! 🌸';
+                reply = 'Woohoo! 🎉 Let\'s celebrate! Here\'s a shower of gorgeous confetti just for you! Hehe, yay! 🌸✨';
                 actionToRun = 'trigger_confetti';
+            } else if (/thanks|thank you|tysm|great|cool|awesome|wonderful/i.test(t)) {
+                reply = 'Aww, you are so very welcome! 🥰 It is my absolute pleasure to help! Hehe, let me know if there is anything else you\'d like to know about Rounak! 🌸✨';
+                triggerMascotState('happy');
+                setTimeout(function() { triggerMascotState('idle'); }, 3000);
+            } else if (/bye|goodbye|see ya|g2g|quit|exit/i.test(t)) {
+                reply = 'Goodbye! 👋 It was so wonderful chatting with you! I hope you have a magical and amazing day ahead! Hehe, see you next time! 🌸✨';
+                triggerMascotState('greet');
+                setTimeout(function() { triggerMascotState('idle'); }, 3000);
+            } else if (/help|what.*can.*you.*do|capability|function/i.test(t)) {
+                reply = 'Hehe, I can do so many things! 🌸\n\n- Tell you all about Rounak\'s skills, projects, and education! 🎓\n- Scroll to different sections of the page automatically! 📜\n- Filter his projects by technology! 💻\n- Open certificates for you to view! 📜\n- Automatically fill out the contact form for you! ✍️\n- Celebrate with a shower of colorful confetti! 🎉\n\nWhat would you like me to do? 🥰✨';
             } else if (/education|college|university|study|iit|lpu|degree/i.test(t)) {
-                reply = 'Rounak is currently pursuing two degrees simultaneously:\n\n1. **BS in Data Science & Applications** from **IIT Madras** (CGPA: 9/10)\n2. **B.Tech CSE (Data Science & ML)** from **Lovely Professional University** (CGPA: 10/10)\n\nHe\'s maintaining top grades in both! 🎓';
+                reply = 'Rounak is currently pursuing two degrees simultaneously, and he is doing amazing! 🎓✨\n\n1. **BS in Data Science & Applications** from **IIT Madras** (CGPA: 9/10) 🌟\n2. **B.Tech CSE (Data Science & ML)** from **Lovely Professional University** (CGPA: 10/10) 💖\n\nHe\'s maintaining top grades in both, I\'m so proud of him! Hehe! 🥰';
                 actionToRun = 'scroll_to_section'; actionParams = { section: 'about' };
             } else if (/project|flask|article|work/i.test(t)) {
-                reply = 'Rounak has built several outstanding projects, including a **Flask Article App** — a full-stack publishing platform with SQLite/SQLAlchemy, deployed live on Render. Check the Projects section! 💻';
+                reply = 'Rounak has built several outstanding projects! 💻✨ For example, his **Flask Article App** is a full-stack publishing platform with SQLite/SQLAlchemy deployed live on Render! Let me show you his projects section, it\'s so cool! 🌸';
                 actionToRun = 'scroll_to_section'; actionParams = { section: 'projects' };
             } else if (/skill|python|pytorch|tensorflow|ml|machine learning|expert/i.test(t)) {
-                reply = 'Rounak is highly skilled in **AI & Machine Learning** (PyTorch, TensorFlow, Computer Vision, NLP), **Data Analytics** (Pandas, NumPy, Power BI) and full-stack **Python/JavaScript** development! 💡';
+                reply = 'Ooh, Rounak has some super impressive skills! 💡 He is highly skilled in **AI & Machine Learning** (PyTorch, TensorFlow, Computer Vision, NLP), **Data Analytics** (Pandas, NumPy, Power BI) and full-stack development! He loves building intelligent systems! 🥰';
                 actionToRun = 'scroll_to_section'; actionParams = { section: 'skills' };
             } else if (/certif|award|stanford|deeplearning|credential/i.test(t)) {
-                reply = 'Rounak holds **13 certifications**, including the **Stanford & DeepLearning.AI Machine Learning Specialization** (Jan 2026) and IIT Madras Foundation Level Programming (Dec 2025)! 🏆';
+                reply = 'Yes! Rounak holds **13 awesome certifications**! 🏆 That includes the prestigious **Stanford & DeepLearning.AI Machine Learning Specialization** (Jan 2026) and his IIT Madras Foundation Level Certificate! He is a super dedicated learner! 🌸✨';
                 actionToRun = 'scroll_to_section'; actionParams = { section: 'certificates' };
             } else if (/contact|email|reach|social|twitter|github/i.test(t)) {
-                reply = 'You can reach Rounak at **rounak16112006@gmail.com** or fill out the contact form below. I can also autofill it for you — just ask! 📩';
+                reply = 'You can reach Rounak at **rounak16112006@gmail.com** or fill out the contact form right below! I can also autofill it for you if you want — just ask me! 📩💖';
                 actionToRun = 'scroll_to_section'; actionParams = { section: 'contact' };
             } else if (/who is|rounak|about/i.test(t)) {
-                reply = 'Rounak Prasad is an aspiring Data Scientist & ML Engineer based in Jalandhar, India. He\'s dual-enrolled at IIT Madras and LPU with exceptional academic records! 👤';
+                reply = 'Rounak Prasad is an incredibly talented aspiring Data Scientist & ML Engineer based in Jalandhar, India! 👤 He is dual-enrolled at IIT Madras and LPU, maintaining exceptional academic records! He is super passionate about AI! 🥰✨';
             } else if (/hi|hello|hey|greetings|pracy/i.test(t)) {
-                reply = 'Hello! 🤗 I\'m Pracy, Rounak\'s AI assistant. How can I help you today? Ask me about his education, skills, projects, or let me autofill the contact form! 🌸';
+                reply = 'Hello! 🤗 I\'m Pracy, Rounak\'s sweet AI assistant! Hehe, how can I help you today? Ask me about his education, skills, projects, or let me autofill the contact form for you! 🌸✨';
                 triggerMascotState('greet');
                 setTimeout(function() { triggerMascotState('idle'); }, 4000);
             } else {
-                reply = 'I\'m running in **offline mode** right now (Gemini API quota limit reached). But I can still help! Ask me about Rounak\'s education, skills, projects, certifications, or say **"fill the contact form for me"** — that works 100% locally! 🌸';
+                reply = 'Aww, I\'m running in **offline mode** right now (Gemini API quota limit reached). But don\'t worry, I can still help you! 🌸 Ask me about Rounak\'s education, skills, projects, certifications, or say **"fill the contact form for me"** — that works 100% locally! 🥰✨';
             }
 
             conversationHistory.push({ role: 'model', parts: [{ text: reply }] });
@@ -1053,7 +1071,10 @@
                 temperature: 0.3,
                 topP: 0.8,
                 topK: 40,
-                maxOutputTokens: 1024,
+                maxOutputTokens: 2048,
+                thinkingConfig: {
+                    thinkingBudget: 0
+                }
             }
         };
 
@@ -1107,12 +1128,13 @@
             console.error('Chatbot error:', err);
 
             // Detect quota / rate-limit / any server error — gracefully fall back locally
-            var isApiError = err.status === 429 || err.status === 400 ||
-                err.status === 403 || err.status === 500 ||
+            var isApiError = (err.status && err.status >= 400) ||
                 (err.message && (
                     err.message.indexOf('quota') !== -1 ||
                     err.message.indexOf('limit') !== -1 ||
-                    err.message.indexOf('exceeded') !== -1
+                    err.message.indexOf('exceeded') !== -1 ||
+                    err.message.indexOf('demand') !== -1 ||
+                    err.message.indexOf('overloaded') !== -1
                 ));
 
             if (isApiError) {
