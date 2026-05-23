@@ -19,5 +19,5 @@ backup_skills/
 *.md
 !README.md
 
-# Allow gitignore itself
-.gitignore
+# Allow tracking gitignore itself
+!.gitignore

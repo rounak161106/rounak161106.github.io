@@ -298,20 +298,46 @@
   <!-- Preloader -->
   <div class="preloader" id="preloader" role="status" aria-label="Loading portfolio">
     <div class="pl-scene">
-      <canvas id="plCanvas"></canvas>
       <div class="pl-overlay">
-        <div class="pl-monogram" id="plMonogram">
-          <span class="pl-letter" id="plR">R</span><span class="pl-letter" id="plP">P</span>
+        <div class="pl-monogram-container" id="plMonogram">
+          <svg class="pl-svg-monogram" viewBox="0 0 120 120" aria-hidden="true">
+            <defs>
+              <linearGradient id="plGradR" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#8b5cf6" />
+                <stop offset="100%" stop-color="#ec4899" />
+              </linearGradient>
+              <linearGradient id="plGradP" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ec4899" />
+                <stop offset="100%" stop-color="#22d3ee" />
+              </linearGradient>
+              <linearGradient id="plGradHex" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#8b5cf6" />
+                <stop offset="50%" stop-color="#ec4899" />
+                <stop offset="100%" stop-color="#22d3ee" />
+              </linearGradient>
+            </defs>
+            <!-- High-tech Rotating Orbital Circles -->
+            <circle class="pl-hud-circle pl-hud-circle-outer" cx="60" cy="60" r="56" />
+            <circle class="pl-hud-circle pl-hud-circle-inner" cx="60" cy="60" r="52" />
+            <!-- Centered Hexagon and Monogram Paths -->
+            <polygon class="pl-hex" points="60,14 100,37 100,83 60,106 20,83 20,37" />
+            <path class="pl-path pl-path-r" d="M 39,78 V 42 H 49 C 57,42 57,60 49,60 H 39 M 46,60 L 54,78" />
+            <path class="pl-path pl-path-p" d="M 65,78 V 42 H 75 C 83,42 83,60 75,60 H 65" />
+          </svg>
         </div>
         <div class="pl-name" id="plName">Rounak Prasad</div>
         <div class="pl-role" id="plRole">Data Scientist &amp; ML Engineer</div>
+        <div class="pl-progress-info" id="plProgressInfo">
+          <div class="pl-status" id="plStatus">INITIALIZING SYSTEM...</div>
+          <div class="pl-percent" id="plPercent">0%</div>
+        </div>
         <div class="pl-bar-wrap" id="plBarWrap">
           <div class="pl-bar" id="plBar"></div>
         </div>
-        <div class="pl-status" id="plStatus">Initializing neural net...</div>
       </div>
     </div>
   </div>
+  <script src="static/js/preloader.js"></script>
 
   <!-- Navigation -->
   <nav class="navbar" id="navbar">
@@ -1504,7 +1530,6 @@
   </button>
 
   <!-- Scripts -->
-  <script src="static/js/preloader.js" defer></script>
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer></script>
   <script src="static/js/projects-data.js" defer></script>
   <script src="static/js/main.js" defer></script>

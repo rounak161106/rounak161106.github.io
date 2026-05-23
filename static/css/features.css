@@ -37,9 +37,9 @@
     opacity: 0.13;
     pointer-events: none;
     z-index: 99998;
-    transform: translate(-50%, -50%);
+    transform: translate3d(0, 0, 0) translate(-50%, -50%);
     mix-blend-mode: screen;
-    will-change: left, top;
+    will-change: transform;
     transition: width 0.3s ease, height 0.3s ease, opacity 0.3s ease;
 }
 .cursor-blob.large {

@@ -584,6 +584,15 @@
         chatBackdrop = document.getElementById('chatBackdrop');
     }
 
+    function handleViewportChange() {
+        if (!chatOpen || window.innerWidth > 768) return;
+        var vv = window.visualViewport;
+        if (!vv) return;
+        chatPanel.style.top = vv.offsetTop + 'px';
+        chatPanel.style.height = vv.height + 'px';
+        scrollToBottom();
+    }
+
     function openChat() {
         if (chatOpen) return;
         chatOpen = true;
@@ -605,6 +614,7 @@
         if (window.innerWidth <= 768) {
             document.body.style.overflow = 'hidden';
             history.pushState({ chatbotOpen: true }, '');
+            setTimeout(handleViewportChange, 100);
         }
         
         setTimeout(function () { chatInput.focus(); }, 400);
@@ -627,6 +637,11 @@
             if (history.state && history.state.chatbotOpen) {
                 history.back();
             }
+        }
+        
+        if (chatPanel) {
+            chatPanel.style.top = '';
+            chatPanel.style.height = '';
         }
     }
     
@@ -1420,8 +1435,13 @@
             }
         });
 
-        // Auto-resize
-        chatInput.addEventListener('input', autoResize);
+        // Auto-resize and hide suggestions when user types
+        chatInput.addEventListener('input', function() {
+            autoResize();
+            if (chatInput.value.trim() !== '') {
+                hideSuggestions();
+            }
+        });
 
         // Unified chip click handler — chips live inside .chat-welcome
         chatMessages.addEventListener('click', function (e) {
@@ -1493,6 +1513,20 @@
                 clearTimeout(tooltipTimer);
             }
         });
+
+        // Adjust layout for virtual keyboard on input focus
+        chatInput.addEventListener('focus', function() {
+            if (window.innerWidth <= 768) {
+                setTimeout(handleViewportChange, 150);
+                setTimeout(handleViewportChange, 350);
+            }
+        });
+
+        // Track mobile keyboard presence via VisualViewport API
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', handleViewportChange);
+            window.visualViewport.addEventListener('scroll', handleViewportChange);
+        }
     }
 
     // ── DRAG FUNCTIONALITY ────────────────────────────────────────
@@ -1837,6 +1871,22 @@
             }
         }
     });
+
+    // Expose utilities globally for testing purposes
+    if (typeof window !== 'undefined') {
+        window.chatbotUtils = {
+            renderMarkdown: renderMarkdown,
+            localReframer: localReframer,
+            parseParams: parseParams,
+            generateSubject: generateSubject,
+            getConversationHistory: function() { return conversationHistory; },
+            setConversationHistory: function(h) { conversationHistory = h; },
+            getUserName: function() { return userName; },
+            setUserName: function(n) { userName = n; },
+            awaitingName: function() { return awaitingName; },
+            setAwaitingName: function(a) { awaitingName = a; }
+        };
+    }
 
     // Boot
     if (document.readyState === 'loading') {

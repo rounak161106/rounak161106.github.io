@@ -872,27 +872,47 @@
     var dockItems = dockEl.querySelectorAll('.orbit-item');
 
     if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-        dockEl.addEventListener('mousemove', function (e) {
+        var cachedCenters = [];
+
+        dockEl.addEventListener('mouseenter', function () {
+            cachedCenters = [];
             dockItems.forEach(function (item) {
+                var origTransform = item.style.transform;
+                item.style.transform = '';
                 var r = item.getBoundingClientRect();
-                var cx = r.left + r.width  / 2;
-                var cy = r.top  + r.height / 2;
-                var dx = e.clientX - cx;
-                var dy = e.clientY - cy;
+                item.style.transform = origTransform;
+                cachedCenters.push({
+                    el: item,
+                    cx: r.left + r.width / 2,
+                    cy: r.top + r.height / 2
+                });
+            });
+        });
+
+        dockEl.addEventListener('mousemove', function (e) {
+            if (document.body.classList.contains('is-preloading')) return;
+            if (cachedCenters.length === 0) return;
+            cachedCenters.forEach(function (cache) {
+                var dx = e.clientX - cache.cx;
+                var dy = e.clientY - cache.cy;
                 var dist = Math.sqrt(dx * dx + dy * dy);
                 var maxD = 75;
                 if (dist < maxD) {
                     var f = 1 - dist / maxD;
-                    item.style.transform = 'translate(' + (dx * f * 0.32) + 'px,' + (dy * f * 0.2) + 'px) scale(' + (1 + f * 0.18) + ')';
+                    cache.el.style.transform = 'translate(' + (dx * f * 0.32) + 'px,' + (dy * f * 0.2) + 'px) scale(' + (1 + f * 0.18) + ')';
                 } else {
-                    item.style.transform = '';
+                    cache.el.style.transform = '';
                 }
             });
         });
 
         dockEl.addEventListener('mouseleave', function () {
+            cachedCenters = [];
             dockItems.forEach(function (item) { item.style.transform = ''; });
         });
+
+        window.addEventListener('scroll', function() { cachedCenters = []; }, { passive: true });
+        window.addEventListener('resize', function() { cachedCenters = []; }, { passive: true });
     }
 
 
@@ -1014,15 +1034,21 @@
 
     // 3-D tilt
     function addTiltEffect(card) {
+        var r = null;
+        card.addEventListener('mouseenter', function () {
+            r = card.getBoundingClientRect();
+        });
         card.addEventListener('mousemove', function (e) {
+            if (document.body.classList.contains('is-preloading')) return;
             if (!card.classList.contains('in-view')) return;
+            if (!r) r = card.getBoundingClientRect();
             card.style.transition = 'border-color 0.3s ease, box-shadow 0.3s ease';
-            var r  = card.getBoundingClientRect();
             var x  = (e.clientX - r.left) / r.width  - 0.5;
             var y  = (e.clientY - r.top)  / r.height - 0.5;
             card.style.transform = 'perspective(900px) rotateX(' + (-y * 7) + 'deg) rotateY(' + (x * 7) + 'deg) translateY(-6px)';
         });
         card.addEventListener('mouseleave', function () {
+            r = null;
             if (!card.classList.contains('in-view')) return;
             card.style.transition = 'transform 0.6s cubic-bezier(0.34,1.56,0.64,1), border-color 0.3s ease, box-shadow 0.3s ease';
             card.style.transform = 'translateY(0)';
@@ -1299,56 +1325,59 @@
         ioPreFetch.observe(discoverSection);
     }
 
-    // Inject section then kick off pre-fetch
-    injectDiscoverSection();
-    initBlogPreFetch();
+    // Defer initialization until preloader is done
+    document.addEventListener('preloaderComplete', function () {
+        // Inject section then kick off pre-fetch
+        injectDiscoverSection();
+        initBlogPreFetch();
 
 
-    // ================================================================
-    // FEATURE 6 — CURSOR BLOB (desktop / fine-pointer only)
-    // ================================================================
-    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-        var blob = document.createElement('div');
-        blob.className = 'cursor-blob';
-        blob.id = 'cursorBlob';
-        document.body.appendChild(blob);
+        // ================================================================
+        // FEATURE 6 — CURSOR BLOB (desktop / fine-pointer only)
+        // ================================================================
+        if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+            var blob = document.createElement('div');
+            blob.className = 'cursor-blob';
+            blob.id = 'cursorBlob';
+            document.body.appendChild(blob);
 
-        var blobX = 0, blobY = 0, targetX = 0, targetY = 0, blobRAF;
+            var blobX = 0, blobY = 0, targetX = 0, targetY = 0, blobRAF;
 
-        document.addEventListener('mousemove', function (e) {
-            targetX = e.clientX;
-            targetY = e.clientY;
-        });
+            document.addEventListener('mousemove', function (e) {
+                if (document.body.classList.contains('is-preloading')) return;
+                targetX = e.clientX;
+                targetY = e.clientY;
+            });
 
-        function animateBlob() {
-            blobX += (targetX - blobX) * 0.1;
-            blobY += (targetY - blobY) * 0.1;
-            blob.style.left = blobX + 'px';
-            blob.style.top  = blobY + 'px';
-            blobRAF = requestAnimationFrame(animateBlob);
+            function animateBlob() {
+                blobX += (targetX - blobX) * 0.1;
+                blobY += (targetY - blobY) * 0.1;
+                blob.style.transform = 'translate3d(' + blobX + 'px,' + blobY + 'px, 0) translate(-50%, -50%)';
+                blobRAF = requestAnimationFrame(animateBlob);
+            }
+            animateBlob();
+
+            // Expand on interactive elements
+            document.addEventListener('mouseover', function (e) {
+                var el = e.target;
+                if (el.closest('a, button, .fd-card, .orbit-item, .blog-post-card, .gh-repo-card, .profile-card')) {
+                    blob.classList.add('large');
+                } else {
+                    blob.classList.remove('large');
+                }
+            });
+
+            // Pause RAF when window hidden (battery saving)
+            document.addEventListener('visibilitychange', function () {
+                if (document.hidden) {
+                    cancelAnimationFrame(blobRAF);
+                } else {
+                    animateBlob();
+                }
+            });
         }
-        animateBlob();
 
-        // Expand on interactive elements
-        document.addEventListener('mouseover', function (e) {
-            var el = e.target;
-            if (el.closest('a, button, .fd-card, .orbit-item, .blog-post-card, .gh-repo-card, .profile-card')) {
-                blob.classList.add('large');
-            } else {
-                blob.classList.remove('large');
-            }
-        });
-
-        // Pause RAF when window hidden (battery saving)
-        document.addEventListener('visibilitychange', function () {
-            if (document.hidden) {
-                cancelAnimationFrame(blobRAF);
-            } else {
-                animateBlob();
-            }
-        });
-    }
-
-    initOverlayControls(devOvEl);
-    initOverlayControls(blogOvEl);
+        initOverlayControls(devOvEl);
+        initOverlayControls(blogOvEl);
+    });
 })();

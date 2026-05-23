@@ -19,6 +19,7 @@
             });
             
             card.addEventListener('mousemove', function(e) {
+                if (document.body.classList.contains('is-preloading')) return;
                 if (!rect) rect = card.getBoundingClientRect();
                 var x = e.clientX - rect.left;
                 var y = e.clientY - rect.top;
@@ -94,12 +95,18 @@
         }
 
         var mouse = { x: -999, y: -999 };
+        var rect = null;
+        parent.addEventListener('mouseenter', function() {
+            rect = parent.getBoundingClientRect();
+        });
         parent.addEventListener('mousemove', function(e) {
-            var rect = parent.getBoundingClientRect();
+            if (document.body.classList.contains('is-preloading')) return;
+            if (!rect) rect = parent.getBoundingClientRect();
             mouse.x = e.clientX - rect.left;
             mouse.y = e.clientY - rect.top;
         });
         parent.addEventListener('mouseleave', function() {
+            rect = null;
             mouse.x = -999; 
             mouse.y = -999;
         });
@@ -182,14 +189,9 @@
     }
 
     /* ── Init ── */
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function() {
-            initBentoInteractions();
-            initNeuralCanvas();
-        });
-    } else {
+    document.addEventListener('preloaderComplete', function() {
         initBentoInteractions();
         initNeuralCanvas();
-    }
+    });
 
 })();

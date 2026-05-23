@@ -32,6 +32,7 @@
         0 1px 0 rgba(255, 255, 255, 0.08) inset;
     z-index: 99999 !important;
     overflow: hidden;
+    overscroll-behavior: contain;
 
     /* Animation — starts hidden */
     opacity: 0;
@@ -201,6 +202,7 @@
     gap: 1rem;
     scroll-behavior: smooth;
     min-height: 0;
+    overscroll-behavior: contain;
 }
 
 /* Custom scrollbar for messages */
@@ -565,6 +567,10 @@
     .chat-suggestions {
         padding: 0 1rem 0.6rem;
     }
+
+    .chat-input {
+        font-size: 16px !important;
+    }
 }
 
 /* Small phones */
@@ -659,6 +665,7 @@
         opacity: 0;
         visibility: hidden;
         transition: opacity 0.3s ease, visibility 0.3s;
+        overscroll-behavior: contain;
     }
     .chat-backdrop.open {
         opacity: 1;
@@ -1125,8 +1132,6 @@
         right: 0 !important;
         bottom: 0 !important;
         width: 100% !important;
-        height: 100% !important;
-        max-height: 100vh !important;
         border-radius: 0 !important;
     }
 }
@@ -1592,4 +1597,36 @@
     0%, 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 2px #3b82f6); }
     50% { transform: translateY(-2.5px) scale(1.05); filter: drop-shadow(0 0 6px #3b82f6); }
 }
+
+/* Mobile performance optimizations for the mascot */
+@media (max-width: 768px) {
+    /* Disable expensive filter drop shadows */
+    .pracy-svg-mascot,
+    .pracy-svg-mascot:hover,
+    [filter="url(#cyberNeonGlow)"] {
+        filter: none !important;
+    }
+    
+    /* Disable complex float animations & decoration rings that cause layout/paint on mobile */
+    .cyber-ring-group,
+    .cyber-particles,
+    .cyber-halo,
+    .float-hex-1,
+    .float-hex-2 {
+        display: none !important;
+        animation: none !important;
+    }
+    
+    /* Simplify keyframe animations for mascot character to reduce draw calls */
+    .mascot-character {
+        animation-duration: 6s !important; /* Slow down updates to reduce CPU usage */
+    }
+    
+    .mascot-head-group,
+    .left-arm-group,
+    .right-arm-group {
+        animation: none !important; /* Disable multi-layered animations on mobile */
+    }
+}
+
 

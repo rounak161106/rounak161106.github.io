@@ -205,8 +205,14 @@
         var container = this.canvas.parentElement;
         if (!container) return;
 
+        var rect = null;
+        container.addEventListener('mouseenter', function () {
+            rect = container.getBoundingClientRect();
+        });
+
         container.addEventListener('mousemove', function (e) {
-            var rect = container.getBoundingClientRect();
+            if (document.body.classList.contains('is-preloading')) return;
+            if (!rect) rect = container.getBoundingClientRect();
             var x = (e.clientX - rect.left) / rect.width - 0.5; // -0.5 to 0.5
             var y = (e.clientY - rect.top) / rect.height - 0.5; // -0.5 to 0.5
             self.targetMouseX = x;
@@ -214,6 +220,7 @@
         });
 
         container.addEventListener('mouseleave', function () {
+            rect = null;
             self.targetMouseX = 0;
             self.targetMouseY = 0;
         });

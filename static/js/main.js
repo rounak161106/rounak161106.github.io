@@ -4,12 +4,22 @@
 // ===================================
 
 // Initialize AOS (Animate On Scroll)
-AOS.init({
-    duration: 1000,
-    once: true,
-    offset: 100,
-    easing: 'ease-out-cubic'
-});
+function initAOS() {
+    if (typeof AOS !== 'undefined') {
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100,
+            easing: 'ease-out-cubic'
+        });
+    }
+}
+
+if (document.body.classList.contains('is-preloading')) {
+    document.addEventListener('preloaderComplete', initAOS);
+} else {
+    initAOS();
+}
 
 // Preloader is handled by preloader.js
 
@@ -24,6 +34,7 @@ const cursorFollower = document.querySelector('.cursor-follower');
     let isHovering = false;
 
     document.addEventListener('mousemove', (e) => {
+        if (document.body.classList.contains('is-preloading')) return;
         mouseX = e.clientX;
         mouseY = e.clientY;
         

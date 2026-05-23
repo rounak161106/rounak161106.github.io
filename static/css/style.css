@@ -2266,3 +2266,17 @@ body:hover .cursor-follower {
     0% { transform: translateY(0) rotate(0deg); opacity: 1; }
     100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
 }
+
+/* Prevent horizontal slide-in animations on mobile and tablet viewports to stop layout displacement */
+@media (max-width: 1024px) {
+    [data-aos="fade-left"] {
+        transform: translate3d(0, 20px, 0) !important;
+    }
+    [data-aos="fade-right"] {
+        transform: translate3d(0, 20px, 0) !important;
+    }
+    [data-aos="fade-left"].aos-animate,
+    [data-aos="fade-right"].aos-animate {
+        transform: translate3d(0, 0, 0) !important;
+    }
+}
