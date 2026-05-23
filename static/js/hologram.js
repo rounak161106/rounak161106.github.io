@@ -165,10 +165,10 @@
     HologramMascot.prototype.preloadImages = function () {
         var self = this;
         var sources = {
-            idle: 'static/images/pracy_idle.png',
-            thinking: 'static/images/pracy_thinking.png',
-            happy: 'static/images/pracy_happy.png',
-            greet: 'static/images/pracy_greet.png'
+            idle: 'static/images/pracy_idle.webp',
+            thinking: 'static/images/pracy_thinking.webp',
+            happy: 'static/images/pracy_happy.webp',
+            greet: 'static/images/pracy_greet.webp'
         };
 
         var loadedCount = 0;
@@ -339,7 +339,7 @@
 
     HologramMascot.prototype.setupStaticFallback = function () {
         var img = document.createElement('img');
-        img.src = 'static/images/pracy_idle.png';
+        img.src = 'static/images/pracy_idle.webp';
         img.style.width = '100%';
         img.style.height = '100%';
         img.style.objectFit = 'cover';
