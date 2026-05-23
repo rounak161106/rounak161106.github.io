@@ -526,11 +526,13 @@
         var backdrop = document.createElement('div');
         backdrop.className = 'chat-backdrop';
         backdrop.id = 'chatBackdrop';
+        backdrop.style.display = 'none'; // Avoid flash of unstyled content
         document.body.appendChild(backdrop);
 
         var panel = document.createElement('div');
         panel.className = 'chat-panel';
         panel.id = 'chatPanel';
+        panel.style.display = 'none'; // Avoid flash of unstyled content
         panel.innerHTML =
             '<div class="chat-header">' +
                 '<div class="chat-avatar">' + getPracyAvatarHTML(true, false) + '</div>' +
@@ -584,6 +586,11 @@
         chatBackdrop = document.getElementById('chatBackdrop');
     }
 
+    // ── DRAGGABLE PANEL IMPLEMENTATION ────────────────────────────────
+    // Keeps chat panel within bounds and supports smooth mouse dragging.
+    var isDragging = false;
+    var startX, startY, initialLeft, initialTop;
+
     function handleViewportChange() {
         if (!chatOpen || window.innerWidth > 768) return;
         var vv = window.visualViewport;
@@ -596,6 +603,12 @@
     function openChat() {
         if (chatOpen) return;
         chatOpen = true;
+        
+        chatPanel.style.display = 'flex';
+        chatBackdrop.style.display = 'block';
+        chatPanel.offsetHeight; // Force reflow
+        chatBackdrop.offsetHeight; // Force reflow
+        
         chatPanel.classList.add('open');
         chatBackdrop.classList.add('open');
         if (dockAiBtn) dockAiBtn.classList.add('chat-active');
@@ -643,6 +656,13 @@
             chatPanel.style.top = '';
             chatPanel.style.height = '';
         }
+
+        setTimeout(function() {
+            if (!chatOpen) {
+                if (chatPanel) chatPanel.style.display = 'none';
+                if (chatBackdrop) chatBackdrop.style.display = 'none';
+            }
+        }, 400); // Wait for transition animation to complete
     }
     
     // Close chat on hardware back button
@@ -1889,10 +1909,10 @@
     }
 
     // Boot
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-    } else {
+    if (!document.body.classList.contains('is-preloading')) {
         init();
+    } else {
+        document.addEventListener('preloaderComplete', init);
     }
 
 })();

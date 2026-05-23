@@ -1325,8 +1325,7 @@
         ioPreFetch.observe(discoverSection);
     }
 
-    // Defer initialization until preloader is done
-    document.addEventListener('preloaderComplete', function () {
+    function initializeFeatures() {
         // Inject section then kick off pre-fetch
         injectDiscoverSection();
         initBlogPreFetch();
@@ -1379,5 +1378,12 @@
 
         initOverlayControls(devOvEl);
         initOverlayControls(blogOvEl);
-    });
+    }
+
+    // Defer initialization until preloader is done
+    if (!document.body.classList.contains('is-preloading')) {
+        initializeFeatures();
+    } else {
+        document.addEventListener('preloaderComplete', initializeFeatures);
+    }
 })();

@@ -189,9 +189,15 @@
     }
 
     /* ── Init ── */
-    document.addEventListener('preloaderComplete', function() {
+    function initializeSkills() {
         initBentoInteractions();
         initNeuralCanvas();
-    });
+    }
+
+    if (!document.body.classList.contains('is-preloading')) {
+        initializeSkills();
+    } else {
+        document.addEventListener('preloaderComplete', initializeSkills);
+    }
 
 })();
