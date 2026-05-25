@@ -136,10 +136,10 @@ sections.forEach(section => {
 const typingText = document.querySelector('.typing-text');
 if (typingText) {
     const texts = [
-        'Aspiring Data Scientist',
-        'Machine Learning Enthusiast',
-        'Python Developer',
-        'AI Researcher'
+        'Data Scientist',
+        'AI Engineer',
+        'Machine Learning Engineer',
+        'Software Engineer'
     ];
     let textIndex = 0;
     let charIndex = 0;
