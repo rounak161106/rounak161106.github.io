@@ -365,8 +365,7 @@
             var actDot = document.getElementById('dockActivityDot');
             if (actDot && results[0]) actDot.classList.add('visible');
 
-            var themeColor = document.documentElement.getAttribute('data-theme') || 'blue';
-            var ghColor = themeColor === 'green' ? '41b883' : (themeColor === 'red' ? 'ff6b6b' : (themeColor === 'cyan' ? '00f2fe' : '4facfe'));
+            var ghColor = '4facfe'; // Always use default premium blue theme accent color
 
             box.innerHTML =
                 '<div class="gh-profile" style="flex-direction:column;gap:1.5rem;align-items:center;">' +

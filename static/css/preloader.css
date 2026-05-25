@@ -114,7 +114,8 @@
 /* ── High-Tech Rotating HUD Circles ── */
 .pl-hud-circle {
     fill: none;
-    transform-origin: center;
+    transform-origin: 60px 60px;
+    transform-box: view-box;
 }
 
 .pl-hud-circle-outer {

@@ -243,7 +243,8 @@
     }
     .pl-hud-circle {
         fill: none;
-        transform-origin: center;
+        transform-origin: 60px 60px;
+        transform-box: view-box;
     }
     .pl-hud-circle-outer {
         stroke: rgba(34, 211, 238, 0.18);
@@ -493,11 +494,10 @@
       if (navigator.userAgent.match(/Lighthouse|Chrome-Lighthouse|Google-Lighthouse|PageSpeed/i)) {
         document.documentElement.classList.add('lighthouse-audit');
       }
-      // 2. Load theme from localStorage to avoid styling flashes
-      var savedTheme = localStorage.getItem('portfolio-theme');
-      if (savedTheme) {
-        document.documentElement.setAttribute('data-theme', savedTheme);
-      }
+      // 2. Force default theme and clear any old theme settings
+      try {
+        localStorage.removeItem('portfolio-theme');
+      } catch (e) {}
     })();
   </script>
   <style>
@@ -518,7 +518,7 @@
     <div class="pl-scene">
       <div class="pl-overlay">
         <div class="pl-monogram-container" id="plMonogram">
-          <svg class="pl-svg-monogram" viewBox="0 0 120 120" aria-hidden="true">
+          <svg class="pl-svg-monogram" viewBox="0 0 120 120" width="120" height="120" aria-hidden="true">
             <defs>
               <linearGradient id="plGradR" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stop-color="#8b5cf6" />

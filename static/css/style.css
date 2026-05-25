@@ -50,46 +50,6 @@
     --font-primary: 'Poppins', sans-serif;
     --font-secondary: 'Inter', sans-serif;
 }
-
-/* ===== THEME VARIANTS ===== */
-/* Add this RIGHT AFTER the existing :root block in style.css */
-
-/* Green/Teal Theme */
-[data-theme="green"] {
-    --primary-color: #11998e;
-    --secondary-color: #38ef7d;
-    --accent-color: #7bed9f;
-    --gradient-primary: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-    --gradient-secondary: linear-gradient(135deg, #7bed9f 0%, #2ed573 100%);
-    --gradient-accent: linear-gradient(135deg, #0be881 0%, #05c46b 100%);
-    --gradient-orb: radial-gradient(circle at center, rgba(17, 153, 142, 0.3) 0%, transparent 70%);
-    --shadow-glow: 0 0 30px rgba(17, 153, 142, 0.3);
-}
-
-/* Red/Orange Theme */
-[data-theme="red"] {
-    --primary-color: #ff6b6b;
-    --secondary-color: #ffa07a;
-    --accent-color: #ff8787;
-    --gradient-primary: linear-gradient(135deg, #ff6b6b 0%, #ffa07a 100%);
-    --gradient-secondary: linear-gradient(135deg, #ff8787 0%, #ff6348 100%);
-    --gradient-accent: linear-gradient(135deg, #ff7979 0%, #ff4757 100%);
-    --gradient-orb: radial-gradient(circle at center, rgba(255, 107, 107, 0.3) 0%, transparent 70%);
-    --shadow-glow: 0 0 30px rgba(255, 107, 107, 0.3);
-}
-
-/* Cyan/Blue Theme */
-[data-theme="cyan"] {
-    --primary-color: #4facfe;
-    --secondary-color: #00f2fe;
-    --accent-color: #48dbfb;
-    --gradient-primary: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    --gradient-secondary: linear-gradient(135deg, #48dbfb 0%, #0abde3 100%);
-    --gradient-accent: linear-gradient(135deg, #54a0ff 0%, #2e86de 100%);
-    --gradient-orb: radial-gradient(circle at center, rgba(79, 172, 254, 0.3) 0%, transparent 70%);
-    --shadow-glow: 0 0 30px rgba(79, 172, 254, 0.3);
-}
-
 /* ===== BACK TO TOP BUTTON ===== */
 .back-to-top {
     position: fixed;

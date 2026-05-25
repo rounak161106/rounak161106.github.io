@@ -1660,15 +1660,11 @@
                 }
             });
         }
-        if (name === 'change_theme' && params.theme) {
-            var theme = params.theme;
-            if (theme === 'default') {
-                document.documentElement.removeAttribute('data-theme');
+        if (name === 'change_theme') {
+            document.documentElement.removeAttribute('data-theme');
+            try {
                 localStorage.removeItem('portfolio-theme');
-            } else {
-                document.documentElement.setAttribute('data-theme', theme);
-                localStorage.setItem('portfolio-theme', theme);
-            }
+            } catch (e) {}
         }
         if (name === 'open_certificate' && params.file) {
             if (typeof window.openCertModal === 'function') {
