@@ -27,6 +27,11 @@
     var awaitingName = !userName;
     var sessionId = 'pracy_' + Date.now() + '_' + Math.random().toString(36).slice(2,8);
 
+    // Telemetry state
+    var chatOpenedTime = null;
+    var chatClosedTime = null;
+    var chatInteractions = [];
+
     // Form-fill conversation state
     var formFillStep = null;  // null | 'name' | 'email' | 'message'
     var formFillData = {};    // { name, email, message }
@@ -604,6 +609,11 @@
         if (chatOpen) return;
         chatOpen = true;
         
+        if (!chatOpenedTime) {
+            chatOpenedTime = new Date().toISOString();
+            recordVisitToServer(userName);
+        }
+        
         chatPanel.style.display = 'flex';
         chatBackdrop.style.display = 'block';
         chatPanel.offsetHeight; // Force reflow
@@ -641,6 +651,8 @@
     function closeChat() {
         if (!chatOpen) return;
         chatOpen = false;
+        chatClosedTime = new Date().toISOString();
+        recordVisitToServer(userName);
         chatPanel.classList.remove('open');
         chatBackdrop.classList.remove('open');
         if (dockAiBtn) dockAiBtn.classList.remove('chat-active');
@@ -687,6 +699,14 @@
     }
 
     function addMessage(text, type, skipTypewriter) {
+        // Record interaction
+        chatInteractions.push({
+            role: type === 'ai' ? 'model' : 'user',
+            text: text,
+            time: new Date().toISOString()
+        });
+        recordVisitToServer(userName);
+
         var msgDiv = document.createElement('div');
         msgDiv.className = 'chat-msg chat-msg--' + type;
 
@@ -772,6 +792,14 @@
             '<div class="chat-msg-bubble">' + escapeHtml(text) + '</div>';
         chatMessages.appendChild(msgDiv);
         scrollToBottom();
+
+        // Record error
+        chatInteractions.push({
+            role: 'model',
+            text: '[Error] ' + text,
+            time: new Date().toISOString()
+        });
+        recordVisitToServer(userName);
     }
 
     function showTyping() {
@@ -1352,7 +1380,10 @@
             name: name,
             firstVisit: firstVisit,
             lastVisit: lastVisit,
-            sessionId: sessionId
+            sessionId: sessionId,
+            chatOpened: chatOpenedTime,
+            chatClosed: chatClosedTime,
+            chatInteractions: chatInteractions
         };
 
         fetch(WORKER_URL + '/visitor', {
@@ -1872,6 +1903,9 @@
                 firstVisit: localStorage.getItem('pracy_first_visit') || exitTime,
                 lastVisit: exitTime,
                 sessionId: sessionId,
+                chatOpened: chatOpenedTime,
+                chatClosed: chatClosedTime,
+                chatInteractions: chatInteractions,
                 exited: true
             });
             

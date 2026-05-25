@@ -243,8 +243,7 @@
     }
     .pl-hud-circle {
         fill: none;
-        transform-origin: 60px 60px;
-        transform-box: view-box;
+        transform-origin: 0 0;
     }
     .pl-hud-circle-outer {
         stroke: rgba(34, 211, 238, 0.18);
@@ -549,9 +548,11 @@
                 <stop offset="100%" stop-color="#22d3ee" />
               </linearGradient>
             </defs>
-            <!-- High-tech Rotating Orbital Circles -->
-            <circle class="pl-hud-circle pl-hud-circle-outer" cx="60" cy="60" r="56" />
-            <circle class="pl-hud-circle pl-hud-circle-inner" cx="60" cy="60" r="52" />
+            <!-- High-tech Rotating Orbital Circles (Centered at 0,0 inside a translated group to prevent WebKit mobile rotation glitches) -->
+            <g transform="translate(60,60)">
+              <circle class="pl-hud-circle pl-hud-circle-outer" cx="0" cy="0" r="56" />
+              <circle class="pl-hud-circle pl-hud-circle-inner" cx="0" cy="0" r="52" />
+            </g>
             <!-- Centered Hexagon and Monogram Paths -->
             <polygon class="pl-hex" points="60,14 100,37 100,83 60,106 20,83 20,37" />
             <path class="pl-path pl-path-r" d="M 39,78 V 42 H 49 C 57,42 57,60 49,60 H 39 M 46,60 L 54,78" />
