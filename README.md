@@ -149,7 +149,7 @@ You are free to:
 ---
 
 <div align="center">
-  <strong>⭐ Star this repository if you found it helpful!</strong>
+  <strong>⭐ Give this repo a star if you found it helpful!</strong>
   <br><br>
   Made with ❤️ by Rounak Prasad
 </div>
