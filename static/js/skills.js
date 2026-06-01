@@ -184,7 +184,11 @@
             animFrame = requestAnimationFrame(tick);
         }
 
-        window.addEventListener('resize', initParticles);
+        var resizeDebounceTimer;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeDebounceTimer);
+            resizeDebounceTimer = setTimeout(initParticles, 250);
+        });
         initParticles();
     }
 

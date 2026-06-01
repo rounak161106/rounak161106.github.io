@@ -835,27 +835,35 @@
     // ── scroll progress ring ─────────────────────────────────────────
     var progressRing = document.querySelector('.orbit-progress-ring');
     var circumference = 2 * Math.PI * 17; // ≈ 106.8
+    var dockScrollTick = false;
 
     window.addEventListener('scroll', function () {
-        var maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-        if (maxScroll > 0) {
-            var dock = document.getElementById('orbitDock');
-            if (dock) {
-                if (window.innerWidth > 768) {
-                    if (maxScroll - window.scrollY < 150) {
-                        dock.classList.add('hidden');
-                    } else {
-                        dock.classList.remove('hidden');
+        if (!dockScrollTick) {
+            window.requestAnimationFrame(function () {
+                var maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+                if (maxScroll > 0) {
+                    var dock = document.getElementById('orbitDock');
+                    if (dock) {
+                        if (window.innerWidth > 768) {
+                            if (maxScroll - window.scrollY < 150) {
+                                dock.classList.add('hidden');
+                            } else {
+                                dock.classList.remove('hidden');
+                            }
+                        } else {
+                            dock.classList.remove('hidden');
+                        }
                     }
-                } else {
-                    dock.classList.remove('hidden');
                 }
-            }
+                if (maxScroll > 0 && progressRing) {
+                    var pct    = Math.min(1, window.scrollY / maxScroll);
+                    var offset = circumference * (1 - pct);
+                    progressRing.style.strokeDashoffset = offset;
+                }
+                dockScrollTick = false;
+            });
+            dockScrollTick = true;
         }
-        if (maxScroll <= 0 || !progressRing) return;
-        var pct    = Math.min(1, window.scrollY / maxScroll);
-        var offset = circumference * (1 - pct);
-        progressRing.style.strokeDashoffset = offset;
     }, { passive: true });
 
     // Clear keyframe animation on end to allow smooth CSS transitions

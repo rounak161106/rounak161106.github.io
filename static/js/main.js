@@ -74,13 +74,20 @@ const navMenu = document.getElementById('navMenu');
 const navLinks = document.querySelectorAll('.nav-link');
 
 // Navbar scroll effect
+let navbarScrollTick = false;
 window.addEventListener('scroll', () => {
-    if (window.scrollY > 100) {
-        navbar.classList.add('scrolled');
-    } else {
-        navbar.classList.remove('scrolled');
+    if (!navbarScrollTick) {
+        window.requestAnimationFrame(() => {
+            if (window.scrollY > 100) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+            navbarScrollTick = false;
+        });
+        navbarScrollTick = true;
     }
-});
+}, { passive: true });
 
 // Mobile menu toggle
 if (navToggle) {
