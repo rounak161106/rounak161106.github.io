@@ -53,18 +53,25 @@ const cursorFollower = document.querySelector('.cursor-follower');
     }
     animateCursor();
     
-    // Cursor effects on hover
-    const hoverElements = document.querySelectorAll('a, button, .project-card, .cert-card');
-    hoverElements.forEach(el => {
-        el.addEventListener('mouseenter', () => {
+    // Cursor effects on hover using event delegation (high performance, dynamic content support)
+    const hoverSelector = 'a, button, .project-card, .cert-card, .fd-card, .orbit-item, .blog-post-card, .gh-repo-card, .profile-card, .chat-chip';
+    
+    document.addEventListener('mouseover', (e) => {
+        if (document.body.classList.contains('is-preloading')) return;
+        const target = e.target.closest(hoverSelector);
+        if (target) {
             isHovering = true;
             cursor.style.transform = `translate3d(calc(${mouseX}px - 50%), calc(${mouseY}px - 50%), 0) scale(1.5)`;
-        });
-        
-        el.addEventListener('mouseleave', () => {
+        }
+    });
+    
+    document.addEventListener('mouseout', (e) => {
+        if (document.body.classList.contains('is-preloading')) return;
+        const toElement = e.relatedTarget;
+        if (!toElement || !toElement.closest(hoverSelector)) {
             isHovering = false;
             cursor.style.transform = `translate3d(calc(${mouseX}px - 50%), calc(${mouseY}px - 50%), 0) scale(1)`;
-        });
+        }
     });
 
 // ===== NAVIGATION =====
