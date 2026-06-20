@@ -21,3 +21,5 @@ backup_skills/
 
 # Allow tracking gitignore itself
 !.gitignore
+
+.vscode
